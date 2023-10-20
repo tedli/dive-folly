@@ -1,0 +1,8 @@
+[
+{
+  "directory": "C:/Users/lizhen/Documents/Development/folly/build",
+  "command": "C:\\PROGRA~1\\mingw64\\bin\\CLANG_~1.EXE -DFOLLY_NO_CONFIG @CMakeFiles/dive-folly.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles\\dive-folly.dir\\src\\main.cpp.obj -c C:\\Users\\lizhen\\Documents\\Development\\folly\\src\\main.cpp",
+  "file": "C:/Users/lizhen/Documents/Development/folly/src/main.cpp",
+  "output": "CMakeFiles/dive-folly.dir/src/main.cpp.obj"
+}
+]

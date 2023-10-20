@@ -1,0 +1,3 @@
+C:/Users/lizhen/Documents/Development/folly/build/CMakeFiles/dive-folly.dir
+C:/Users/lizhen/Documents/Development/folly/build/CMakeFiles/edit_cache.dir
+C:/Users/lizhen/Documents/Development/folly/build/CMakeFiles/rebuild_cache.dir

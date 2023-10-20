@@ -1,0 +1,14 @@
+# Target labels
+ gflags-populate
+# Source files and their labels
+C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/CMakeFiles/gflags-populate
+C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/CMakeFiles/gflags-populate.rule
+C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/CMakeFiles/gflags-populate-complete.rule
+C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-build.rule
+C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-configure.rule
+C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-download.rule
+C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-install.rule
+C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-mkdir.rule
+C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-patch.rule
+C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-test.rule
+C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-update.rule
