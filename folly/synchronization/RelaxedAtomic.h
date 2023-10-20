@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,17 +36,15 @@ namespace folly {
 //
 //  Useful for values which may be loaded and stored concurrently, such as
 //  counters, but which do not guard any associated data.
-template <typename T>
-struct relaxed_atomic;
+template <typename T> struct relaxed_atomic;
 
 namespace detail {
 
-template <typename T>
-struct relaxed_atomic_base : protected std::atomic<T> {
- private:
+template <typename T> struct relaxed_atomic_base : protected std::atomic<T> {
+private:
   using atomic = std::atomic<T>;
 
- public:
+public:
   using value_type = T;
 
   using atomic::atomic;
@@ -78,32 +83,32 @@ struct relaxed_atomic_base : protected std::atomic<T> {
     return atomic::exchange(desired, std::memory_order_relaxed);
   }
 
-  bool compare_exchange_weak(T& expected, T desired) noexcept {
-    return atomic::compare_exchange_weak(
-        expected, desired, std::memory_order_relaxed);
+  bool compare_exchange_weak(T &expected, T desired) noexcept {
+    return atomic::compare_exchange_weak(expected, desired,
+                                         std::memory_order_relaxed);
   }
-  bool compare_exchange_weak(T& expected, T desired) volatile noexcept {
-    return atomic::compare_exchange_weak(
-        expected, desired, std::memory_order_relaxed);
+  bool compare_exchange_weak(T &expected, T desired) volatile noexcept {
+    return atomic::compare_exchange_weak(expected, desired,
+                                         std::memory_order_relaxed);
   }
 
-  bool compare_exchange_strong(T& expected, T desired) noexcept {
-    return atomic::compare_exchange_strong(
-        expected, desired, std::memory_order_relaxed);
+  bool compare_exchange_strong(T &expected, T desired) noexcept {
+    return atomic::compare_exchange_strong(expected, desired,
+                                           std::memory_order_relaxed);
   }
-  bool compare_exchange_strong(T& expected, T desired) volatile noexcept {
-    return atomic::compare_exchange_strong(
-        expected, desired, std::memory_order_relaxed);
+  bool compare_exchange_strong(T &expected, T desired) volatile noexcept {
+    return atomic::compare_exchange_strong(expected, desired,
+                                           std::memory_order_relaxed);
   }
 };
 
 template <typename T>
 struct relaxed_atomic_integral_base : private relaxed_atomic_base<T> {
- private:
+private:
   using atomic = std::atomic<T>;
   using base = relaxed_atomic_base<T>;
 
- public:
+public:
   using typename base::value_type;
 
   using base::relaxed_atomic_base;
@@ -181,12 +186,11 @@ struct relaxed_atomic_integral_base : private relaxed_atomic_base<T> {
 
 } // namespace detail
 
-template <>
-struct relaxed_atomic<bool> : detail::relaxed_atomic_base<bool> {
- private:
+template <> struct relaxed_atomic<bool> : detail::relaxed_atomic_base<bool> {
+private:
   using base = detail::relaxed_atomic_base<bool>;
 
- public:
+public:
   using typename base::value_type;
 
   using base::relaxed_atomic_base;
@@ -196,12 +200,11 @@ struct relaxed_atomic<bool> : detail::relaxed_atomic_base<bool> {
 
 using relaxed_atomic_bool = relaxed_atomic<bool>;
 
-template <typename T>
-struct relaxed_atomic : detail::relaxed_atomic_base<T> {
- private:
+template <typename T> struct relaxed_atomic : detail::relaxed_atomic_base<T> {
+private:
   using base = detail::relaxed_atomic_base<T>;
 
- public:
+public:
   using typename base::value_type;
 
   using base::relaxed_atomic_base;
@@ -210,70 +213,69 @@ struct relaxed_atomic : detail::relaxed_atomic_base<T> {
 };
 
 template <typename T>
-struct relaxed_atomic<T*> : detail::relaxed_atomic_base<T*> {
- private:
-  using atomic = std::atomic<T*>;
-  using base = detail::relaxed_atomic_base<T*>;
+struct relaxed_atomic<T *> : detail::relaxed_atomic_base<T *> {
+private:
+  using atomic = std::atomic<T *>;
+  using base = detail::relaxed_atomic_base<T *>;
 
- public:
+public:
   using typename base::value_type;
 
-  using detail::relaxed_atomic_base<T*>::relaxed_atomic_base;
+  using detail::relaxed_atomic_base<T *>::relaxed_atomic_base;
   using base::operator=;
-  using base::operator T*;
+  using base::operator T *;
 
-  T* fetch_add(std::ptrdiff_t arg) noexcept {
+  T *fetch_add(std::ptrdiff_t arg) noexcept {
     return atomic::fetch_add(arg, std::memory_order_relaxed);
   }
-  T* fetch_add(std::ptrdiff_t arg) volatile noexcept {
+  T *fetch_add(std::ptrdiff_t arg) volatile noexcept {
     return atomic::fetch_add(arg, std::memory_order_relaxed);
   }
 
-  T* fetch_sub(std::ptrdiff_t arg) noexcept {
+  T *fetch_sub(std::ptrdiff_t arg) noexcept {
     return atomic::fetch_sub(arg, std::memory_order_relaxed);
   }
-  T* fetch_sub(std::ptrdiff_t arg) volatile noexcept {
+  T *fetch_sub(std::ptrdiff_t arg) volatile noexcept {
     return atomic::fetch_sub(arg, std::memory_order_relaxed);
   }
 
-  T* operator++() noexcept { return fetch_add(1) + 1; }
-  T* operator++() volatile noexcept { return fetch_add(1) + 1; }
+  T *operator++() noexcept { return fetch_add(1) + 1; }
+  T *operator++() volatile noexcept { return fetch_add(1) + 1; }
 
-  T* operator++(int) noexcept { return fetch_add(1); }
-  T* operator++(int) volatile noexcept { return fetch_add(1); }
+  T *operator++(int) noexcept { return fetch_add(1); }
+  T *operator++(int) volatile noexcept { return fetch_add(1); }
 
-  T* operator--() noexcept { return fetch_sub(1) - 1; }
-  T* operator--() volatile noexcept { return fetch_sub(1) - 1; }
+  T *operator--() noexcept { return fetch_sub(1) - 1; }
+  T *operator--() volatile noexcept { return fetch_sub(1) - 1; }
 
-  T* operator--(int) noexcept { return fetch_sub(1); }
-  T* operator--(int) volatile noexcept { return fetch_sub(1); }
+  T *operator--(int) noexcept { return fetch_sub(1); }
+  T *operator--(int) volatile noexcept { return fetch_sub(1); }
 
-  T* operator+=(std::ptrdiff_t arg) noexcept { return fetch_add(arg) + arg; }
-  T* operator+=(std::ptrdiff_t arg) volatile noexcept {
+  T *operator+=(std::ptrdiff_t arg) noexcept { return fetch_add(arg) + arg; }
+  T *operator+=(std::ptrdiff_t arg) volatile noexcept {
     return fetch_add(arg) + arg;
   }
 
-  T* operator-=(std::ptrdiff_t arg) noexcept { return fetch_sub(arg) - arg; }
-  T* operator-=(std::ptrdiff_t arg) volatile noexcept {
+  T *operator-=(std::ptrdiff_t arg) noexcept { return fetch_sub(arg) - arg; }
+  T *operator-=(std::ptrdiff_t arg) volatile noexcept {
     return fetch_sub(arg) - arg;
   }
 };
 
 #if __cpp_deduction_guides >= 201611
-template <typename T>
-relaxed_atomic(T) -> relaxed_atomic<T>;
+template <typename T> relaxed_atomic(T) -> relaxed_atomic<T>;
 #endif
 
-#define FOLLY_RELAXED_ATOMIC_DEFINE_INTEGRAL_SPECIALIZATION(type)            \
-  template <>                                                                \
-  struct relaxed_atomic<type> : detail::relaxed_atomic_integral_base<type> { \
-   private:                                                                  \
-    using base = detail::relaxed_atomic_integral_base<type>;                 \
-                                                                             \
-   public:                                                                   \
-    using base::relaxed_atomic_integral_base;                                \
-    using base::operator=;                                                   \
-    using base::operator type;                                               \
+#define FOLLY_RELAXED_ATOMIC_DEFINE_INTEGRAL_SPECIALIZATION(type)              \
+  template <>                                                                  \
+  struct relaxed_atomic<type> : detail::relaxed_atomic_integral_base<type> {   \
+  private:                                                                     \
+    using base = detail::relaxed_atomic_integral_base<type>;                   \
+                                                                               \
+  public:                                                                      \
+    using base::relaxed_atomic_integral_base;                                  \
+    using base::operator=;                                                     \
+    using base::operator type;                                                 \
   };
 
 FOLLY_RELAXED_ATOMIC_DEFINE_INTEGRAL_SPECIALIZATION(char)

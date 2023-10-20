@@ -8,22 +8,22 @@
 #define GOOGLE_NAMESPACE google
 
 /* Define if you have the `dladdr' function */
-/* #undef HAVE_DLADDR */
+#define HAVE_DLADDR
 
 /* Define if you have the `snprintf' function */
 #define HAVE_SNPRINTF
 
 /* Define to 1 if you have the <dlfcn.h> header file. */
-/* #undef HAVE_DLFCN_H */
+#define HAVE_DLFCN_H
 
 /* Define to 1 if you have the <execinfo.h> header file. */
-/* #undef HAVE_EXECINFO_H */
+#define HAVE_EXECINFO_H
 
 /* Define if you have the `fcntl' function */
-/* #undef HAVE_FCNTL */
+#define HAVE_FCNTL
 
 /* Define to 1 if you have the <glob.h> header file. */
-/* #undef HAVE_GLOB_H */
+#define HAVE_GLOB_H
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #define HAVE_INTTYPES_H 1
@@ -41,7 +41,7 @@
 /* #undef HAVE_LIB_GTEST */
 
 /* define if you have dbghelp library */
-#define HAVE_DBGHELP
+/* #undef HAVE_DBGHELP */
 
 /* define if you have libunwind */
 /* #undef HAVE_LIB_UNWIND */
@@ -56,25 +56,25 @@
 #define HAVE_NAMESPACES
 
 /* Define if you have the 'pread' function */
-/* #undef HAVE_PREAD */
+#define HAVE_PREAD
 
 /* Define if you have POSIX threads libraries and header files. */
 #define HAVE_PTHREAD
 
 /* Define to 1 if you have the <pwd.h> header file. */
-/* #undef HAVE_PWD_H */
+#define HAVE_PWD_H
 
 /* Define if you have the 'pwrite' function */
-/* #undef HAVE_PWRITE */
+#define HAVE_PWRITE
 
 /* define if the compiler implements pthread_rwlock_* */
-/* #undef HAVE_RWLOCK */
+#define HAVE_RWLOCK
 
 /* Define if you have the 'sigaction' function */
-/* #undef HAVE_SIGACTION */
+#define HAVE_SIGACTION
 
 /* Define if you have the `sigaltstack' function */
-/* #undef HAVE_SIGALTSTACK */
+#define HAVE_SIGALTSTACK
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #define HAVE_STDINT_H 1
@@ -83,16 +83,16 @@
 #define HAVE_STRINGS_H
 
 /* Define to 1 if you have the <syscall.h> header file. */
-/* #undef HAVE_SYSCALL_H */
+#define HAVE_SYSCALL_H
 
 /* Define to 1 if you have the <syslog.h> header file. */
-/* #undef HAVE_SYSLOG_H */
+#define HAVE_SYSLOG_H
 
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #define HAVE_SYS_STAT_H
 
 /* Define to 1 if you have the <sys/syscall.h> header file. */
-/* #undef HAVE_SYS_SYSCALL_H */
+#define HAVE_SYS_SYSCALL_H
 
 /* Define to 1 if you have the <sys/time.h> header file. */
 #define HAVE_SYS_TIME_H
@@ -104,13 +104,13 @@
 /* #undef HAVE_SYS_UCONTEXT_H */
 
 /* Define to 1 if you have the <sys/utsname.h> header file. */
-/* #undef HAVE_SYS_UTSNAME_H */
+#define HAVE_SYS_UTSNAME_H
 
 /* Define to 1 if you have the <sys/wait.h> header file. */
-/* #undef HAVE_SYS_WAIT_H */
+#define HAVE_SYS_WAIT_H
 
 /* Define to 1 if you have the <ucontext.h> header file. */
-/* #undef HAVE_UCONTEXT_H */
+#define HAVE_UCONTEXT_H
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #define HAVE_UNISTD_H 1
@@ -134,10 +134,10 @@
 #define HAVE___SYNC_VAL_COMPARE_AND_SWAP
 
 /* define if symbolize support is available */
-/* #undef HAVE_SYMBOLIZE */
+#define HAVE_SYMBOLIZE
 
 /* define if localtime_r is available in time.h */
-/* #undef HAVE_LOCALTIME_R */
+#define HAVE_LOCALTIME_R
 
 /* define if gmtime_r is available in time.h */
 /* #undef HAVE_GMTIME_R */
@@ -187,7 +187,7 @@
 #define STL_NAMESPACE std
 
 /* location of source code */
-#define TEST_SRC_DIR "C:/Users/lizhen/Documents/Development/folly/build/_deps/glog-src"
+#define TEST_SRC_DIR "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src"
 
 /* Define to necessary thread-local storage attribute. */
 #define GLOG_THREAD_LOCAL_STORAGE __thread

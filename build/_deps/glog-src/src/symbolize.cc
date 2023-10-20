@@ -62,7 +62,7 @@
 #include <limits>
 
 #include "symbolize.h"
-#include "demangle.h"
+#include "glog_demangle.h"
 
 _START_GOOGLE_NAMESPACE_
 

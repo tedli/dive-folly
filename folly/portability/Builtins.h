@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,19 +42,19 @@
 namespace folly {
 namespace portability {
 namespace detail {
-void call_flush_instruction_cache_self_pid(void* begin, size_t size);
+void call_flush_instruction_cache_self_pid(void *begin, size_t size);
 }
 } // namespace portability
 } // namespace folly
 
-FOLLY_ALWAYS_INLINE void __builtin___clear_cache(char* begin, char* end) {
+FOLLY_ALWAYS_INLINE void __builtin___clear_cache(char *begin, char *end) {
   if (folly::kIsArchAmd64) {
     // x86_64 doesn't require the instruction cache to be flushed after
     // modification.
   } else {
     // Default to flushing it for everything else, such as ARM.
     folly::portability::detail::call_flush_instruction_cache_self_pid(
-        static_cast<void*>(begin), static_cast<size_t>(end - begin));
+        static_cast<void *>(begin), static_cast<size_t>(end - begin));
   }
 }
 
@@ -110,9 +117,7 @@ FOLLY_ALWAYS_INLINE int __builtin_ffs(int x) {
   return int(_BitScanForward(&index, (unsigned long)x) ? index + 1 : 0);
 }
 
-FOLLY_ALWAYS_INLINE int __builtin_ffsl(long x) {
-  return __builtin_ffs(int(x));
-}
+FOLLY_ALWAYS_INLINE int __builtin_ffsl(long x) { return __builtin_ffs(int(x)); }
 
 #if defined(_M_IX86) || defined(_M_ARM) || defined(_M_ARM64)
 FOLLY_ALWAYS_INLINE int __builtin_ffsll(long long x) {
@@ -141,7 +146,7 @@ FOLLY_ALWAYS_INLINE int __builtin_popcountl(unsigned long x) {
 #if defined(_M_IX86)
 FOLLY_ALWAYS_INLINE int __builtin_popcountll(unsigned long long x) {
   return int(__popcnt((unsigned int)(x >> 32))) +
-      int(__popcnt((unsigned int)x));
+         int(__popcnt((unsigned int)x));
 }
 #elif defined(_M_X64)
 FOLLY_ALWAYS_INLINE int __builtin_popcountll(unsigned long long x) {
@@ -150,7 +155,7 @@ FOLLY_ALWAYS_INLINE int __builtin_popcountll(unsigned long long x) {
 #endif
 #endif // !defined(_MSC_VER) || !defined(FOLLY_DETAIL_MSC_BUILTIN_SUPPORT)
 
-FOLLY_ALWAYS_INLINE void* __builtin_return_address(unsigned int frame) {
+FOLLY_ALWAYS_INLINE void *__builtin_return_address(unsigned int frame) {
   // I really hope frame is zero...
   (void)frame;
   assert(frame == 0);

@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -40,9 +47,7 @@ namespace detail {
 
 /** Threshold for the number of retired objects to trigger
     asynchronous reclamation. */
-constexpr int hazptr_domain_rcount_threshold() {
-  return 1000;
-}
+constexpr int hazptr_domain_rcount_threshold() { return 1000; }
 
 folly::Executor::KeepAlive<> hazptr_get_default_executor();
 
@@ -96,14 +101,13 @@ folly::Executor::KeepAlive<> hazptr_get_default_executor();
  *    reclaimable objects by different synchronous reclamation
  *    operations are disjoint.
  */
-template <template <typename> class Atom>
-class hazptr_domain {
+template <template <typename> class Atom> class hazptr_domain {
   using Obj = hazptr_obj<Atom>;
   using Rec = hazptr_rec<Atom>;
   using List = hazptr_detail::linked_list<Obj>;
   using ObjList = hazptr_obj_list<Atom>;
   using RetiredList = hazptr_detail::shared_head_only_list<Obj, Atom>;
-  using Set = folly::F14FastSet<const void*>;
+  using Set = folly::F14FastSet<const void *>;
   using ExecFn = folly::Executor::KeepAlive<> (*)();
 
   static constexpr int kThreshold = detail::hazptr_domain_rcount_threshold();
@@ -116,10 +120,10 @@ class hazptr_domain {
 
   static constexpr int kNumShards = 8;
   static constexpr int kShardMask = kNumShards - 1;
-  static_assert(
-      (kNumShards & kShardMask) == 0, "kNumShards must be a power of 2");
+  static_assert((kNumShards & kShardMask) == 0,
+                "kNumShards must be a power of 2");
 
-  Atom<Rec*> hazptrs_{nullptr};
+  Atom<Rec *> hazptrs_{nullptr};
   Atom<uintptr_t> avail_{reinterpret_cast<uintptr_t>(nullptr)};
   Atom<uint64_t> sync_time_{0};
   /* Using signed int for rcount_ because it may transiently be negative.
@@ -135,7 +139,7 @@ class hazptr_domain {
   Atom<ExecFn> exec_fn_{nullptr};
   Atom<int> exec_backlog_{0};
 
- public:
+public:
   /** Constructor */
   hazptr_domain() = default;
 
@@ -151,10 +155,10 @@ class hazptr_domain {
     }
   }
 
-  hazptr_domain(const hazptr_domain&) = delete;
-  hazptr_domain(hazptr_domain&&) = delete;
-  hazptr_domain& operator=(const hazptr_domain&) = delete;
-  hazptr_domain& operator=(hazptr_domain&&) = delete;
+  hazptr_domain(const hazptr_domain &) = delete;
+  hazptr_domain(hazptr_domain &&) = delete;
+  hazptr_domain &operator=(const hazptr_domain &) = delete;
+  hazptr_domain &operator=(hazptr_domain &&) = delete;
 
   void set_executor(ExecFn exfn) {
     exec_fn_.store(exfn, std::memory_order_release);
@@ -164,16 +168,16 @@ class hazptr_domain {
 
   /** retire - nonintrusive - allocates memory */
   template <typename T, typename D = std::default_delete<T>>
-  void retire(T* obj, D reclaim = {}) {
+  void retire(T *obj, D reclaim = {}) {
     struct hazptr_retire_node : hazptr_obj<Atom> {
       std::unique_ptr<T, D> obj_;
-      hazptr_retire_node(T* retireObj, D toReclaim)
+      hazptr_retire_node(T *retireObj, D toReclaim)
           : obj_{retireObj, std::move(toReclaim)} {}
     };
 
     auto node = new hazptr_retire_node(obj, std::move(reclaim));
-    node->reclaim_ = [](hazptr_obj<Atom>* p, hazptr_obj_list<Atom>&) {
-      delete static_cast<hazptr_retire_node*>(p);
+    node->reclaim_ = [](hazptr_obj<Atom> *p, hazptr_obj_list<Atom> &) {
+      delete static_cast<hazptr_retire_node *>(p);
     };
     hazptr_obj_list<Atom> l(node);
     push_list(l);
@@ -191,7 +195,7 @@ class hazptr_domain {
     // Call cleanup() to ensure that there is no lagging concurrent
     // asynchronous reclamation in progress.
     cleanup();
-    Rec* rec = head();
+    Rec *rec = head();
     while (rec) {
       auto next = rec->next();
       rec->~Rec();
@@ -204,7 +208,7 @@ class hazptr_domain {
   }
 
   /** cleanup_cohort_tag */
-  void cleanup_cohort_tag(const hazptr_obj_cohort<Atom>* cohort) noexcept {
+  void cleanup_cohort_tag(const hazptr_obj_cohort<Atom> *cohort) noexcept {
     auto ftag = reinterpret_cast<uintptr_t>(cohort) + kTagBit;
     auto shard = calc_shard(ftag);
     auto obj = tagged_[shard].pop_all(RetiredList::kAlsoLock);
@@ -221,19 +225,18 @@ class hazptr_domain {
     }
   }
 
-  void list_match_tag(
-      uintptr_t ftag, Obj* obj, ObjList& match, ObjList& nomatch) {
-    list_match_condition(obj, match, nomatch, [ftag](Obj* o) {
-      return o->cohort_tag() == ftag;
-    });
+  void list_match_tag(uintptr_t ftag, Obj *obj, ObjList &match,
+                      ObjList &nomatch) {
+    list_match_condition(obj, match, nomatch,
+                         [ftag](Obj *o) { return o->cohort_tag() == ftag; });
   }
 
- private:
+private:
   using hazptr_rec_alloc = AlignedSysAllocator<Rec, FixedAlign<alignof(Rec)>>;
 
-  friend void hazptr_domain_push_retired<Atom>(
-      hazptr_obj_list<Atom>&, hazptr_domain<Atom>&) noexcept;
-  friend hazptr_holder<Atom> make_hazard_pointer<Atom>(hazptr_domain<Atom>&);
+  friend void hazptr_domain_push_retired<Atom>(hazptr_obj_list<Atom> &,
+                                               hazptr_domain<Atom> &) noexcept;
+  friend hazptr_holder<Atom> make_hazard_pointer<Atom>(hazptr_domain<Atom> &);
   template <uint8_t M, template <typename> class A>
   friend hazptr_array<M, A> make_hazard_pointer_array();
   friend class hazptr_holder<Atom>;
@@ -251,7 +254,7 @@ class hazptr_domain {
     return count_.exchange(val, std::memory_order_acq_rel);
   }
 
-  bool cas_count(int& expected, int newval) {
+  bool cas_count(int &expected, int newval) {
     return count_.compare_exchange_weak(
         expected, newval, std::memory_order_acq_rel, std::memory_order_relaxed);
   }
@@ -265,7 +268,7 @@ class hazptr_domain {
     due_time_.store(time + kSyncTimePeriod, std::memory_order_release);
   }
 
-  bool cas_due_time(uint64_t& expected, uint64_t newval) {
+  bool cas_due_time(uint64_t &expected, uint64_t newval) {
     return due_time_.compare_exchange_strong(
         expected, newval, std::memory_order_acq_rel, std::memory_order_relaxed);
   }
@@ -289,20 +292,20 @@ class hazptr_domain {
     avail_.store(val, std::memory_order_release);
   }
 
-  bool cas_avail(uintptr_t& expval, uintptr_t newval) {
+  bool cas_avail(uintptr_t &expval, uintptr_t newval) {
     return avail_.compare_exchange_weak(
         expval, newval, std::memory_order_acq_rel, std::memory_order_acquire);
   }
 
   /** acquire_hprecs */
-  Rec* acquire_hprecs(uint8_t num) {
+  Rec *acquire_hprecs(uint8_t num) {
     DCHECK_GE(num, 1);
     // C++17: auto [n, head] = try_pop_available_hprecs(num);
     uint8_t n;
-    Rec* head;
+    Rec *head;
     std::tie(n, head) = try_pop_available_hprecs(num);
     for (; n < num; ++n) {
-      Rec* rec = create_new_hprec();
+      Rec *rec = create_new_hprec();
       DCHECK(rec->next_avail() == nullptr);
       rec->set_next_avail(head);
       head = rec;
@@ -312,14 +315,14 @@ class hazptr_domain {
   }
 
   /** release_hprec */
-  void release_hprec(Rec* hprec) noexcept {
+  void release_hprec(Rec *hprec) noexcept {
     DCHECK(hprec);
     DCHECK(hprec->next_avail() == nullptr);
     push_available_hprecs(hprec, hprec);
   }
 
   /** release_hprecs */
-  void release_hprecs(Rec* head, Rec* tail) noexcept {
+  void release_hprecs(Rec *head, Rec *tail) noexcept {
     DCHECK(head);
     DCHECK(tail);
     DCHECK(tail->next_avail() == nullptr);
@@ -327,7 +330,7 @@ class hazptr_domain {
   }
 
   /** push_list */
-  void push_list(ObjList& l) {
+  void push_list(ObjList &l) {
     if (l.empty()) {
       return;
     }
@@ -373,7 +376,7 @@ class hazptr_domain {
     return shard;
   }
 
-  size_t calc_shard(Obj* obj) {
+  size_t calc_shard(Obj *obj) {
     return calc_shard(reinterpret_cast<uintptr_t>(obj));
   }
 
@@ -424,7 +427,7 @@ class hazptr_domain {
   }
 
   /** extract_retired_objects */
-  bool extract_retired_objects(Obj* untagged[], Obj* tagged[]) {
+  bool extract_retired_objects(Obj *untagged[], Obj *tagged[]) {
     bool empty = true;
     for (int s = 0; s < kNumShards; ++s) {
       untagged[s] = untagged_[s].pop_all(RetiredList::kDontLock);
@@ -463,12 +466,12 @@ class hazptr_domain {
   }
 
   /** match_tagged */
-  int match_tagged(Obj* tagged[], Set& hs) {
+  int match_tagged(Obj *tagged[], Set &hs) {
     int count = 0;
     for (int s = 0; s < kNumShards; ++s) {
       if (tagged[s]) {
         ObjList match, nomatch;
-        list_match_condition(tagged[s], match, nomatch, [&](Obj* o) {
+        list_match_condition(tagged[s], match, nomatch, [&](Obj *o) {
           return hs.count(o->raw_ptr()) > 0;
         });
         count += nomatch.count();
@@ -488,15 +491,14 @@ class hazptr_domain {
   }
 
   /** match_reclaim_untagged */
-  int match_reclaim_untagged(Obj* untagged[], Set& hs, bool& done) {
+  int match_reclaim_untagged(Obj *untagged[], Set &hs, bool &done) {
     done = true;
     ObjList not_reclaimed;
     int count = 0;
     for (int s = 0; s < kNumShards; ++s) {
       ObjList match, nomatch;
-      list_match_condition(untagged[s], match, nomatch, [&](Obj* o) {
-        return hs.count(o->raw_ptr()) > 0;
-      });
+      list_match_condition(untagged[s], match, nomatch,
+                           [&](Obj *o) { return hs.count(o->raw_ptr()) > 0; });
       ObjList children;
       count += nomatch.count();
       reclaim_unprotected(nomatch.head(), children);
@@ -516,8 +518,8 @@ class hazptr_domain {
   void do_reclamation(int rcount) {
     DCHECK_GE(rcount, 0);
     while (true) {
-      Obj* untagged[kNumShards];
-      Obj* tagged[kNumShards];
+      Obj *untagged[kNumShards];
+      Obj *tagged[kNumShards];
       bool done = true;
       if (extract_retired_objects(untagged, tagged)) {
         /*** Full fence ***/ asymmetric_thread_fence_heavy(
@@ -538,8 +540,8 @@ class hazptr_domain {
 
   /** list_match_condition */
   template <typename Cond>
-  void list_match_condition(
-      Obj* obj, ObjList& match, ObjList& nomatch, const Cond& cond) {
+  void list_match_condition(Obj *obj, ObjList &match, ObjList &nomatch,
+                            const Cond &cond) {
     while (obj) {
       auto next = obj->next();
       DCHECK_NE(obj, next);
@@ -553,7 +555,7 @@ class hazptr_domain {
   }
 
   /** reclaim_unprotected */
-  void reclaim_unprotected(Obj* obj, ObjList& children) {
+  void reclaim_unprotected(Obj *obj, ObjList &children) {
     while (obj) {
       auto next = obj->next();
       (*(obj->reclaim()))(obj, children);
@@ -562,7 +564,7 @@ class hazptr_domain {
   }
 
   /** reclaim_unconditional */
-  void reclaim_unconditional(Obj* head, ObjList& children) {
+  void reclaim_unconditional(Obj *head, ObjList &children) {
     while (head) {
       auto next = head->next();
       (*(head->reclaim()))(head, children);
@@ -570,7 +572,7 @@ class hazptr_domain {
     }
   }
 
-  Rec* head() const noexcept {
+  Rec *head() const noexcept {
     return hazptrs_.load(std::memory_order_acquire);
   }
 
@@ -580,12 +582,12 @@ class hazptr_domain {
 
   void reclaim_all_objects() {
     for (int s = 0; s < kNumShards; ++s) {
-      Obj* head = untagged_[s].pop_all(RetiredList::kDontLock);
+      Obj *head = untagged_[s].pop_all(RetiredList::kDontLock);
       reclaim_list_transitive(head);
     }
   }
 
-  void reclaim_list_transitive(Obj* head) {
+  void reclaim_list_transitive(Obj *head) {
     while (head) {
       ObjList children;
       reclaim_unconditional(head, children);
@@ -614,7 +616,7 @@ class hazptr_domain {
     }
   }
 
-  std::pair<uint8_t, Rec*> try_pop_available_hprecs(uint8_t num) {
+  std::pair<uint8_t, Rec *> try_pop_available_hprecs(uint8_t num) {
     DCHECK_GE(num, 1);
     while (true) {
       uintptr_t avail = load_avail();
@@ -625,7 +627,7 @@ class hazptr_domain {
         // Try to lock avail list
         if (cas_avail(avail, avail | kLockBit)) {
           // Lock acquired
-          Rec* head = reinterpret_cast<Rec*>(avail);
+          Rec *head = reinterpret_cast<Rec *>(avail);
           uint8_t nn = pop_available_hprecs_release_lock(num, head);
           // Lock released
           DCHECK_GE(nn, 1);
@@ -638,13 +640,13 @@ class hazptr_domain {
     }
   }
 
-  uint8_t pop_available_hprecs_release_lock(uint8_t num, Rec* head) {
+  uint8_t pop_available_hprecs_release_lock(uint8_t num, Rec *head) {
     // Lock already acquired
     DCHECK_GE(num, 1);
     DCHECK(head);
-    Rec* tail = head;
+    Rec *tail = head;
     uint8_t nn = 1;
-    Rec* next = tail->next_avail();
+    Rec *next = tail->next_avail();
     while ((next != nullptr) && (nn < num)) {
       DCHECK_EQ(reinterpret_cast<uintptr_t>(next) & kLockBit, 0);
       tail = next;
@@ -659,7 +661,7 @@ class hazptr_domain {
     return nn;
   }
 
-  void push_available_hprecs(Rec* head, Rec* tail) {
+  void push_available_hprecs(Rec *head, Rec *tail) {
     DCHECK(head);
     DCHECK(tail);
     DCHECK(tail->next_avail() == nullptr);
@@ -672,7 +674,7 @@ class hazptr_domain {
       uintptr_t avail = load_avail();
       if ((avail & kLockBit) == 0) {
         // Try to push if unlocked
-        auto next = reinterpret_cast<Rec*>(avail);
+        auto next = reinterpret_cast<Rec *>(avail);
         tail->set_next_avail(next);
         if (cas_avail(avail, newval)) {
           break;
@@ -683,11 +685,11 @@ class hazptr_domain {
     }
   }
 
-  void dcheck_connected(Rec* head, Rec* tail) {
-    Rec* rec = head;
+  void dcheck_connected(Rec *head, Rec *tail) {
+    Rec *rec = head;
     bool connected = false;
     while (rec) {
-      Rec* next = rec->next_avail();
+      Rec *next = rec->next_avail();
       if (rec == tail) {
         connected = true;
         DCHECK(next == nullptr);
@@ -697,15 +699,15 @@ class hazptr_domain {
     DCHECK(connected);
   }
 
-  Rec* create_new_hprec() {
+  Rec *create_new_hprec() {
     auto rec = hazptr_rec_alloc{}.allocate(1);
     new (rec) Rec();
     rec->set_domain(this);
     while (true) {
       auto h = head();
       rec->set_next(h);
-      if (hazptrs_.compare_exchange_weak(
-              h, rec, std::memory_order_release, std::memory_order_acquire)) {
+      if (hazptrs_.compare_exchange_weak(h, rec, std::memory_order_release,
+                                         std::memory_order_acquire)) {
         break;
       }
     }
@@ -741,8 +743,8 @@ class hazptr_domain {
   }
 
   template <typename Func>
-  void invoke_reclamation_may_deadlock(
-      folly::Executor::KeepAlive<> ex, Func recl_fn) {
+  void invoke_reclamation_may_deadlock(folly::Executor::KeepAlive<> ex,
+                                       Func recl_fn) {
     ex->add(recl_fn);
     // This program is using the default executor, which is an
     // inline executor. This is not necessarily a problem. But if this
@@ -753,8 +755,8 @@ class hazptr_domain {
     // program is missing a call to folly::init or an alternative.
   }
 
-  FOLLY_EXPORT FOLLY_NOINLINE void hazptr_warning_list_too_large(
-      uintptr_t ftag, size_t shard, int count) {
+  FOLLY_EXPORT FOLLY_NOINLINE void
+  hazptr_warning_list_too_large(uintptr_t ftag, size_t shard, int count) {
     static std::atomic<uint64_t> warning_count{0};
     if ((warning_count++ % 10000) == 0) {
       LOG(WARNING) << "Hazptr retired list too large:"
@@ -763,8 +765,8 @@ class hazptr_domain {
     }
   }
 
-  FOLLY_EXPORT FOLLY_NOINLINE void hazptr_warning_executor_backlog(
-      int backlog) {
+  FOLLY_EXPORT FOLLY_NOINLINE void
+  hazptr_warning_executor_backlog(int backlog) {
     static std::atomic<uint64_t> warning_count{0};
     if ((warning_count++ % 10000) == 0) {
       LOG(WARNING) << backlog
@@ -780,53 +782,51 @@ class hazptr_domain {
 
 /** default_hazptr_domain: Returns reference to the default domain */
 
-template <template <typename> class Atom>
-struct hazptr_default_domain_helper {
-  static FOLLY_ALWAYS_INLINE hazptr_domain<Atom>& get() {
+template <template <typename> class Atom> struct hazptr_default_domain_helper {
+  static FOLLY_ALWAYS_INLINE hazptr_domain<Atom> &get() {
     static hazptr_domain<Atom> domain;
     return domain;
   }
 };
 
-template <>
-struct hazptr_default_domain_helper<std::atomic> {
-  static FOLLY_ALWAYS_INLINE hazptr_domain<std::atomic>& get() {
+template <> struct hazptr_default_domain_helper<std::atomic> {
+  static FOLLY_ALWAYS_INLINE hazptr_domain<std::atomic> &get() {
     return default_domain;
   }
 };
 
 template <template <typename> class Atom>
-FOLLY_ALWAYS_INLINE hazptr_domain<Atom>& default_hazptr_domain() {
+FOLLY_ALWAYS_INLINE hazptr_domain<Atom> &default_hazptr_domain() {
   return hazptr_default_domain_helper<Atom>::get();
 }
 
 template <template <typename> class Atom>
-FOLLY_ALWAYS_INLINE hazard_pointer_domain<Atom>&
+FOLLY_ALWAYS_INLINE hazard_pointer_domain<Atom> &
 hazard_pointer_default_domain() {
   return default_hazptr_domain<Atom>();
 }
 
 /** hazptr_domain_push_retired: push a list of retired objects into a domain */
 template <template <typename> class Atom>
-void hazptr_domain_push_retired(
-    hazptr_obj_list<Atom>& l, hazptr_domain<Atom>& domain) noexcept {
+void hazptr_domain_push_retired(hazptr_obj_list<Atom> &l,
+                                hazptr_domain<Atom> &domain) noexcept {
   domain.push_list(l);
 }
 
 /** hazptr_retire */
 template <template <typename> class Atom, typename T, typename D>
-FOLLY_ALWAYS_INLINE void hazptr_retire(T* obj, D reclaim) {
+FOLLY_ALWAYS_INLINE void hazptr_retire(T *obj, D reclaim) {
   default_hazptr_domain<Atom>().retire(obj, std::move(reclaim));
 }
 
 /** hazptr_cleanup: Reclaims all reclaimable objects retired to the domain */
 template <template <typename> class Atom>
-void hazptr_cleanup(hazptr_domain<Atom>& domain) noexcept {
+void hazptr_cleanup(hazptr_domain<Atom> &domain) noexcept {
   domain.cleanup();
 }
 
 template <template <typename> class Atom>
-void hazard_pointer_clean_up(hazard_pointer_domain<Atom>& domain) noexcept {
+void hazard_pointer_clean_up(hazard_pointer_domain<Atom> &domain) noexcept {
   hazptr_cleanup(domain);
 }
 

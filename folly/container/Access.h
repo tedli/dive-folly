@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,7 +36,7 @@ namespace access {
 //  mimic: std::size, C++17
 struct size_fn {
   template <typename C>
-  FOLLY_ERASE constexpr auto operator()(C const& c) const
+  FOLLY_ERASE constexpr auto operator()(C const &c) const
       noexcept(noexcept(c.size())) -> decltype(c.size()) {
     return c.size();
   }
@@ -43,7 +50,7 @@ FOLLY_INLINE_VARIABLE constexpr size_fn size{};
 //  mimic: std::empty, C++17
 struct empty_fn {
   template <typename C>
-  FOLLY_ERASE constexpr auto operator()(C const& c) const
+  FOLLY_ERASE constexpr auto operator()(C const &c) const
       noexcept(noexcept(c.empty())) -> decltype(c.empty()) {
     return c.empty();
   }
@@ -54,8 +61,8 @@ struct empty_fn {
     return N == 0;
   }
   template <typename E>
-  FOLLY_ERASE constexpr bool operator()(
-      std::initializer_list<E> il) const noexcept {
+  FOLLY_ERASE constexpr bool
+  operator()(std::initializer_list<E> il) const noexcept {
     return il.size() == 0;
   }
 };
@@ -64,22 +71,22 @@ FOLLY_INLINE_VARIABLE constexpr empty_fn empty{};
 //  mimic: std::data, C++17
 struct data_fn {
   template <typename C>
-  FOLLY_ERASE constexpr auto operator()(C& c) const noexcept(noexcept(c.data()))
+  FOLLY_ERASE constexpr auto operator()(C &c) const noexcept(noexcept(c.data()))
       -> decltype(c.data()) {
     return c.data();
   }
   template <typename C>
-  FOLLY_ERASE constexpr auto operator()(C const& c) const
+  FOLLY_ERASE constexpr auto operator()(C const &c) const
       noexcept(noexcept(c.data())) -> decltype(c.data()) {
     return c.data();
   }
   template <typename T, std::size_t N>
-  FOLLY_ERASE constexpr T* operator()(T (&a)[N]) const noexcept {
+  FOLLY_ERASE constexpr T *operator()(T (&a)[N]) const noexcept {
     return a;
   }
   template <typename E>
-  FOLLY_ERASE constexpr E const* operator()(
-      std::initializer_list<E> il) const noexcept {
+  FOLLY_ERASE constexpr E const *
+  operator()(std::initializer_list<E> il) const noexcept {
     return il.begin();
   }
 };

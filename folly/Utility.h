@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -53,28 +60,22 @@ namespace folly {
 // Don't have noexcept-qualified function types prior to C++17
 // so just fall back to a function-template.
 namespace detail {
-template <typename T>
-T declval() noexcept;
+template <typename T> T declval() noexcept;
 } // namespace detail
 
 #define FOLLY_DECLVAL(...) ::folly::detail::declval<__VA_ARGS__>()
 #endif
 
 namespace detail {
-template <typename T>
-T decay_1_(T const volatile&&);
-template <typename T>
-T decay_1_(T const&);
-template <typename T>
-T* decay_1_(T*);
+template <typename T> T decay_1_(T const volatile &&);
+template <typename T> T decay_1_(T const &);
+template <typename T> T *decay_1_(T *);
 
 template <typename T>
 auto decay_0_(int) -> decltype(detail::decay_1_(FOLLY_DECLVAL(T &&)));
-template <typename T>
-auto decay_0_(short) -> void;
+template <typename T> auto decay_0_(short) -> void;
 
-template <typename T>
-using decay_t = decltype(detail::decay_0_<T>(0));
+template <typename T> using decay_t = decltype(detail::decay_0_<T>(0));
 } // namespace detail
 
 //  decay_t
@@ -127,9 +128,9 @@ using detail::decay_t;
  */
 
 template <typename T>
-constexpr detail::decay_t<T> copy(T&& value) noexcept(
-    noexcept(detail::decay_t<T>(static_cast<T&&>(value)))) {
-  return static_cast<T&&>(value);
+constexpr detail::decay_t<T> copy(T &&value) noexcept(
+    noexcept(detail::decay_t<T>(static_cast<T &&>(value)))) {
+  return static_cast<T &&>(value);
 }
 
 /**
@@ -150,20 +151,16 @@ constexpr detail::decay_t<T> copy(T&& value) noexcept(
 
 #else
 
-template <class T>
-constexpr T const& as_const(T& t) noexcept {
-  return t;
-}
+template <class T> constexpr T const &as_const(T &t) noexcept { return t; }
 
-template <class T>
-void as_const(T const&&) = delete;
+template <class T> void as_const(T const &&) = delete;
 
 #endif
 
 //  mimic: forward_like, p0847r0
 template <typename Src, typename Dst>
-constexpr like_t<Src, Dst>&& forward_like(Dst&& dst) noexcept {
-  return std::forward<like_t<Src, Dst>>(static_cast<Dst&&>(dst));
+constexpr like_t<Src, Dst> &&forward_like(Dst &&dst) noexcept {
+  return std::forward<like_t<Src, Dst>>(static_cast<Dst &&>(dst));
 }
 
 /**
@@ -197,15 +194,13 @@ struct in_place_t {
 };
 FOLLY_INLINE_VARIABLE constexpr in_place_t in_place{};
 
-template <class>
-struct in_place_type_t {
+template <class> struct in_place_type_t {
   explicit in_place_type_t() = default;
 };
 template <class T>
 FOLLY_INLINE_VARIABLE constexpr in_place_type_t<T> in_place_type{};
 
-template <std::size_t>
-struct in_place_index_t {
+template <std::size_t> struct in_place_index_t {
   explicit in_place_index_t() = default;
 };
 template <std::size_t I>
@@ -305,8 +300,7 @@ constexpr sorted_unique_t sorted_unique{};
 struct sorted_equivalent_t {};
 constexpr sorted_equivalent_t sorted_equivalent{};
 
-template <typename T>
-struct transparent : T {
+template <typename T> struct transparent : T {
   using is_transparent = void;
   using T::T;
 };
@@ -331,9 +325,8 @@ struct transparent : T {
  *                // is no longer valid
  */
 struct identity_fn {
-  template <class T>
-  constexpr T&& operator()(T&& x) const noexcept {
-    return static_cast<T&&>(x);
+  template <class T> constexpr T &&operator()(T &&x) const noexcept {
+    return static_cast<T &&>(x);
   }
 };
 using Identity = identity_fn;
@@ -341,45 +334,36 @@ FOLLY_INLINE_VARIABLE constexpr identity_fn identity{};
 
 namespace detail {
 
-template <typename T>
-struct inheritable_inherit_ : T {
+template <typename T> struct inheritable_inherit_ : T {
   using T::T;
-  template <
-      typename... A,
-      std::enable_if_t<std::is_constructible<T, A...>::value, int> = 0>
-  /* implicit */ FOLLY_ERASE inheritable_inherit_(A&&... a) noexcept(
-      noexcept(T(static_cast<A&&>(a)...)))
-      : T(static_cast<A&&>(a)...) {}
+  template <typename... A,
+            std::enable_if_t<std::is_constructible<T, A...>::value, int> = 0>
+  /* implicit */ FOLLY_ERASE
+  inheritable_inherit_(A &&...a) noexcept(noexcept(T(static_cast<A &&>(a)...)))
+      : T(static_cast<A &&>(a)...) {}
 };
 
-template <typename T>
-struct inheritable_contain_ {
+template <typename T> struct inheritable_contain_ {
   T v;
-  template <
-      typename... A,
-      std::enable_if_t<std::is_constructible<T, A...>::value, int> = 0>
-  /* implicit */ FOLLY_ERASE inheritable_contain_(A&&... a) noexcept(
-      noexcept(T(static_cast<A&&>(a)...)))
-      : v(static_cast<A&&>(a)...) {}
-  FOLLY_ERASE operator T&() & noexcept { return v; }
-  FOLLY_ERASE operator T&&() && noexcept { return static_cast<T&&>(v); }
-  FOLLY_ERASE operator T const &() const& noexcept { return v; }
-  FOLLY_ERASE operator T const &&() const&& noexcept {
-    return static_cast<T const&&>(v);
+  template <typename... A,
+            std::enable_if_t<std::is_constructible<T, A...>::value, int> = 0>
+  /* implicit */ FOLLY_ERASE
+  inheritable_contain_(A &&...a) noexcept(noexcept(T(static_cast<A &&>(a)...)))
+      : v(static_cast<A &&>(a)...) {}
+  FOLLY_ERASE operator T &() & noexcept { return v; }
+  FOLLY_ERASE operator T &&() && noexcept { return static_cast<T &&>(v); }
+  FOLLY_ERASE operator T const &() const & noexcept { return v; }
+  FOLLY_ERASE operator T const &&() const && noexcept {
+    return static_cast<T const &&>(v);
   }
 };
 
-template <bool>
-struct inheritable_;
-template <>
-struct inheritable_<false> {
-  template <typename T>
-  using apply = inheritable_inherit_<T>;
+template <bool> struct inheritable_;
+template <> struct inheritable_<false> {
+  template <typename T> using apply = inheritable_inherit_<T>;
 };
-template <>
-struct inheritable_<true> {
-  template <typename T>
-  using apply = inheritable_contain_<T>;
+template <> struct inheritable_<true> {
+  template <typename T> using apply = inheritable_contain_<T>;
 };
 
 //  inheritable
@@ -405,10 +389,10 @@ struct MoveOnly {
   constexpr MoveOnly() noexcept = default;
   ~MoveOnly() noexcept = default;
 
-  MoveOnly(MoveOnly&&) noexcept = default;
-  MoveOnly& operator=(MoveOnly&&) noexcept = default;
-  MoveOnly(const MoveOnly&) = delete;
-  MoveOnly& operator=(const MoveOnly&) = delete;
+  MoveOnly(MoveOnly &&) noexcept = default;
+  MoveOnly &operator=(MoveOnly &&) noexcept = default;
+  MoveOnly(const MoveOnly &) = delete;
+  MoveOnly &operator=(const MoveOnly &) = delete;
 };
 
 /**
@@ -420,19 +404,17 @@ struct NonCopyableNonMovable {
   constexpr NonCopyableNonMovable() noexcept = default;
   ~NonCopyableNonMovable() noexcept = default;
 
-  NonCopyableNonMovable(NonCopyableNonMovable&&) = delete;
-  NonCopyableNonMovable& operator=(NonCopyableNonMovable&&) = delete;
-  NonCopyableNonMovable(const NonCopyableNonMovable&) = delete;
-  NonCopyableNonMovable& operator=(const NonCopyableNonMovable&) = delete;
+  NonCopyableNonMovable(NonCopyableNonMovable &&) = delete;
+  NonCopyableNonMovable &operator=(NonCopyableNonMovable &&) = delete;
+  NonCopyableNonMovable(const NonCopyableNonMovable &) = delete;
+  NonCopyableNonMovable &operator=(const NonCopyableNonMovable &) = delete;
 };
 
 struct Default {};
 
 template <bool Copy, bool Move>
 using EnableCopyMove = std::conditional_t<
-    Copy,
-    Default,
-    std::conditional_t<Move, MoveOnly, NonCopyableNonMovable>>;
+    Copy, Default, std::conditional_t<Move, MoveOnly, NonCopyableNonMovable>>;
 
 } // namespace moveonly_
 
@@ -501,7 +483,7 @@ FOLLY_INLINE_VARIABLE constexpr unsafe_default_initialized_cv
 
 struct to_signed_fn {
   template <typename..., typename T>
-  constexpr auto operator()(T const& t) const noexcept ->
+  constexpr auto operator()(T const &t) const noexcept ->
       typename std::make_signed<T>::type {
     using S = typename std::make_signed<T>::type;
     // note: static_cast<S>(t) would be more straightforward, but it would also
@@ -515,7 +497,7 @@ FOLLY_INLINE_VARIABLE constexpr to_signed_fn to_signed{};
 
 struct to_unsigned_fn {
   template <typename..., typename T>
-  constexpr auto operator()(T const& t) const noexcept ->
+  constexpr auto operator()(T const &t) const noexcept ->
       typename std::make_unsigned<T>::type {
     using U = typename std::make_unsigned<T>::type;
     return static_cast<U>(t);
@@ -530,25 +512,24 @@ FOLLY_INLINE_VARIABLE constexpr bool is_to_narrow_convertible_v =
     (std::is_signed<Dst>::value == std::is_signed<Src>::value);
 }
 
-template <typename Src>
-class to_narrow_convertible {
+template <typename Src> class to_narrow_convertible {
   static_assert(std::is_integral<Src>::value, "not an integer");
 
   template <typename Dst>
   struct to_ : bool_constant<detail::is_to_narrow_convertible_v<Src, Dst>> {};
 
- public:
-  explicit constexpr to_narrow_convertible(Src const& value) noexcept
+public:
+  explicit constexpr to_narrow_convertible(Src const &value) noexcept
       : value_(value) {}
 #if __cplusplus >= 201703L
-  explicit to_narrow_convertible(to_narrow_convertible const&) = default;
-  explicit to_narrow_convertible(to_narrow_convertible&&) = default;
+  explicit to_narrow_convertible(to_narrow_convertible const &) = default;
+  explicit to_narrow_convertible(to_narrow_convertible &&) = default;
 #else
-  to_narrow_convertible(to_narrow_convertible const&) = default;
-  to_narrow_convertible(to_narrow_convertible&&) = default;
+  to_narrow_convertible(to_narrow_convertible const &) = default;
+  to_narrow_convertible(to_narrow_convertible &&) = default;
 #endif
-  to_narrow_convertible& operator=(to_narrow_convertible const&) = default;
-  to_narrow_convertible& operator=(to_narrow_convertible&&) = default;
+  to_narrow_convertible &operator=(to_narrow_convertible const &) = default;
+  to_narrow_convertible &operator=(to_narrow_convertible &&) = default;
 
   template <typename Dst, std::enable_if_t<to_<Dst>::value, int> = 0>
   /* implicit */ constexpr operator Dst() const noexcept {
@@ -560,7 +541,7 @@ class to_narrow_convertible {
     FOLLY_POP_WARNING
   }
 
- private:
+private:
   Src value_;
 };
 
@@ -579,33 +560,32 @@ class to_narrow_convertible {
 //  for warnings which guard against narrowing implicit conversions.
 struct to_narrow_fn {
   template <typename..., typename Src>
-  constexpr auto operator()(Src const& src) const noexcept
+  constexpr auto operator()(Src const &src) const noexcept
       -> to_narrow_convertible<Src> {
     return to_narrow_convertible<Src>{src};
   }
 };
 FOLLY_INLINE_VARIABLE constexpr to_narrow_fn to_narrow{};
 
-template <typename Src>
-class to_integral_convertible {
+template <typename Src> class to_integral_convertible {
   static_assert(std::is_floating_point<Src>::value, "not a floating-point");
 
   template <typename Dst>
   static constexpr bool to_ = std::is_integral<Dst>::value;
 
- public:
-  explicit constexpr to_integral_convertible(Src const& value) noexcept
+public:
+  explicit constexpr to_integral_convertible(Src const &value) noexcept
       : value_(value) {}
 
 #if __cplusplus >= 201703L
-  explicit to_integral_convertible(to_integral_convertible const&) = default;
-  explicit to_integral_convertible(to_integral_convertible&&) = default;
+  explicit to_integral_convertible(to_integral_convertible const &) = default;
+  explicit to_integral_convertible(to_integral_convertible &&) = default;
 #else
-  to_integral_convertible(to_integral_convertible const&) = default;
-  to_integral_convertible(to_integral_convertible&&) = default;
+  to_integral_convertible(to_integral_convertible const &) = default;
+  to_integral_convertible(to_integral_convertible &&) = default;
 #endif
-  to_integral_convertible& operator=(to_integral_convertible const&) = default;
-  to_integral_convertible& operator=(to_integral_convertible&&) = default;
+  to_integral_convertible &operator=(to_integral_convertible const &) = default;
+  to_integral_convertible &operator=(to_integral_convertible &&) = default;
 
   template <typename Dst, std::enable_if_t<to_<Dst>, int> = 0>
   /* implicit */ constexpr operator Dst() const noexcept {
@@ -617,7 +597,7 @@ class to_integral_convertible {
     FOLLY_POP_WARNING
   }
 
- private:
+private:
   Src value_;
 };
 
@@ -634,37 +614,37 @@ class to_integral_convertible {
 //  implicit conversions.
 struct to_integral_fn {
   template <typename..., typename Src>
-  constexpr auto operator()(Src const& src) const noexcept
+  constexpr auto operator()(Src const &src) const noexcept
       -> to_integral_convertible<Src> {
     return to_integral_convertible<Src>{src};
   }
 };
 FOLLY_INLINE_VARIABLE constexpr to_integral_fn to_integral{};
 
-template <typename Src>
-class to_floating_point_convertible {
+template <typename Src> class to_floating_point_convertible {
   static_assert(std::is_integral<Src>::value, "not a floating-point");
 
   template <typename Dst>
   static constexpr bool to_ = std::is_floating_point<Dst>::value;
 
- public:
-  explicit constexpr to_floating_point_convertible(Src const& value) noexcept
+public:
+  explicit constexpr to_floating_point_convertible(Src const &value) noexcept
       : value_(value) {}
 
 #if __cplusplus >= 201703L
-  explicit to_floating_point_convertible(to_floating_point_convertible const&) =
-      default;
-  explicit to_floating_point_convertible(to_floating_point_convertible&&) =
+  explicit to_floating_point_convertible(
+      to_floating_point_convertible const &) = default;
+  explicit to_floating_point_convertible(to_floating_point_convertible &&) =
       default;
 #else
-  to_floating_point_convertible(to_floating_point_convertible const&) = default;
-  to_floating_point_convertible(to_floating_point_convertible&&) = default;
-#endif
-  to_floating_point_convertible& operator=(
-      to_floating_point_convertible const&) = default;
-  to_floating_point_convertible& operator=(to_floating_point_convertible&&) =
+  to_floating_point_convertible(to_floating_point_convertible const &) =
       default;
+  to_floating_point_convertible(to_floating_point_convertible &&) = default;
+#endif
+  to_floating_point_convertible &
+  operator=(to_floating_point_convertible const &) = default;
+  to_floating_point_convertible &
+  operator=(to_floating_point_convertible &&) = default;
 
   template <typename Dst, std::enable_if_t<to_<Dst>, int> = 0>
   /* implicit */ constexpr operator Dst() const noexcept {
@@ -674,7 +654,7 @@ class to_floating_point_convertible {
     FOLLY_POP_WARNING
   }
 
- private:
+private:
   Src value_;
 };
 
@@ -691,7 +671,7 @@ class to_floating_point_convertible {
 //  implicit conversions.
 struct to_floating_point_fn {
   template <typename..., typename Src>
-  constexpr auto operator()(Src const& src) const noexcept
+  constexpr auto operator()(Src const &src) const noexcept
       -> to_floating_point_convertible<Src> {
     return to_floating_point_convertible<Src>{src};
   }
@@ -708,24 +688,22 @@ struct to_underlying_fn {
 FOLLY_INLINE_VARIABLE constexpr to_underlying_fn to_underlying{};
 
 namespace detail {
-template <typename R>
-using invocable_to_detect = decltype(FOLLY_DECLVAL(R)());
+template <typename R> using invocable_to_detect = decltype(FOLLY_DECLVAL(R)());
 
 template <
     typename F,
     //  MSVC 14.16.27023 does not permit these to be in the class body:
     //    error C2833: 'operator decltype' is not a recognized operator or type
     //  TODO: return these to the class body and remove the static assertions
-    typename TML = detected_t<invocable_to_detect, F&>,
-    typename TCL = detected_t<invocable_to_detect, F const&>,
-    typename TMR = detected_t<invocable_to_detect, F&&>,
-    typename TCR = detected_t<invocable_to_detect, F const&&>>
+    typename TML = detected_t<invocable_to_detect, F &>,
+    typename TCL = detected_t<invocable_to_detect, F const &>,
+    typename TMR = detected_t<invocable_to_detect, F &&>,
+    typename TCR = detected_t<invocable_to_detect, F const &&>>
 class invocable_to_convertible : private inheritable<F> {
- private:
+private:
   static_assert(std::is_same<F, decay_t<F>>::value, "mismatch");
 
-  template <typename R>
-  using result_t = detected_t<invocable_to_detect, R>;
+  template <typename R> using result_t = detected_t<invocable_to_detect, R>;
   template <typename R>
   static constexpr bool detected_v = is_detected_v<invocable_to_detect, R>;
   template <typename R>
@@ -733,29 +711,29 @@ class invocable_to_convertible : private inheritable<F> {
   template <typename R>
   static constexpr bool nx_v = noexcept(FOLLY_DECLVAL(R)());
   template <typename G>
-  static constexpr bool constructible_v = std::is_constructible<F, G&&>::value;
+  static constexpr bool constructible_v = std::is_constructible<F, G &&>::value;
 
-  using FML = F&;
-  using FCL = F const&;
-  using FMR = F&&;
-  using FCR = F const&&;
+  using FML = F &;
+  using FCL = F const &;
+  using FMR = F &&;
+  using FCR = F const &&;
   static_assert(std::is_same<TML, result_t<FML>>::value, "mismatch");
   static_assert(std::is_same<TCL, result_t<FCL>>::value, "mismatch");
   static_assert(std::is_same<TMR, result_t<FMR>>::value, "mismatch");
   static_assert(std::is_same<TCR, result_t<FCR>>::value, "mismatch");
 
- public:
-  template <typename G, std::enable_if_t<constructible_v<G&&>, int> = 0>
-  FOLLY_ERASE explicit constexpr invocable_to_convertible(G&& g) noexcept(
-      noexcept(F(static_cast<G&&>(g))))
-      : inheritable<F>(static_cast<G&&>(g)) {}
+public:
+  template <typename G, std::enable_if_t<constructible_v<G &&>, int> = 0>
+  FOLLY_ERASE explicit constexpr invocable_to_convertible(G &&g) noexcept(
+      noexcept(F(static_cast<G &&>(g))))
+      : inheritable<F>(static_cast<G &&>(g)) {}
 
   template <typename..., typename R = FML, if_invocable_as_v<R> = 0>
   FOLLY_ERASE constexpr operator TML() & noexcept(nx_v<R>) {
     return static_cast<FML>(*this)();
   }
   template <typename..., typename R = FCL, if_invocable_as_v<R> = 0>
-  FOLLY_ERASE constexpr operator TCL() const& noexcept(nx_v<R>) {
+  FOLLY_ERASE constexpr operator TCL() const & noexcept(nx_v<R>) {
     return static_cast<FCL>(*this)();
   }
   template <typename..., typename R = FMR, if_invocable_as_v<R> = 0>
@@ -763,7 +741,7 @@ class invocable_to_convertible : private inheritable<F> {
     return static_cast<FMR>(*this)();
   }
   template <typename..., typename R = FCR, if_invocable_as_v<R> = 0>
-  FOLLY_ERASE constexpr operator TCR() const&& noexcept(nx_v<R>) {
+  FOLLY_ERASE constexpr operator TCR() const && noexcept(nx_v<R>) {
     return static_cast<FCR>(*this)();
   }
 };
@@ -818,33 +796,26 @@ class invocable_to_convertible : private inheritable<F> {
 //        return obj;
 //      }));
 struct invocable_to_fn {
-  template <
-      typename F,
-      typename...,
-      typename D = detail::decay_t<F>,
-      typename R = detail::invocable_to_convertible<D>,
-      std::enable_if_t<std::is_constructible<D, F&&>::value, int> = 0>
-  FOLLY_ERASE constexpr R operator()(F&& f) const
-      noexcept(noexcept(R(static_cast<F&&>(f)))) {
-    return R(static_cast<F&&>(f));
+  template <typename F, typename..., typename D = detail::decay_t<F>,
+            typename R = detail::invocable_to_convertible<D>,
+            std::enable_if_t<std::is_constructible<D, F &&>::value, int> = 0>
+  FOLLY_ERASE constexpr R operator()(F &&f) const
+      noexcept(noexcept(R(static_cast<F &&>(f)))) {
+    return R(static_cast<F &&>(f));
   }
 };
 FOLLY_INLINE_VARIABLE constexpr invocable_to_fn invocable_to{};
 
 // Simulate if constexpr in C++14
-template <bool>
-struct if_constexpr_fn {
-  template <class F, class G>
-  constexpr auto&& operator()(F&& f, G&&) const {
-    return static_cast<F&&>(f);
+template <bool> struct if_constexpr_fn {
+  template <class F, class G> constexpr auto &&operator()(F &&f, G &&) const {
+    return static_cast<F &&>(f);
   }
 };
 
-template <>
-struct if_constexpr_fn<false> {
-  template <class F, class G>
-  constexpr auto&& operator()(F&&, G&& g) const {
-    return static_cast<G&&>(g);
+template <> struct if_constexpr_fn<false> {
+  template <class F, class G> constexpr auto &&operator()(F &&, G &&g) const {
+    return static_cast<G &&>(g);
   }
 };
 

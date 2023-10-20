@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,10 +28,10 @@
 #include <folly/CPortability.h>
 #include <folly/portability/Config.h>
 
-#if (defined(USE_JEMALLOC) || defined(FOLLY_USE_JEMALLOC)) && \
+#if (defined(USE_JEMALLOC) || defined(FOLLY_USE_JEMALLOC)) &&                  \
     !defined(FOLLY_SANITIZE)
 #if defined(FOLLY_ASSUME_NO_JEMALLOC)
-#error \
+#error                                                                         \
     "Both USE_JEMALLOC/FOLLY_USE_JEMALLOC and FOLLY_ASSUME_NO_JEMALLOC defined"
 #endif
 // JEMalloc provides it's own implementation of
@@ -43,8 +50,8 @@
 
 #if defined(__APPLE__) && !defined(FOLLY_HAVE_MALLOC_USABLE_SIZE)
 // MacOS doesn't have malloc_usable_size()
-extern "C" size_t malloc_usable_size(void* ptr);
+extern "C" size_t malloc_usable_size(void *ptr);
 #elif defined(_WIN32)
-extern "C" size_t malloc_usable_size(void* ptr);
+extern "C" size_t malloc_usable_size(void *ptr);
 #endif
 #endif

@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,7 +41,7 @@ namespace folly {
  * http://www.intel.com/content/www/us/en/processors/processor-identification-cpuid-instruction-note.html
  */
 class CpuId {
- public:
+public:
   // Always inline in order for this to be usable from a __ifunc__.
   // In shared library mode, a __ifunc__ runs at relocation time, while the
   // PLT hasn't been fully populated yet; thus, ifuncs cannot use symbols
@@ -45,18 +52,18 @@ class CpuId {
 #if defined(_MSC_VER) && (FOLLY_X64 || defined(_M_IX86))
 #if !defined(__clang__)
     int reg[4];
-    __cpuid(static_cast<int*>(reg), 0);
+    __cpuid(static_cast<int *>(reg), 0);
     vendor_[0] = (uint32_t)reg[1];
     vendor_[1] = (uint32_t)reg[3];
     vendor_[2] = (uint32_t)reg[2];
     const int n = reg[0];
     if (n >= 1) {
-      __cpuid(static_cast<int*>(reg), 1);
+      __cpuid(static_cast<int *>(reg), 1);
       f1c_ = uint32_t(reg[2]);
       f1d_ = uint32_t(reg[3]);
     }
     if (n >= 7) {
-      __cpuidex(static_cast<int*>(reg), 7, 0);
+      __cpuidex(static_cast<int *>(reg), 7, 0);
       f7b_ = uint32_t(reg[1]);
       f7c_ = uint32_t(reg[2]);
       f7d_ = uint32_t(reg[3]);
@@ -68,71 +75,65 @@ class CpuId {
     // ourselves. Clang supports inline assembly anyway.
     uint32_t n;
     uint32_t v0b, v0d, v0c;
-    __asm__(
-        "pushq %%rbx\n\t"
-        "cpuid\n\t"
-        "movl %%ebx, %1\n\t"
-        "popq %%rbx\n\t"
-        : "=a"(n), "=r"(v0b), "=d"(v0d), "=c"(v0c)
-        : "a"(0));
+    __asm__("pushq %%rbx\n\t"
+            "cpuid\n\t"
+            "movl %%ebx, %1\n\t"
+            "popq %%rbx\n\t"
+            : "=a"(n), "=r"(v0b), "=d"(v0d), "=c"(v0c)
+            : "a"(0));
     vendor_[0] = v0b;
     vendor_[1] = v0d;
     vendor_[2] = v0c;
     if (n >= 1) {
       uint32_t f1a;
-      __asm__(
-          "pushq %%rbx\n\t"
-          "cpuid\n\t"
-          "popq %%rbx\n\t"
-          : "=a"(f1a), "=c"(f1c_), "=d"(f1d_)
-          : "a"(1)
-          :);
+      __asm__("pushq %%rbx\n\t"
+              "cpuid\n\t"
+              "popq %%rbx\n\t"
+              : "=a"(f1a), "=c"(f1c_), "=d"(f1d_)
+              : "a"(1)
+              :);
     }
     if (n >= 7) {
-      __asm__(
-          "pushq %%rbx\n\t"
-          "cpuid\n\t"
-          "movq %%rbx, %%rax\n\t"
-          "popq %%rbx"
-          : "=a"(f7b_), "=c"(f7c_), "=d"(f7d_)
-          : "a"(7), "c"(0));
+      __asm__("pushq %%rbx\n\t"
+              "cpuid\n\t"
+              "movq %%rbx, %%rax\n\t"
+              "popq %%rbx"
+              : "=a"(f7b_), "=c"(f7c_), "=d"(f7d_)
+              : "a"(7), "c"(0));
     }
 #endif
-#elif defined(__i386__) && defined(__PIC__) && !defined(__clang__) && \
+#elif defined(__i386__) && defined(__PIC__) && !defined(__clang__) &&          \
     defined(__GNUC__)
     // The following block like the normal cpuid branch below, but gcc
     // reserves ebx for use of its pic register so we must specially
     // handle the save and restore to avoid clobbering the register
     uint32_t n;
     uint32_t v0b, v0d, v0c;
-    __asm__(
-        "pushl %%ebx\n\t"
-        "cpuid\n\t"
-        "movl %%ebx, %1\n\t"
-        "popl %%ebx\n\t"
-        : "=a"(n), "=r"(v0b), "=d"(v0d), "=c"(v0c)
-        : "a"(0));
+    __asm__("pushl %%ebx\n\t"
+            "cpuid\n\t"
+            "movl %%ebx, %1\n\t"
+            "popl %%ebx\n\t"
+            : "=a"(n), "=r"(v0b), "=d"(v0d), "=c"(v0c)
+            : "a"(0));
     vendor_[0] = v0b;
     vendor_[1] = v0d;
     vendor_[2] = v0c;
     if (n >= 1) {
       uint32_t f1a;
-      __asm__(
-          "pushl %%ebx\n\t"
-          "cpuid\n\t"
-          "popl %%ebx\n\t"
-          : "=a"(f1a), "=c"(f1c_), "=d"(f1d_)
-          : "a"(1)
-          :);
+      __asm__("pushl %%ebx\n\t"
+              "cpuid\n\t"
+              "popl %%ebx\n\t"
+              : "=a"(f1a), "=c"(f1c_), "=d"(f1d_)
+              : "a"(1)
+              :);
     }
     if (n >= 7) {
-      __asm__(
-          "pushl %%ebx\n\t"
-          "cpuid\n\t"
-          "movl %%ebx, %%eax\n\t"
-          "popl %%ebx"
-          : "=a"(f7b_), "=c"(f7c_), "=d"(f7d_)
-          : "a"(7), "c"(0));
+      __asm__("pushl %%ebx\n\t"
+              "cpuid\n\t"
+              "movl %%ebx, %%eax\n\t"
+              "popl %%ebx"
+              : "=a"(f7b_), "=c"(f7c_), "=d"(f7d_)
+              : "a"(7), "c"(0));
     }
 #elif FOLLY_X64 || defined(__i386__)
     uint32_t n;
@@ -154,7 +155,7 @@ class CpuId {
 #endif
   }
 
-#define FOLLY_DETAIL_CPUID_X(name, r, bit) \
+#define FOLLY_DETAIL_CPUID_X(name, r, bit)                                     \
   FOLLY_ALWAYS_INLINE bool name() const { return ((r) & (1U << bit)) != 0; }
 
 // cpuid(1): Processor Info and Feature Bits.
@@ -271,13 +272,13 @@ class CpuId {
 
 #undef FOLLY_DETAIL_CPUID_X
 
-#define FOLLY_DETAIL_VENDOR(name, str)                         \
-  FOLLY_ALWAYS_INLINE bool vendor_##name() const {             \
-    /* Size of str should be 12 + NUL terminator. */           \
-    static_assert(sizeof(str) == 13, "Bad CPU Vendor string"); \
-    /* Just as with the main CpuId call above, this can also   \
-    still be in an __ifunc__, so no function calls :( */       \
-    return memcmp(&vendor_[0], &str[0], 12) == 0;              \
+#define FOLLY_DETAIL_VENDOR(name, str)                                         \
+  FOLLY_ALWAYS_INLINE bool vendor_##name() const {                             \
+    /* Size of str should be 12 + NUL terminator. */                           \
+    static_assert(sizeof(str) == 13, "Bad CPU Vendor string");                 \
+    /* Just as with the main CpuId call above, this can also                   \
+    still be in an __ifunc__, so no function calls :( */                       \
+    return memcmp(&vendor_[0], &str[0], 12) == 0;                              \
   }
 
   FOLLY_DETAIL_VENDOR(intel, "GenuineIntel")
@@ -285,7 +286,7 @@ class CpuId {
 
 #undef FOLLY_DETAIL_VENDOR
 
- private:
+private:
   uint32_t vendor_[3] = {0};
   uint32_t f1c_ = 0;
   uint32_t f1d_ = 0;

@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -283,11 +290,11 @@ struct PolicySuppressTSAN : SharedMutexPolicyDefault {
 
 // Returns a guard that gives permission for the current thread to
 // annotate, and adjust the annotation bits in, the SharedMutex at ptr.
-std::unique_lock<std::mutex> annotationGuard(void* ptr);
+std::unique_lock<std::mutex> annotationGuard(void *ptr);
 
 constexpr uint32_t kMaxDeferredReadersAllocated = 256 * 2;
 
-FOLLY_COLD uint32_t getMaxDeferredReadersSlow(relaxed_atomic<uint32_t>& cache);
+FOLLY_COLD uint32_t getMaxDeferredReadersSlow(relaxed_atomic<uint32_t> &cache);
 
 long getCurrentThreadInvoluntaryContextSwitchCount();
 
@@ -299,7 +306,7 @@ FOLLY_EXPORT FOLLY_ALWAYS_INLINE uint32_t getMaxDeferredReaders() {
 }
 
 class NopOwnershipTracker {
- public:
+public:
   void beginThreadOwnership() {}
 
   void maybeBeginThreadOwnership(bool) {}
@@ -308,7 +315,7 @@ class NopOwnershipTracker {
 };
 
 class ThreadIdOwnershipTracker {
- public:
+public:
   void beginThreadOwnership() {
     assert(ownerTid_ == 0);
     ownerTid_ = tid();
@@ -326,7 +333,7 @@ class ThreadIdOwnershipTracker {
     ownerTid_ = 0;
   }
 
- private:
+private:
   static unsigned tid() {
     /* library-local */ static thread_local unsigned cached = 0;
     auto z = cached;
@@ -337,32 +344,29 @@ class ThreadIdOwnershipTracker {
     return z;
   }
 
- private:
+private:
   // gettid() of thread holding the lock in U or E mode
   unsigned ownerTid_ = 0;
 };
 } // namespace shared_mutex_detail
 
-template <
-    bool ReaderPriority,
-    typename Tag_ = void,
-    template <typename> class Atom = std::atomic,
-    typename Policy = SharedMutexPolicyDefault>
-class SharedMutexImpl : std::conditional_t<
-                            Policy::track_thread_id,
-                            shared_mutex_detail::ThreadIdOwnershipTracker,
-                            shared_mutex_detail::NopOwnershipTracker> {
- private:
+template <bool ReaderPriority, typename Tag_ = void,
+          template <typename> class Atom = std::atomic,
+          typename Policy = SharedMutexPolicyDefault>
+class SharedMutexImpl
+    : std::conditional_t<Policy::track_thread_id,
+                         shared_mutex_detail::ThreadIdOwnershipTracker,
+                         shared_mutex_detail::NopOwnershipTracker> {
+private:
   static constexpr bool AnnotateForThreadSanitizer =
       kIsSanitizeThread && !ReaderPriority && !Policy::skip_annotate_rwlock;
 
-  typedef std::conditional_t<
-      Policy::track_thread_id,
-      shared_mutex_detail::ThreadIdOwnershipTracker,
-      shared_mutex_detail::NopOwnershipTracker>
+  typedef std::conditional_t<Policy::track_thread_id,
+                             shared_mutex_detail::ThreadIdOwnershipTracker,
+                             shared_mutex_detail::NopOwnershipTracker>
       OwnershipTrackerBase;
 
- public:
+public:
   static constexpr bool kReaderPriority = ReaderPriority;
   typedef Tag_ Tag;
 
@@ -374,10 +378,10 @@ class SharedMutexImpl : std::conditional_t<
 
   constexpr SharedMutexImpl() noexcept : state_(0) {}
 
-  SharedMutexImpl(const SharedMutexImpl&) = delete;
-  SharedMutexImpl(SharedMutexImpl&&) = delete;
-  SharedMutexImpl& operator=(const SharedMutexImpl&) = delete;
-  SharedMutexImpl& operator=(SharedMutexImpl&&) = delete;
+  SharedMutexImpl(const SharedMutexImpl &) = delete;
+  SharedMutexImpl(SharedMutexImpl &&) = delete;
+  SharedMutexImpl &operator=(const SharedMutexImpl &) = delete;
+  SharedMutexImpl &operator=(SharedMutexImpl &&) = delete;
 
   // It is an error to destroy an SharedMutex that still has
   // any outstanding locks.  This is checked if NDEBUG isn't defined.
@@ -460,7 +464,7 @@ class SharedMutexImpl : std::conditional_t<
   }
 
   template <class Rep, class Period>
-  bool try_lock_for(const std::chrono::duration<Rep, Period>& duration) {
+  bool try_lock_for(const std::chrono::duration<Rep, Period> &duration) {
     WaitForDuration<Rep, Period> ctx(duration);
     auto result = lockExclusiveImpl(kHasSolo, ctx);
     OwnershipTrackerBase::maybeBeginThreadOwnership(result);
@@ -469,8 +473,8 @@ class SharedMutexImpl : std::conditional_t<
   }
 
   template <class Clock, class Duration>
-  bool try_lock_until(
-      const std::chrono::time_point<Clock, Duration>& absDeadline) {
+  bool
+  try_lock_until(const std::chrono::time_point<Clock, Duration> &absDeadline) {
     WaitUntilDeadline<Clock, Duration> ctx{absDeadline};
     auto result = lockExclusiveImpl(kHasSolo, ctx);
     OwnershipTrackerBase::maybeBeginThreadOwnership(result);
@@ -497,7 +501,7 @@ class SharedMutexImpl : std::conditional_t<
     annotateAcquired(annotate_rwlock_level::rdlock);
   }
 
-  void lock_shared(Token& token) {
+  void lock_shared(Token &token) {
     WaitForever ctx;
     (void)lockSharedImpl(&token, ctx);
     annotateAcquired(annotate_rwlock_level::rdlock);
@@ -510,7 +514,7 @@ class SharedMutexImpl : std::conditional_t<
     return result;
   }
 
-  bool try_lock_shared(Token& token) {
+  bool try_lock_shared(Token &token) {
     WaitNever ctx;
     auto result = lockSharedImpl(&token, ctx);
     annotateTryAcquired(result, annotate_rwlock_level::rdlock);
@@ -518,7 +522,7 @@ class SharedMutexImpl : std::conditional_t<
   }
 
   template <class Rep, class Period>
-  bool try_lock_shared_for(const std::chrono::duration<Rep, Period>& duration) {
+  bool try_lock_shared_for(const std::chrono::duration<Rep, Period> &duration) {
     WaitForDuration<Rep, Period> ctx(duration);
     auto result = lockSharedImpl(nullptr, ctx);
     annotateTryAcquired(result, annotate_rwlock_level::rdlock);
@@ -526,8 +530,8 @@ class SharedMutexImpl : std::conditional_t<
   }
 
   template <class Rep, class Period>
-  bool try_lock_shared_for(
-      const std::chrono::duration<Rep, Period>& duration, Token& token) {
+  bool try_lock_shared_for(const std::chrono::duration<Rep, Period> &duration,
+                           Token &token) {
     WaitForDuration<Rep, Period> ctx(duration);
     auto result = lockSharedImpl(&token, ctx);
     annotateTryAcquired(result, annotate_rwlock_level::rdlock);
@@ -536,7 +540,7 @@ class SharedMutexImpl : std::conditional_t<
 
   template <class Clock, class Duration>
   bool try_lock_shared_until(
-      const std::chrono::time_point<Clock, Duration>& absDeadline) {
+      const std::chrono::time_point<Clock, Duration> &absDeadline) {
     WaitUntilDeadline<Clock, Duration> ctx{absDeadline};
     auto result = lockSharedImpl(nullptr, ctx);
     annotateTryAcquired(result, annotate_rwlock_level::rdlock);
@@ -545,8 +549,8 @@ class SharedMutexImpl : std::conditional_t<
 
   template <class Clock, class Duration>
   bool try_lock_shared_until(
-      const std::chrono::time_point<Clock, Duration>& absDeadline,
-      Token& token) {
+      const std::chrono::time_point<Clock, Duration> &absDeadline,
+      Token &token) {
     WaitUntilDeadline<Clock, Duration> ctx{absDeadline};
     auto result = lockSharedImpl(&token, ctx);
     annotateTryAcquired(result, annotate_rwlock_level::rdlock);
@@ -572,12 +576,11 @@ class SharedMutexImpl : std::conditional_t<
     }
   }
 
-  void unlock_shared(Token& token) {
+  void unlock_shared(Token &token) {
     annotateReleased(annotate_rwlock_level::rdlock);
 
-    assert(
-        token.type_ == Token::Type::INLINE_SHARED ||
-        token.type_ == Token::Type::DEFERRED_SHARED);
+    assert(token.type_ == Token::Type::INLINE_SHARED ||
+           token.type_ == Token::Type::DEFERRED_SHARED);
 
     if (token.type_ != Token::Type::DEFERRED_SHARED ||
         !tryUnlockSharedDeferred(token.slot_)) {
@@ -600,8 +603,8 @@ class SharedMutexImpl : std::conditional_t<
     // S) we need to wake E as well.
     auto state = state_.load(std::memory_order_acquire);
     do {
-      assert(
-          (state & ~(kWaitingAny | kPrevDefer | kAnnotationCreated)) == kHasE);
+      assert((state & ~(kWaitingAny | kPrevDefer | kAnnotationCreated)) ==
+             kHasE);
     } while (!state_.compare_exchange_strong(
         state, (state & ~(kWaitingAny | kPrevDefer | kHasE)) + kIncrHasS));
     if ((state & (kWaitingE | kWaitingU | kWaitingS)) != 0) {
@@ -609,7 +612,7 @@ class SharedMutexImpl : std::conditional_t<
     }
   }
 
-  void unlock_and_lock_shared(Token& token) {
+  void unlock_and_lock_shared(Token &token) {
     unlock_and_lock_shared();
     token.type_ = Token::Type::INLINE_SHARED;
   }
@@ -631,8 +634,8 @@ class SharedMutexImpl : std::conditional_t<
   }
 
   template <class Rep, class Period>
-  bool try_lock_upgrade_for(
-      const std::chrono::duration<Rep, Period>& duration) {
+  bool
+  try_lock_upgrade_for(const std::chrono::duration<Rep, Period> &duration) {
     WaitForDuration<Rep, Period> ctx(duration);
     auto result = lockUpgradeImpl(ctx);
     OwnershipTrackerBase::maybeBeginThreadOwnership(result);
@@ -642,7 +645,7 @@ class SharedMutexImpl : std::conditional_t<
 
   template <class Clock, class Duration>
   bool try_lock_upgrade_until(
-      const std::chrono::time_point<Clock, Duration>& absDeadline) {
+      const std::chrono::time_point<Clock, Duration> &absDeadline) {
     WaitUntilDeadline<Clock, Duration> ctx{absDeadline};
     auto result = lockUpgradeImpl(ctx);
     OwnershipTrackerBase::maybeBeginThreadOwnership(result);
@@ -675,7 +678,7 @@ class SharedMutexImpl : std::conditional_t<
     wakeRegisteredWaiters(state, kWaitingE | kWaitingU);
   }
 
-  void unlock_upgrade_and_lock_shared(Token& token) {
+  void unlock_upgrade_and_lock_shared(Token &token) {
     unlock_upgrade_and_lock_shared();
     token.type_ = Token::Type::INLINE_SHARED;
   }
@@ -688,8 +691,8 @@ class SharedMutexImpl : std::conditional_t<
     // as well clear the relevant wake bits at the same time.
     auto state = state_.load(std::memory_order_acquire);
     while (true) {
-      assert(
-          (state & ~(kWaitingAny | kPrevDefer | kAnnotationCreated)) == kHasE);
+      assert((state & ~(kWaitingAny | kPrevDefer | kAnnotationCreated)) ==
+             kHasE);
       auto after =
           (state & ~(kWaitingNotS | kWaitingS | kPrevDefer | kHasE)) + kHasU;
       if (state_.compare_exchange_strong(state, after)) {
@@ -701,7 +704,7 @@ class SharedMutexImpl : std::conditional_t<
     }
   }
 
- private:
+private:
   typedef typename folly::detail::Futex<Atom> Futex;
 
   // Internally we use four kinds of wait contexts.  These are structs
@@ -715,7 +718,7 @@ class SharedMutexImpl : std::conditional_t<
     bool canTimeOut() { return false; }
     bool shouldTimeOut() { return false; }
 
-    bool doWait(Futex& futex, uint32_t expected, uint32_t waitMask) {
+    bool doWait(Futex &futex, uint32_t expected, uint32_t waitMask) {
       detail::futexWait(&futex, expected, waitMask);
       return true;
     }
@@ -726,19 +729,18 @@ class SharedMutexImpl : std::conditional_t<
     bool canTimeOut() { return true; }
     bool shouldTimeOut() { return true; }
 
-    bool doWait(
-        Futex& /* futex */, uint32_t /* expected */, uint32_t /* waitMask */) {
+    bool doWait(Futex & /* futex */, uint32_t /* expected */,
+                uint32_t /* waitMask */) {
       return false;
     }
   };
 
-  template <class Rep, class Period>
-  struct WaitForDuration {
+  template <class Rep, class Period> struct WaitForDuration {
     std::chrono::duration<Rep, Period> duration_;
     bool deadlineComputed_;
     std::chrono::steady_clock::time_point deadline_;
 
-    explicit WaitForDuration(const std::chrono::duration<Rep, Period>& duration)
+    explicit WaitForDuration(const std::chrono::duration<Rep, Period> &duration)
         : duration_(duration), deadlineComputed_(false) {}
 
     std::chrono::steady_clock::time_point deadline() {
@@ -756,22 +758,21 @@ class SharedMutexImpl : std::conditional_t<
       return std::chrono::steady_clock::now() > deadline();
     }
 
-    bool doWait(Futex& futex, uint32_t expected, uint32_t waitMask) {
+    bool doWait(Futex &futex, uint32_t expected, uint32_t waitMask) {
       auto result =
           detail::futexWaitUntil(&futex, expected, deadline(), waitMask);
       return result != folly::detail::FutexResult::TIMEDOUT;
     }
   };
 
-  template <class Clock, class Duration>
-  struct WaitUntilDeadline {
+  template <class Clock, class Duration> struct WaitUntilDeadline {
     std::chrono::time_point<Clock, Duration> absDeadline_;
 
     bool canBlock() { return true; }
     bool canTimeOut() { return true; }
     bool shouldTimeOut() { return Clock::now() > absDeadline_; }
 
-    bool doWait(Futex& futex, uint32_t expected, uint32_t waitMask) {
+    bool doWait(Futex &futex, uint32_t expected, uint32_t waitMask) {
       auto result =
           detail::futexWaitUntil(&futex, expected, absDeadline_, waitMask);
       return result != folly::detail::FutexResult::TIMEDOUT;
@@ -785,8 +786,8 @@ class SharedMutexImpl : std::conditional_t<
       // check again
       if ((state_.load() & kAnnotationCreated) == 0) {
         state_.fetch_or(kAnnotationCreated);
-        annotate_benign_race_sized(
-            &state_, sizeof(state_), "init TSAN", __FILE__, __LINE__);
+        annotate_benign_race_sized(&state_, sizeof(state_), "init TSAN",
+                                   __FILE__, __LINE__);
         annotate_rwlock_create(this, __FILE__, __LINE__);
       }
     }
@@ -960,14 +961,13 @@ class SharedMutexImpl : std::conditional_t<
   // kDeferredSearchDistance * kDeferredSeparationFactor <=
   // 64 / 8 then we will search only within a single cache line, which
   // guarantees we won't have inter-L1 contention.
- public:
+public:
   static constexpr uint32_t kDeferredSearchDistance = 2;
   static constexpr uint32_t kDeferredSeparationFactor = 4;
 
- private:
-  static_assert(
-      !(kDeferredSearchDistance & (kDeferredSearchDistance - 1)),
-      "kDeferredSearchDistance must be a power of 2");
+private:
+  static_assert(!(kDeferredSearchDistance & (kDeferredSearchDistance - 1)),
+                "kDeferredSearchDistance must be a power of 2");
 
   // The number of deferred locks that can be simultaneously acquired
   // by a thread via the token-less methods without performing any heap
@@ -988,7 +988,7 @@ class SharedMutexImpl : std::conditional_t<
   static constexpr uintptr_t kTokenless = 0x1;
 
   // This is the starting location for Token-less unlock_shared().
-  FOLLY_EXPORT FOLLY_ALWAYS_INLINE static relaxed_atomic<uint32_t>&
+  FOLLY_EXPORT FOLLY_ALWAYS_INLINE static relaxed_atomic<uint32_t> &
   tls_lastTokenlessSlot() {
     static relaxed_atomic<uint32_t> non_tl{};
     static thread_local relaxed_atomic<uint32_t> tl{};
@@ -996,7 +996,7 @@ class SharedMutexImpl : std::conditional_t<
   }
 
   // Last deferred reader slot used.
-  FOLLY_EXPORT FOLLY_ALWAYS_INLINE static relaxed_atomic<uint32_t>&
+  FOLLY_EXPORT FOLLY_ALWAYS_INLINE static relaxed_atomic<uint32_t> &
   tls_lastDeferredReaderSlot() {
     static relaxed_atomic<uint32_t> non_tl{};
     static thread_local relaxed_atomic<uint32_t> tl{};
@@ -1007,19 +1007,18 @@ class SharedMutexImpl : std::conditional_t<
   // If any of those elements points to a SharedMutexImpl, then it
   // should be considered that there is a shared lock on that instance.
   // See kTokenless.
- public:
+public:
   typedef Atom<uintptr_t> DeferredReaderSlot;
 
- private:
+private:
   alignas(hardware_destructive_interference_size) static DeferredReaderSlot
-      deferredReaders
-          [shared_mutex_detail::kMaxDeferredReadersAllocated *
-           kDeferredSeparationFactor];
+      deferredReaders[shared_mutex_detail::kMaxDeferredReadersAllocated *
+                      kDeferredSeparationFactor];
 
   // Performs an exclusive lock, waiting for state_ & waitMask to be
   // zero first
   template <class WaitContext>
-  bool lockExclusiveImpl(uint32_t preconditionGoalMask, WaitContext& ctx) {
+  bool lockExclusiveImpl(uint32_t preconditionGoalMask, WaitContext &ctx) {
     uint32_t state = state_.load(std::memory_order_acquire);
     if (FOLLY_LIKELY(
             (state & (preconditionGoalMask | kMayDefer | kHasS)) == 0 &&
@@ -1031,8 +1030,8 @@ class SharedMutexImpl : std::conditional_t<
   }
 
   template <class WaitContext>
-  bool lockExclusiveImpl(
-      uint32_t& state, uint32_t preconditionGoalMask, WaitContext& ctx) {
+  bool lockExclusiveImpl(uint32_t &state, uint32_t preconditionGoalMask,
+                         WaitContext &ctx) {
     while (true) {
       if (FOLLY_UNLIKELY((state & preconditionGoalMask) != 0) &&
           !waitForZeroBits(state, preconditionGoalMask, kWaitingE, ctx) &&
@@ -1084,8 +1083,8 @@ class SharedMutexImpl : std::conditional_t<
 
           if (kReaderPriority && (state & kHasE) == 0) {
             assert((state & kBegunE) != 0);
-            if (!state_.compare_exchange_strong(
-                    state, (state & ~kBegunE) | kHasE)) {
+            if (!state_.compare_exchange_strong(state,
+                                                (state & ~kBegunE) | kHasE)) {
               continue;
             }
           }
@@ -1097,8 +1096,8 @@ class SharedMutexImpl : std::conditional_t<
   }
 
   template <class WaitContext>
-  bool waitForZeroBits(
-      uint32_t& state, uint32_t goal, uint32_t waitMask, WaitContext& ctx) {
+  bool waitForZeroBits(uint32_t &state, uint32_t goal, uint32_t waitMask,
+                       WaitContext &ctx) {
     uint32_t spinCount = 0;
     while (true) {
       state = state_.load(std::memory_order_acquire);
@@ -1107,7 +1106,7 @@ class SharedMutexImpl : std::conditional_t<
       }
       if (FOLLY_UNLIKELY(spinCount == kMaxSpinCount)) {
         return ctx.canBlock() &&
-            yieldWaitForZeroBits(state, goal, waitMask, ctx);
+               yieldWaitForZeroBits(state, goal, waitMask, ctx);
       }
       asm_volatile_pause();
       ++spinCount;
@@ -1115,8 +1114,8 @@ class SharedMutexImpl : std::conditional_t<
   }
 
   template <class WaitContext>
-  bool yieldWaitForZeroBits(
-      uint32_t& state, uint32_t goal, uint32_t waitMask, WaitContext& ctx) {
+  bool yieldWaitForZeroBits(uint32_t &state, uint32_t goal, uint32_t waitMask,
+                            WaitContext &ctx) {
     long thread_nivcsw = 0;
     long before = -1;
     for (uint32_t yieldCount = 0; yieldCount < kMaxSoftYieldCount;
@@ -1147,11 +1146,10 @@ class SharedMutexImpl : std::conditional_t<
   }
 
   template <class WaitContext>
-  bool futexWaitForZeroBits(
-      uint32_t& state, uint32_t goal, uint32_t waitMask, WaitContext& ctx) {
-    assert(
-        waitMask == kWaitingNotS || waitMask == kWaitingE ||
-        waitMask == kWaitingU || waitMask == kWaitingS);
+  bool futexWaitForZeroBits(uint32_t &state, uint32_t goal, uint32_t waitMask,
+                            WaitContext &ctx) {
+    assert(waitMask == kWaitingNotS || waitMask == kWaitingE ||
+           waitMask == kWaitingU || waitMask == kWaitingS);
 
     while (true) {
       state = state_.load(std::memory_order_acquire);
@@ -1186,13 +1184,13 @@ class SharedMutexImpl : std::conditional_t<
   // Wakes up waiters registered in state_ as appropriate, clearing the
   // awaiting bits for anybody that was awoken.  Tries to perform direct
   // single wakeup of an exclusive waiter if appropriate
-  void wakeRegisteredWaiters(uint32_t& state, uint32_t wakeMask) {
+  void wakeRegisteredWaiters(uint32_t &state, uint32_t wakeMask) {
     if (FOLLY_UNLIKELY((state & wakeMask) != 0)) {
       wakeRegisteredWaitersImpl(state, wakeMask);
     }
   }
 
-  void wakeRegisteredWaitersImpl(uint32_t& state, uint32_t wakeMask) {
+  void wakeRegisteredWaitersImpl(uint32_t &state, uint32_t wakeMask) {
     // If there are multiple lock() pending only one of them will actually
     // get to wake up, so issuing futexWakeAll will make a thundering herd.
     // There's nothing stopping us from issuing futexWake(1) instead,
@@ -1227,7 +1225,7 @@ class SharedMutexImpl : std::conditional_t<
     detail::futexWake(&state_, std::numeric_limits<int>::max(), wakeMask);
   }
 
-  DeferredReaderSlot* deferredReader(uint32_t slot) {
+  DeferredReaderSlot *deferredReader(uint32_t slot) {
     return &deferredReaders[slot * kDeferredSeparationFactor];
   }
 
@@ -1244,7 +1242,7 @@ class SharedMutexImpl : std::conditional_t<
   // to avoid the work.  Always finishes the application, even if ctx
   // times out.
   template <class WaitContext>
-  void applyDeferredReaders(uint32_t& state, WaitContext& ctx) {
+  void applyDeferredReaders(uint32_t &state, WaitContext &ctx) {
     uint32_t slot = 0;
 
     uint32_t spinCount = 0;
@@ -1266,7 +1264,7 @@ class SharedMutexImpl : std::conditional_t<
   }
 
   template <class WaitContext>
-  void applyDeferredReaders(uint32_t& state, WaitContext& ctx, uint32_t slot) {
+  void applyDeferredReaders(uint32_t &state, WaitContext &ctx, uint32_t slot) {
     long thread_nivcsw = 0;
     long before = -1;
     const uint32_t maxDeferredReaders =
@@ -1333,7 +1331,7 @@ class SharedMutexImpl : std::conditional_t<
   // an array of Atom<uintptr_t>.
 
   template <class WaitContext>
-  bool lockSharedImpl(Token* token, WaitContext& ctx) {
+  bool lockSharedImpl(Token *token, WaitContext &ctx) {
     uint32_t state = state_.load(std::memory_order_relaxed);
     if ((state & (kHasS | kMayDefer | kHasE)) == 0 &&
         state_.compare_exchange_strong(state, state + kIncrHasS)) {
@@ -1346,11 +1344,11 @@ class SharedMutexImpl : std::conditional_t<
   }
 
   template <class WaitContext>
-  bool lockSharedImpl(uint32_t& state, Token* token, WaitContext& ctx);
+  bool lockSharedImpl(uint32_t &state, Token *token, WaitContext &ctx);
 
   // Updates the state in/out argument as if the locks were made inline,
   // but does not update state_
-  void cleanupTokenlessSharedDeferred(uint32_t& state) {
+  void cleanupTokenlessSharedDeferred(uint32_t &state) {
     const uint32_t maxDeferredReaders =
         shared_mutex_detail::getMaxDeferredReaders();
     for (uint32_t i = 0; i < maxDeferredReaders; ++i) {
@@ -1376,9 +1374,8 @@ class SharedMutexImpl : std::conditional_t<
 
   uint32_t unlockSharedInline() {
     uint32_t state = (state_ -= kIncrHasS);
-    assert(
-        (state & (kHasE | kBegunE | kMayDefer)) != 0 ||
-        state < state + kIncrHasS);
+    assert((state & (kHasE | kBegunE | kMayDefer)) != 0 ||
+           state < state + kIncrHasS);
     if ((state & kHasS) == 0) {
       // Only the second half of lock() can be blocked by a non-zero
       // reader count, so that's the only thing we need to wake
@@ -1387,8 +1384,7 @@ class SharedMutexImpl : std::conditional_t<
     return state;
   }
 
-  template <class WaitContext>
-  bool lockUpgradeImpl(WaitContext& ctx) {
+  template <class WaitContext> bool lockUpgradeImpl(WaitContext &ctx) {
     uint32_t state;
     do {
       if (!waitForZeroBits(state, kHasSolo, kWaitingU, ctx)) {
@@ -1398,50 +1394,50 @@ class SharedMutexImpl : std::conditional_t<
     return true;
   }
 
- public:
+public:
   class FOLLY_NODISCARD ReadHolder {
     ReadHolder() : lock_(nullptr) {}
 
-   public:
-    explicit ReadHolder(const SharedMutexImpl* lock)
-        : lock_(const_cast<SharedMutexImpl*>(lock)) {
+  public:
+    explicit ReadHolder(const SharedMutexImpl *lock)
+        : lock_(const_cast<SharedMutexImpl *>(lock)) {
       if (lock_) {
         lock_->lock_shared(token_);
       }
     }
 
-    explicit ReadHolder(const SharedMutexImpl& lock)
-        : lock_(const_cast<SharedMutexImpl*>(&lock)) {
+    explicit ReadHolder(const SharedMutexImpl &lock)
+        : lock_(const_cast<SharedMutexImpl *>(&lock)) {
       lock_->lock_shared(token_);
     }
 
-    ReadHolder(ReadHolder&& rhs) noexcept
+    ReadHolder(ReadHolder &&rhs) noexcept
         : lock_(rhs.lock_), token_(rhs.token_) {
       rhs.lock_ = nullptr;
     }
 
     // Downgrade from upgrade mode
-    explicit ReadHolder(UpgradeHolder&& upgraded) : lock_(upgraded.lock_) {
+    explicit ReadHolder(UpgradeHolder &&upgraded) : lock_(upgraded.lock_) {
       assert(upgraded.lock_ != nullptr);
       upgraded.lock_ = nullptr;
       lock_->unlock_upgrade_and_lock_shared(token_);
     }
 
     // Downgrade from exclusive mode
-    explicit ReadHolder(WriteHolder&& writer) : lock_(writer.lock_) {
+    explicit ReadHolder(WriteHolder &&writer) : lock_(writer.lock_) {
       assert(writer.lock_ != nullptr);
       writer.lock_ = nullptr;
       lock_->unlock_and_lock_shared(token_);
     }
 
-    ReadHolder& operator=(ReadHolder&& rhs) noexcept {
+    ReadHolder &operator=(ReadHolder &&rhs) noexcept {
       std::swap(lock_, rhs.lock_);
       std::swap(token_, rhs.token_);
       return *this;
     }
 
-    ReadHolder(const ReadHolder& rhs) = delete;
-    ReadHolder& operator=(const ReadHolder& rhs) = delete;
+    ReadHolder(const ReadHolder &rhs) = delete;
+    ReadHolder &operator=(const ReadHolder &rhs) = delete;
 
     ~ReadHolder() { unlock(); }
 
@@ -1452,45 +1448,45 @@ class SharedMutexImpl : std::conditional_t<
       }
     }
 
-   private:
+  private:
     friend class UpgradeHolder;
     friend class WriteHolder;
-    SharedMutexImpl* lock_;
+    SharedMutexImpl *lock_;
     SharedMutexToken token_;
   };
 
   class FOLLY_NODISCARD UpgradeHolder {
     UpgradeHolder() : lock_(nullptr) {}
 
-   public:
-    explicit UpgradeHolder(SharedMutexImpl* lock) : lock_(lock) {
+  public:
+    explicit UpgradeHolder(SharedMutexImpl *lock) : lock_(lock) {
       if (lock_) {
         lock_->lock_upgrade();
       }
     }
 
-    explicit UpgradeHolder(SharedMutexImpl& lock) : lock_(&lock) {
+    explicit UpgradeHolder(SharedMutexImpl &lock) : lock_(&lock) {
       lock_->lock_upgrade();
     }
 
     // Downgrade from exclusive mode
-    explicit UpgradeHolder(WriteHolder&& writer) : lock_(writer.lock_) {
+    explicit UpgradeHolder(WriteHolder &&writer) : lock_(writer.lock_) {
       assert(writer.lock_ != nullptr);
       writer.lock_ = nullptr;
       lock_->unlock_and_lock_upgrade();
     }
 
-    UpgradeHolder(UpgradeHolder&& rhs) noexcept : lock_(rhs.lock_) {
+    UpgradeHolder(UpgradeHolder &&rhs) noexcept : lock_(rhs.lock_) {
       rhs.lock_ = nullptr;
     }
 
-    UpgradeHolder& operator=(UpgradeHolder&& rhs) noexcept {
+    UpgradeHolder &operator=(UpgradeHolder &&rhs) noexcept {
       std::swap(lock_, rhs.lock_);
       return *this;
     }
 
-    UpgradeHolder(const UpgradeHolder& rhs) = delete;
-    UpgradeHolder& operator=(const UpgradeHolder& rhs) = delete;
+    UpgradeHolder(const UpgradeHolder &rhs) = delete;
+    UpgradeHolder &operator=(const UpgradeHolder &rhs) = delete;
 
     ~UpgradeHolder() { unlock(); }
 
@@ -1501,28 +1497,28 @@ class SharedMutexImpl : std::conditional_t<
       }
     }
 
-   private:
+  private:
     friend class WriteHolder;
     friend class ReadHolder;
-    SharedMutexImpl* lock_;
+    SharedMutexImpl *lock_;
   };
 
   class FOLLY_NODISCARD WriteHolder {
     WriteHolder() : lock_(nullptr) {}
 
-   public:
-    explicit WriteHolder(SharedMutexImpl* lock) : lock_(lock) {
+  public:
+    explicit WriteHolder(SharedMutexImpl *lock) : lock_(lock) {
       if (lock_) {
         lock_->lock();
       }
     }
 
-    explicit WriteHolder(SharedMutexImpl& lock) : lock_(&lock) {
+    explicit WriteHolder(SharedMutexImpl &lock) : lock_(&lock) {
       lock_->lock();
     }
 
     // Promotion from upgrade mode
-    explicit WriteHolder(UpgradeHolder&& upgrade) : lock_(upgrade.lock_) {
+    explicit WriteHolder(UpgradeHolder &&upgrade) : lock_(upgrade.lock_) {
       assert(upgrade.lock_ != nullptr);
       upgrade.lock_ = nullptr;
       lock_->unlock_upgrade_and_lock();
@@ -1552,17 +1548,17 @@ class SharedMutexImpl : std::conditional_t<
     //   locks.
     // * An upgradeable lock may be upgraded atomically to a unique lock.
 
-    WriteHolder(WriteHolder&& rhs) noexcept : lock_(rhs.lock_) {
+    WriteHolder(WriteHolder &&rhs) noexcept : lock_(rhs.lock_) {
       rhs.lock_ = nullptr;
     }
 
-    WriteHolder& operator=(WriteHolder&& rhs) noexcept {
+    WriteHolder &operator=(WriteHolder &&rhs) noexcept {
       std::swap(lock_, rhs.lock_);
       return *this;
     }
 
-    WriteHolder(const WriteHolder& rhs) = delete;
-    WriteHolder& operator=(const WriteHolder& rhs) = delete;
+    WriteHolder(const WriteHolder &rhs) = delete;
+    WriteHolder &operator=(const WriteHolder &rhs) = delete;
 
     ~WriteHolder() { unlock(); }
 
@@ -1573,53 +1569,40 @@ class SharedMutexImpl : std::conditional_t<
       }
     }
 
-   private:
+  private:
     friend class ReadHolder;
     friend class UpgradeHolder;
-    SharedMutexImpl* lock_;
+    SharedMutexImpl *lock_;
   };
 };
 
 using SharedMutexReadPriority = SharedMutexImpl<true>;
 using SharedMutexWritePriority = SharedMutexImpl<false>;
 using SharedMutex = SharedMutexWritePriority;
-using SharedMutexTracked = SharedMutexImpl<
-    false,
-    void,
-    std::atomic,
-    shared_mutex_detail::PolicyTracked>;
-using SharedMutexSuppressTSAN = SharedMutexImpl<
-    false,
-    void,
-    std::atomic,
-    shared_mutex_detail::PolicySuppressTSAN>;
+using SharedMutexTracked = SharedMutexImpl<false, void, std::atomic,
+                                           shared_mutex_detail::PolicyTracked>;
+using SharedMutexSuppressTSAN =
+    SharedMutexImpl<false, void, std::atomic,
+                    shared_mutex_detail::PolicySuppressTSAN>;
 
 // Prevent the compiler from instantiating these in other translation units.
 // They are instantiated once in SharedMutex.cpp
 extern template class SharedMutexImpl<true>;
 extern template class SharedMutexImpl<false>;
 
-template <
-    bool ReaderPriority,
-    typename Tag_,
-    template <typename>
-    class Atom,
-    typename Policy>
+template <bool ReaderPriority, typename Tag_, template <typename> class Atom,
+          typename Policy>
 alignas(hardware_destructive_interference_size)
-    typename SharedMutexImpl<ReaderPriority, Tag_, Atom, Policy>::
-        DeferredReaderSlot
+    typename SharedMutexImpl<ReaderPriority, Tag_, Atom,
+                             Policy>::DeferredReaderSlot
     SharedMutexImpl<ReaderPriority, Tag_, Atom, Policy>::deferredReaders
         [shared_mutex_detail::kMaxDeferredReadersAllocated *
          kDeferredSeparationFactor] = {};
 
-template <
-    bool ReaderPriority,
-    typename Tag_,
-    template <typename>
-    class Atom,
-    typename Policy>
-bool SharedMutexImpl<ReaderPriority, Tag_, Atom, Policy>::
-    tryUnlockTokenlessSharedDeferred() {
+template <bool ReaderPriority, typename Tag_, template <typename> class Atom,
+          typename Policy>
+bool SharedMutexImpl<ReaderPriority, Tag_, Atom,
+                     Policy>::tryUnlockTokenlessSharedDeferred() {
   uint32_t bestSlot = tls_lastTokenlessSlot();
   // use do ... while to avoid calling
   // shared_mutex_detail::getMaxDeferredReaders() unless necessary
@@ -1637,15 +1620,11 @@ bool SharedMutexImpl<ReaderPriority, Tag_, Atom, Policy>::
   return false;
 }
 
-template <
-    bool ReaderPriority,
-    typename Tag_,
-    template <typename>
-    class Atom,
-    typename Policy>
+template <bool ReaderPriority, typename Tag_, template <typename> class Atom,
+          typename Policy>
 template <class WaitContext>
 bool SharedMutexImpl<ReaderPriority, Tag_, Atom, Policy>::lockSharedImpl(
-    uint32_t& state, Token* token, WaitContext& ctx) {
+    uint32_t &state, Token *token, WaitContext &ctx) {
   const uint32_t maxDeferredReaders =
       shared_mutex_detail::getMaxDeferredReaders();
   while (true) {

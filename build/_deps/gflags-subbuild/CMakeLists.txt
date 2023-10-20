@@ -1,7 +1,7 @@
 # Distributed under the OSI-approved BSD 3-Clause License.  See accompanying
 # file Copyright.txt or https://cmake.org/licensing for details.
 
-cmake_minimum_required(VERSION 3.27.1)
+cmake_minimum_required(VERSION 3.27.7)
 
 # Reject any attempt to use a toolchain file. We must not use one because
 # we could be downloading it here. If the CMAKE_TOOLCHAIN_FILE environment
@@ -19,9 +19,9 @@ project(gflags-populate NONE)
 
 include(ExternalProject)
 ExternalProject_Add(gflags-populate
-                     "UPDATE_DISCONNECTED" "False" "DOWNLOAD_EXTRACT_TIMESTAMP" "TRUE" "EXTERNALPROJECT_INTERNAL_ARGUMENT_SEPARATOR" "URL" "https://github.com/gflags/gflags/archive/v2.2.2.zip" "URL_HASH" "SHA256=19713a36c9f32b33df59d1c79b4958434cb005b5b47dc5400a7a4b078111d9b5"
-                    SOURCE_DIR          "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-src"
-                    BINARY_DIR          "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-build"
+                     "UPDATE_DISCONNECTED" "False" "DOWNLOAD_EXTRACT_TIMESTAMP" "FALSE" "EXTERNALPROJECT_INTERNAL_ARGUMENT_SEPARATOR" "URL" "https://github.com/gflags/gflags/archive/v2.2.2.zip" "URL_HASH" "SHA256=19713a36c9f32b33df59d1c79b4958434cb005b5b47dc5400a7a4b078111d9b5"
+                    SOURCE_DIR          "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src"
+                    BINARY_DIR          "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build"
                     CONFIGURE_COMMAND   ""
                     BUILD_COMMAND       ""
                     INSTALL_COMMAND     ""

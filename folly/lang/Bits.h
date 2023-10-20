@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -80,17 +87,15 @@ using std::bit_cast;
 #else
 
 //  mimic: std::bit_cast, C++20
-template <
-    typename To,
-    typename From,
-    std::enable_if_t<
-        sizeof(From) == sizeof(To) && is_trivially_copyable<To>::value &&
-            is_trivially_copyable<From>::value,
-        int> = 0>
-To bit_cast(const From& src) noexcept {
+template <typename To, typename From,
+          std::enable_if_t<sizeof(From) == sizeof(To) &&
+                               is_trivially_copyable<To>::value &&
+                               is_trivially_copyable<From>::value,
+                           int> = 0>
+To bit_cast(const From &src) noexcept {
   aligned_storage_for_t<To> storage;
   std::memcpy(&storage, &src, sizeof(From));
-  return reinterpret_cast<To&>(storage);
+  return reinterpret_cast<To &>(storage);
 }
 
 #endif
@@ -112,8 +117,7 @@ constexpr std::make_unsigned_t<Dst> bits_to_unsigned(Src const s) {
 ///
 /// Return the 1-based index of the least significant bit which is set.
 /// For x > 0, the exponent in the largest power of two which does not divide x.
-template <typename T>
-inline constexpr unsigned int findFirstSet(T const v) {
+template <typename T> inline constexpr unsigned int findFirstSet(T const v) {
   using S0 = int;
   using S1 = long int;
   using S2 = long long int;
@@ -135,8 +139,7 @@ inline constexpr unsigned int findFirstSet(T const v) {
 ///
 /// Return the 1-based index of the most significant bit which is set.
 /// For x > 0, findLastSet(x) == 1 + floor(log2(x)).
-template <typename T>
-inline constexpr unsigned int findLastSet(T const v) {
+template <typename T> inline constexpr unsigned int findLastSet(T const v) {
   using U0 = unsigned int;
   using U1 = unsigned long int;
   using U2 = unsigned long long int;
@@ -160,8 +163,7 @@ inline constexpr unsigned int findLastSet(T const v) {
 /// extractFirstSet
 ///
 /// Return a value where all the bits but the least significant are cleared.
-template <typename T>
-inline constexpr T extractFirstSet(T const v) {
+template <typename T> inline constexpr T extractFirstSet(T const v) {
   static_assert(std::is_integral<T>::value, "non-integral type");
   static_assert(std::is_unsigned<T>::value, "signed type");
   static_assert(!std::is_same<T, bool>::value, "bool type");
@@ -172,8 +174,7 @@ inline constexpr T extractFirstSet(T const v) {
 /// popcount
 ///
 /// Returns the number of bits which are set.
-template <typename T>
-inline constexpr unsigned int popcount(T const v) {
+template <typename T> inline constexpr unsigned int popcount(T const v) {
   using U0 = unsigned int;
   using U1 = unsigned long int;
   using U2 = unsigned long long int;
@@ -191,34 +192,29 @@ inline constexpr unsigned int popcount(T const v) {
   // clang-format on
 }
 
-template <class T>
-inline constexpr T nextPowTwo(T const v) {
+template <class T> inline constexpr T nextPowTwo(T const v) {
   static_assert(std::is_unsigned<T>::value, "signed type");
   return v ? (T(1) << findLastSet(v - 1)) : T(1);
 }
 
-template <class T>
-inline constexpr T prevPowTwo(T const v) {
+template <class T> inline constexpr T prevPowTwo(T const v) {
   static_assert(std::is_unsigned<T>::value, "signed type");
   return v ? (T(1) << (findLastSet(v) - 1)) : T(0);
 }
 
-template <class T>
-inline constexpr bool isPowTwo(T const v) {
+template <class T> inline constexpr bool isPowTwo(T const v) {
   static_assert(std::is_integral<T>::value, "non-integral type");
   static_assert(std::is_unsigned<T>::value, "signed type");
   static_assert(!std::is_same<T, bool>::value, "bool type");
   return (v != 0) && !(v & (v - 1));
 }
 
-template <class T>
-inline constexpr T strictNextPowTwo(T const v) {
+template <class T> inline constexpr T strictNextPowTwo(T const v) {
   static_assert(std::is_unsigned<T>::value, "signed type");
   return nextPowTwo(T(v + 1));
 }
 
-template <class T>
-inline constexpr T strictPrevPowTwo(T const v) {
+template <class T> inline constexpr T strictPrevPowTwo(T const v) {
   static_assert(std::is_unsigned<T>::value, "signed type");
   return v > 1 ? prevPowTwo(T(v - 1)) : T(0);
 }
@@ -228,14 +224,12 @@ inline constexpr T strictPrevPowTwo(T const v) {
  */
 namespace detail {
 
-template <size_t Size>
-struct uint_types_by_size;
+template <size_t Size> struct uint_types_by_size;
 
-#define FB_GEN(sz, fn)                                                      \
-  static inline uint##sz##_t byteswap_gen(uint##sz##_t v) { return fn(v); } \
-  template <>                                                               \
-  struct uint_types_by_size<sz / 8> {                                       \
-    using type = uint##sz##_t;                                              \
+#define FB_GEN(sz, fn)                                                         \
+  static inline uint##sz##_t byteswap_gen(uint##sz##_t v) { return fn(v); }    \
+  template <> struct uint_types_by_size<sz / 8> {                              \
+    using type = uint##sz##_t;                                                 \
   };
 
 FB_GEN(8, uint8_t)
@@ -251,8 +245,7 @@ FB_GEN(16, __builtin_bswap16)
 
 #undef FB_GEN
 
-template <class T>
-struct EndianInt {
+template <class T> struct EndianInt {
   static_assert(
       (std::is_integral<T>::value && !std::is_same<T, bool>::value) ||
           std::is_floating_point<T>::value,
@@ -276,20 +269,20 @@ struct EndianInt {
 //
 // ntohs, htons == big16
 // ntohl, htonl == big32
-#define FB_GEN1(fn, t, sz) \
+#define FB_GEN1(fn, t, sz)                                                     \
   static t fn##sz(t x) { return fn<t>(x); }
 
-#define FB_GEN2(t, sz) \
-  FB_GEN1(swap, t, sz) \
-  FB_GEN1(big, t, sz)  \
+#define FB_GEN2(t, sz)                                                         \
+  FB_GEN1(swap, t, sz)                                                         \
+  FB_GEN1(big, t, sz)                                                          \
   FB_GEN1(little, t, sz)
 
-#define FB_GEN(sz)          \
-  FB_GEN2(uint##sz##_t, sz) \
+#define FB_GEN(sz)                                                             \
+  FB_GEN2(uint##sz##_t, sz)                                                    \
   FB_GEN2(int##sz##_t, sz)
 
 class Endian {
- public:
+public:
   enum class Order : uint8_t {
     LITTLE,
     BIG,
@@ -297,16 +290,13 @@ class Endian {
 
   static constexpr Order order = kIsLittleEndian ? Order::LITTLE : Order::BIG;
 
-  template <class T>
-  static T swap(T x) {
+  template <class T> static T swap(T x) {
     return folly::detail::EndianInt<T>::swap(x);
   }
-  template <class T>
-  static T big(T x) {
+  template <class T> static T big(T x) {
     return folly::detail::EndianInt<T>::big(x);
   }
-  template <class T>
-  static T little(T x) {
+  template <class T> static T little(T x) {
     return folly::detail::EndianInt<T>::little(x);
   }
 
@@ -322,8 +312,7 @@ class Endian {
 #undef FB_GEN2
 #undef FB_GEN1
 
-template <class T, class Enable = void>
-struct Unaligned;
+template <class T, class Enable = void> struct Unaligned;
 
 /**
  * Representation of an unaligned value of a POD type.
@@ -332,10 +321,8 @@ FOLLY_PUSH_WARNING
 FOLLY_CLANG_DISABLE_WARNING("-Wpacked")
 FOLLY_PACK_PUSH
 template <class T>
-struct Unaligned<
-    T,
-    typename std::enable_if<
-        std::is_standard_layout<T>::value && std::is_trivial<T>::value>::type> {
+struct Unaligned<T, typename std::enable_if<std::is_standard_layout<T>::value &&
+                                            std::is_trivial<T>::value>::type> {
   Unaligned() = default; // uninitialized
   /* implicit */ Unaligned(T v) : value(v) {}
   T value;
@@ -346,14 +333,13 @@ FOLLY_POP_WARNING
 /**
  * Read an unaligned value of type T and return it.
  */
-template <class T>
-inline constexpr T loadUnaligned(const void* p) {
+template <class T> inline constexpr T loadUnaligned(const void *p) {
   static_assert(sizeof(Unaligned<T>) == sizeof(T), "Invalid unaligned size");
   static_assert(alignof(Unaligned<T>) == 1, "Invalid alignment");
   if FOLLY_CXX17_CONSTEXPR (kHasUnalignedAccess) {
-    return static_cast<const Unaligned<T>*>(p)->value;
+    return static_cast<const Unaligned<T> *>(p)->value;
   } else if FOLLY_CXX17_CONSTEXPR (alignof(T) == 1) {
-    return *static_cast<const T*>(p);
+    return *static_cast<const T *>(p);
   } else {
     T value{};
     memcpy(&value, p, sizeof(T));
@@ -368,15 +354,13 @@ inline constexpr T loadUnaligned(const void* p) {
  * This is intended as a complement to loadUnaligned to read the tail
  * of a buffer when it is processed one word at a time.
  */
-template <class T>
-inline T partialLoadUnaligned(const void* p, size_t l) {
-  static_assert(
-      std::is_integral<T>::value && std::is_unsigned<T>::value &&
-          sizeof(T) <= 8,
-      "Invalid type");
+template <class T> inline T partialLoadUnaligned(const void *p, size_t l) {
+  static_assert(std::is_integral<T>::value && std::is_unsigned<T>::value &&
+                    sizeof(T) <= 8,
+                "Invalid type");
   assume(l < sizeof(T));
 
-  auto cp = static_cast<const char*>(p);
+  auto cp = static_cast<const char *>(p);
   T value = 0;
   if FOLLY_CXX17_CONSTEXPR (!kHasUnalignedAccess || !kIsLittleEndian) {
     // Unsupported, use memcpy.
@@ -402,8 +386,7 @@ inline T partialLoadUnaligned(const void* p, size_t l) {
 /**
  * Write an unaligned value of type T.
  */
-template <class T>
-inline void storeUnaligned(void* p, T value) {
+template <class T> inline void storeUnaligned(void *p, T value) {
   static_assert(sizeof(Unaligned<T>) == sizeof(T), "Invalid unaligned size");
   static_assert(alignof(Unaligned<T>) == 1, "Invalid alignment");
   if FOLLY_CXX17_CONSTEXPR (kHasUnalignedAccess) {
@@ -423,8 +406,7 @@ inline void storeUnaligned(void* p, T value) {
   }
 }
 
-template <typename T>
-T bitReverse(T n) {
+template <typename T> T bitReverse(T n) {
   auto m = static_cast<typename std::make_unsigned<T>::type>(n);
   m = ((m & 0xAAAAAAAAAAAAAAAA) >> 1) | ((m & 0x5555555555555555) << 1);
   m = ((m & 0xCCCCCCCCCCCCCCCC) >> 2) | ((m & 0x3333333333333333) << 2);

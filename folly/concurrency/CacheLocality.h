@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -89,7 +96,7 @@ struct CacheLocality {
   /// sysfs implementation and a deterministic implementation by keying
   /// off the type of the underlying atomic.  See DeterministicScheduler.
   template <template <typename> class Atom = std::atomic>
-  static const CacheLocality& system();
+  static const CacheLocality &system();
 
   /// Reads CacheLocality information from a tree structured like
   /// the sysfs filesystem.  The provided function will be evaluated
@@ -99,8 +106,8 @@ struct CacheLocality {
   /// not exist.  The function will be called with paths of the form
   /// /sys/devices/system/cpu/cpu*/cache/index*/{type,shared_cpu_list} .
   /// Throws an exception if no caches can be parsed at all.
-  static CacheLocality readFromSysfsTree(
-      const std::function<std::string(std::string)>& mapping);
+  static CacheLocality
+  readFromSysfsTree(const std::function<std::string(std::string)> &mapping);
 
   /// Reads CacheLocality information from the real sysfs filesystem.
   /// Throws an exception if no cache information can be loaded.
@@ -108,8 +115,8 @@ struct CacheLocality {
 
   /// readFromProcCpuinfo(), except input is taken from memory rather
   /// than the file system.
-  static CacheLocality readFromProcCpuinfoLines(
-      std::vector<std::string> const& lines);
+  static CacheLocality
+  readFromProcCpuinfoLines(std::vector<std::string> const &lines);
 
   /// Returns an estimate of the CacheLocality information by reading
   /// /proc/cpuinfo.  This isn't as accurate as readFromSysfs(), but
@@ -128,7 +135,7 @@ struct CacheLocality {
 /// getcpu(2), if available
 struct Getcpu {
   /// Function pointer to a function with the same signature as getcpu(2).
-  typedef int (*Func)(unsigned* cpu, unsigned* node, void* unused);
+  typedef int (*Func)(unsigned *cpu, unsigned *node, void *unused);
 
   /// Returns a pointer to the VDSO implementation of getcpu(2), if
   /// available, or nullptr otherwise.  This function may be quite
@@ -147,12 +154,11 @@ struct HashingThreadId {
 /// A class that lazily binds a unique (for each implementation of Atom)
 /// identifier to a thread.  This is a fallback mechanism for the access
 /// spreader if __vdso_getcpu can't be loaded
-template <typename ThreadId>
-struct FallbackGetcpu {
+template <typename ThreadId> struct FallbackGetcpu {
   /// Fills the thread id into the cpu and node out params (if they
   /// are non-null).  This method is intended to act like getcpu when a
   /// fast-enough form of getcpu isn't available or isn't desired
-  static int getcpu(unsigned* cpu, unsigned* node, void* /* unused */) {
+  static int getcpu(unsigned *cpu, unsigned *node, void * /* unused */) {
     auto id = ThreadId::get();
     if (cpu) {
       *cpu = id;
@@ -170,7 +176,7 @@ using FallbackGetcpuType = FallbackGetcpu<
 namespace detail {
 
 class AccessSpreaderBase {
- protected:
+protected:
   /// If there are more cpus than this nothing will crash, but there
   /// might be unnecessary sharing
   enum {
@@ -180,12 +186,10 @@ class AccessSpreaderBase {
 
   using CompactStripe = uint8_t;
 
-  static_assert(
-      (kMaxCpus & (kMaxCpus - 1)) == 0,
-      "kMaxCpus should be a power of two so modulo is fast");
-  static_assert(
-      kMaxCpus - 1 <= std::numeric_limits<CompactStripe>::max(),
-      "stripeByCpu element type isn't wide enough");
+  static_assert((kMaxCpus & (kMaxCpus - 1)) == 0,
+                "kMaxCpus should be a power of two so modulo is fast");
+  static_assert(kMaxCpus - 1 <= std::numeric_limits<CompactStripe>::max(),
+                "stripeByCpu element type isn't wide enough");
 
   using CompactStripeTable = CompactStripe[kMaxCpus + 1][kMaxCpus];
 
@@ -204,10 +208,10 @@ class AccessSpreaderBase {
   };
 
   /// Always claims to be on CPU zero, node zero
-  static int degenerateGetcpu(unsigned* cpu, unsigned* node, void*);
+  static int degenerateGetcpu(unsigned *cpu, unsigned *node, void *);
 
-  static bool initialize(
-      GlobalState& out, Getcpu::Func (&)(), const CacheLocality& (&)());
+  static bool initialize(GlobalState &out, Getcpu::Func (&)(),
+                         const CacheLocality &(&)());
 };
 
 } // namespace detail
@@ -248,14 +252,13 @@ class AccessSpreaderBase {
 /// all of the time.
 template <template <typename> class Atom = std::atomic>
 struct AccessSpreader : private detail::AccessSpreaderBase {
- private:
+private:
   struct GlobalState : detail::AccessSpreaderBase::GlobalState {};
-  static_assert(
-      std::is_trivially_destructible<GlobalState>::value,
-      "unsuitable for global state");
+  static_assert(std::is_trivially_destructible<GlobalState>::value,
+                "unsuitable for global state");
 
- public:
-  FOLLY_EXPORT static GlobalState& state() {
+public:
+  FOLLY_EXPORT static GlobalState &state() {
     static FOLLY_CONSTINIT GlobalState state{};
     if (FOLLY_UNLIKELY(!state.getcpu.load(std::memory_order_acquire))) {
       initialize(state);
@@ -265,7 +268,7 @@ struct AccessSpreader : private detail::AccessSpreaderBase {
 
   /// Returns the stripe associated with the current CPU.  The returned
   /// value will be < numStripes.
-  static size_t current(size_t numStripes, const GlobalState& s = state()) {
+  static size_t current(size_t numStripes, const GlobalState &s = state()) {
     // s.table[0] will actually work okay (all zeros), but
     // something's wrong with the caller
     assert(numStripes > 0);
@@ -273,7 +276,7 @@ struct AccessSpreader : private detail::AccessSpreaderBase {
     unsigned cpu;
     s.getcpu.load(std::memory_order_relaxed)(&cpu, nullptr, nullptr);
     cpu = cpu % kMaxCpus;
-    auto& ref = s.table[std::min(size_t(kMaxCpus), numStripes)][cpu];
+    auto &ref = s.table[std::min(size_t(kMaxCpus), numStripes)][cpu];
     return make_atomic_ref(ref).load(std::memory_order_relaxed);
   }
 
@@ -283,13 +286,13 @@ struct AccessSpreader : private detail::AccessSpreaderBase {
   /// certain small number of calls, which can make the result imprecise, but
   /// it is more efficient (amortized 2 ns on my dev box, compared to 12 ns for
   /// current()).
-  static size_t cachedCurrent(
-      size_t numStripes, const GlobalState& s = state()) {
+  static size_t cachedCurrent(size_t numStripes,
+                              const GlobalState &s = state()) {
     if (kIsMobile) {
       return current(numStripes, s);
     }
     unsigned cpu = cpuCache().cpu(s);
-    auto& ref = s.table[std::min(size_t(kMaxCpus), numStripes)][cpu];
+    auto &ref = s.table[std::min(size_t(kMaxCpus), numStripes)][cpu];
     return make_atomic_ref(ref).load(std::memory_order_relaxed);
   }
 
@@ -309,8 +312,8 @@ struct AccessSpreader : private detail::AccessSpreaderBase {
   static size_t localityIndexForStripe(size_t numStripes, size_t stripe) {
     assert(stripe < numStripes);
     return stripe *
-        std::min(size_t(kMaxCpus), CacheLocality::system<Atom>().numCpus) /
-        numStripes;
+           std::min(size_t(kMaxCpus), CacheLocality::system<Atom>().numCpus) /
+           numStripes;
   }
 
   /// Returns the maximum stripe value that can be returned under any
@@ -321,11 +324,11 @@ struct AccessSpreader : private detail::AccessSpreaderBase {
   /// dynamic configuration, based on the current compile-time platform
   static constexpr size_t maxLocalityIndexValue() { return kMaxCpus; }
 
- private:
+private:
   /// Caches the current CPU and refreshes the cache every so often.
   class CpuCache {
-   public:
-    unsigned cpu(GlobalState const& s) {
+  public:
+    unsigned cpu(GlobalState const &s) {
       if (FOLLY_UNLIKELY(cachedCpuUses_-- == 0)) {
         unsigned cpu;
         s.getcpu.load(std::memory_order_relaxed)(&cpu, nullptr, nullptr);
@@ -337,14 +340,14 @@ struct AccessSpreader : private detail::AccessSpreaderBase {
 
     void invalidate() { cachedCpuUses_ = 0; }
 
-   private:
+  private:
     static constexpr unsigned kMaxCachedCpuUses = 32;
 
     unsigned cachedCpu_ = 0;
     unsigned cachedCpuUses_ = 0;
   };
 
-  FOLLY_EXPORT FOLLY_ALWAYS_INLINE static CpuCache& cpuCache() {
+  FOLLY_EXPORT FOLLY_ALWAYS_INLINE static CpuCache &cpuCache() {
     static thread_local CpuCache cpuCache;
     return cpuCache;
   }
@@ -368,9 +371,9 @@ struct AccessSpreader : private detail::AccessSpreaderBase {
   // zero stripe.  Once a sanitizer gets smart enough to detect this as
   // a race or undefined behavior, we can annotate it.
 
-  static bool initialize(GlobalState& state) {
-    return detail::AccessSpreaderBase::initialize(
-        state, pickGetcpuFunc, CacheLocality::system<Atom>);
+  static bool initialize(GlobalState &state) {
+    return detail::AccessSpreaderBase::initialize(state, pickGetcpuFunc,
+                                                  CacheLocality::system<Atom>);
   }
 };
 
@@ -389,11 +392,11 @@ struct AccessSpreader : private detail::AccessSpreaderBase {
  *
  * Memory allocated with coreMalloc() must be freed with coreFree().
  */
-void* coreMalloc(size_t size, size_t numStripes, size_t stripe);
-void coreFree(void* ptr);
+void *coreMalloc(size_t size, size_t numStripes, size_t stripe);
+void coreFree(void *ptr);
 
 namespace detail {
-void* coreMallocFromGuard(size_t size);
+void *coreMallocFromGuard(size_t size);
 }
 
 /**
@@ -406,42 +409,42 @@ void* coreMallocFromGuard(size_t size);
  * This makes CoreAllocator unsuitable for containers that can grow, and it is
  * meant for container where all allocations happen at construction time.
  */
-template <typename T>
-class CoreAllocator : private std::allocator<T> {
- public:
+template <typename T> class CoreAllocator : private std::allocator<T> {
+public:
   using value_type = T;
 
   CoreAllocator() = default;
 
   template <class U>
-  /* implicit */ CoreAllocator(const CoreAllocator<U>&) {}
+  /* implicit */ CoreAllocator(const CoreAllocator<U> &) {}
 
-  T* allocate(std::size_t n) {
-    return reinterpret_cast<T*>(detail::coreMallocFromGuard(n * sizeof(T)));
+  T *allocate(std::size_t n) {
+    return reinterpret_cast<T *>(detail::coreMallocFromGuard(n * sizeof(T)));
   }
 
-  void deallocate(T* p, std::size_t) { coreFree(p); }
+  void deallocate(T *p, std::size_t) { coreFree(p); }
 
-  friend bool operator==(const CoreAllocator&, const CoreAllocator&) noexcept {
+  friend bool operator==(const CoreAllocator &,
+                         const CoreAllocator &) noexcept {
     return true;
   }
-  friend bool operator!=(const CoreAllocator&, const CoreAllocator&) noexcept {
+  friend bool operator!=(const CoreAllocator &,
+                         const CoreAllocator &) noexcept {
     return false;
   }
 
-  template <typename U>
-  struct rebind {
+  template <typename U> struct rebind {
     using other = CoreAllocator<U>;
   };
 };
 
 class FOLLY_NODISCARD CoreAllocatorGuard {
- public:
+public:
   CoreAllocatorGuard(size_t numStripes, size_t stripe);
   ~CoreAllocatorGuard();
 
- private:
-  friend void* detail::coreMallocFromGuard(size_t size);
+private:
+  friend void *detail::coreMallocFromGuard(size_t size);
 
   size_t numStripes_;
   size_t stripe_;

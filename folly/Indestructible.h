@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -65,9 +72,8 @@ struct factory_constructor_t {
 
 constexpr factory_constructor_t factory_constructor{};
 
-template <typename T>
-class Indestructible final {
- public:
+template <typename T> class Indestructible final {
+public:
   template <typename S = T, typename = decltype(S())>
   constexpr Indestructible() noexcept(noexcept(T())) : storage_{in_place} {}
 
@@ -86,74 +92,70 @@ class Indestructible final {
    * type is explicitly but not implicitly constructible from the given
    * argument.
    */
-  template <
-      typename U = T,
-      std::enable_if_t<std::is_constructible<T, U&&>::value>* = nullptr,
-      std::enable_if_t<
-          !std::is_same<Indestructible<T>, remove_cvref_t<U>>::value>* =
-          nullptr,
-      std::enable_if_t<!std::is_convertible<U&&, T>::value>* = nullptr>
-  explicit constexpr Indestructible(U&& u) noexcept(
+  template <typename U = T,
+            std::enable_if_t<std::is_constructible<T, U &&>::value> * = nullptr,
+            std::enable_if_t<!std::is_same<
+                Indestructible<T>, remove_cvref_t<U>>::value> * = nullptr,
+            std::enable_if_t<!std::is_convertible<U &&, T>::value> * = nullptr>
+  explicit constexpr Indestructible(U &&u) noexcept(
       noexcept(T(std::declval<U>())))
       : storage_{in_place, std::forward<U>(u)} {}
-  template <
-      typename U = T,
-      std::enable_if_t<std::is_constructible<T, U&&>::value>* = nullptr,
-      std::enable_if_t<
-          !std::is_same<Indestructible<T>, remove_cvref_t<U>>::value>* =
-          nullptr,
-      std::enable_if_t<std::is_convertible<U&&, T>::value>* = nullptr>
-  /* implicit */ constexpr Indestructible(U&& u) noexcept(
+  template <typename U = T,
+            std::enable_if_t<std::is_constructible<T, U &&>::value> * = nullptr,
+            std::enable_if_t<!std::is_same<
+                Indestructible<T>, remove_cvref_t<U>>::value> * = nullptr,
+            std::enable_if_t<std::is_convertible<U &&, T>::value> * = nullptr>
+  /* implicit */ constexpr Indestructible(U &&u) noexcept(
       noexcept(T(std::declval<U>())))
       : storage_{in_place, std::forward<U>(u)} {}
 
   template <typename... Args, typename = decltype(T(std::declval<Args>()...))>
-  explicit constexpr Indestructible(Args&&... args) noexcept(
+  explicit constexpr Indestructible(Args &&...args) noexcept(
       noexcept(T(std::declval<Args>()...)))
       : storage_{in_place, std::forward<Args>(args)...} {}
-  template <
-      typename U,
-      typename... Args,
-      typename = decltype(T(
-          std::declval<std::initializer_list<U>&>(), std::declval<Args>()...))>
-  explicit constexpr Indestructible(std::initializer_list<U> il, Args... args) noexcept(
-      noexcept(T(
-          std::declval<std::initializer_list<U>&>(), std::declval<Args>()...)))
+  template <typename U, typename... Args,
+            typename = decltype(T(std::declval<std::initializer_list<U> &>(),
+                                  std::declval<Args>()...))>
+  explicit constexpr Indestructible(
+      std::initializer_list<U> il,
+      Args... args) noexcept(noexcept(T(std::declval<std::initializer_list<U>
+                                                         &>(),
+                                        std::declval<Args>()...)))
       : storage_{in_place, il, std::forward<Args>(args)...} {}
 
   template <typename Factory>
-  constexpr Indestructible(factory_constructor_t, Factory&& factory) noexcept(
-      noexcept(factory()))
+  constexpr Indestructible(factory_constructor_t,
+                           Factory &&factory) noexcept(noexcept(factory()))
       : storage_(factory_constructor, std::forward<Factory>(factory)) {}
 
-  Indestructible(Indestructible const&) = delete;
-  Indestructible& operator=(Indestructible const&) = delete;
+  Indestructible(Indestructible const &) = delete;
+  Indestructible &operator=(Indestructible const &) = delete;
 
-  T* get() noexcept { return reinterpret_cast<T*>(&storage_.bytes); }
-  T const* get() const noexcept {
-    return reinterpret_cast<T const*>(&storage_.bytes);
+  T *get() noexcept { return reinterpret_cast<T *>(&storage_.bytes); }
+  T const *get() const noexcept {
+    return reinterpret_cast<T const *>(&storage_.bytes);
   }
-  T& operator*() noexcept { return *get(); }
-  T const& operator*() const noexcept { return *get(); }
-  T* operator->() noexcept { return get(); }
-  T const* operator->() const noexcept { return get(); }
+  T &operator*() noexcept { return *get(); }
+  T const &operator*() const noexcept { return *get(); }
+  T *operator->() noexcept { return get(); }
+  T const *operator->() const noexcept { return get(); }
 
-  /* implicit */ operator T&() noexcept { return *get(); }
+  /* implicit */ operator T &() noexcept { return *get(); }
   /* implicit */ operator T const &() const noexcept { return *get(); }
 
- private:
+private:
   struct Storage {
     aligned_storage_for_t<T> bytes;
 
     template <typename... Args, typename = decltype(T(std::declval<Args>()...))>
-    explicit constexpr Storage(in_place_t, Args&&... args) noexcept(
+    explicit constexpr Storage(in_place_t, Args &&...args) noexcept(
         noexcept(T(std::declval<Args>()...))) {
       ::new (&bytes) T(std::forward<Args>(args)...);
     }
 
     template <typename Factory>
-    constexpr Storage(factory_constructor_t, Factory factory) noexcept(
-        noexcept(factory())) {
+    constexpr Storage(factory_constructor_t,
+                      Factory factory) noexcept(noexcept(factory())) {
       ::new (&bytes) T(factory());
     }
   };

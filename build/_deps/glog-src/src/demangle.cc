@@ -36,7 +36,7 @@
 
 #include <cstdio>  // for NULL
 
-#include "demangle.h"
+#include "glog_demangle.h"
 #include "utilities.h"
 
 #if defined(GLOG_OS_WINDOWS)

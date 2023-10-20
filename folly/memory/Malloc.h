@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,7 +41,7 @@
  *
  * @file memory/Malloc.h
  */
-#if (defined(USE_JEMALLOC) || defined(FOLLY_USE_JEMALLOC)) && \
+#if (defined(USE_JEMALLOC) || defined(FOLLY_USE_JEMALLOC)) &&                  \
     !defined(FOLLY_SANITIZE)
 // We have JEMalloc, so use it.
 #else
@@ -46,7 +53,7 @@
 #endif
 #endif
 
-#include <folly/lang/Exception.h> /* nolint */
+#include <folly/lang/Exception.h>           /* nolint */
 #include <folly/memory/detail/MallocImpl.h> /* nolint */
 
 #include <cassert>
@@ -65,13 +72,12 @@ namespace detail {
 #if FOLLY_CPLUSPLUS >= 202002L
 // Faster "static bool" using a tri-state atomic. The flag is identified by the
 // Initializer functor argument.
-template <class Initializer>
-class FastStaticBool {
- public:
+template <class Initializer> class FastStaticBool {
+public:
   // std::memory_order_relaxed can be used if it is not necessary to synchronize
   // with the invocation of the initializer, only the result is used.
-  FOLLY_ALWAYS_INLINE static bool get(
-      std::memory_order mo = std::memory_order_acquire) noexcept {
+  FOLLY_ALWAYS_INLINE static bool
+  get(std::memory_order mo = std::memory_order_acquire) noexcept {
     auto f = flag_.load(mo);
     if (FOLLY_LIKELY(f != 0)) {
       return f > 0;
@@ -79,7 +85,7 @@ class FastStaticBool {
     return getSlow(); // Tail call.
   }
 
- private:
+private:
   FOLLY_NOINLINE FOLLY_COLD FOLLY_EXPORT static bool getSlow() noexcept {
     static bool rv = [] {
       auto v = Initializer{}();
@@ -97,11 +103,10 @@ constinit std::atomic<signed char> FastStaticBool<Initializer>::flag_{};
 #else // FOLLY_CPLUSPLUS >= 202002L
 // Fallback on native static if std::atomic does not have a constexpr
 // constructor.
-template <class Initializer>
-class FastStaticBool {
- public:
-  FOLLY_ALWAYS_INLINE static bool get(
-      std::memory_order = std::memory_order_acquire) noexcept {
+template <class Initializer> class FastStaticBool {
+public:
+  FOLLY_ALWAYS_INLINE static bool
+  get(std::memory_order = std::memory_order_acquire) noexcept {
     static const bool rv = Initializer{}();
     return rv;
   }
@@ -113,7 +118,7 @@ class FastStaticBool {
 #if defined(__GNUC__)
 // This is for checked malloc-like functions (returns non-null pointer
 // which cannot alias any outstanding pointer).
-#define FOLLY_MALLOC_CHECKED_MALLOC \
+#define FOLLY_MALLOC_CHECKED_MALLOC                                            \
   __attribute__((__returns_nonnull__, __malloc__))
 #else
 #define FOLLY_MALLOC_CHECKED_MALLOC
@@ -128,14 +133,10 @@ class FastStaticBool {
  */
 #if defined(FOLLY_ASSUME_NO_JEMALLOC) || defined(FOLLY_SANITIZE)
 #define FOLLY_CONSTANT_USING_JE_MALLOC 1
-inline bool usingJEMalloc() noexcept {
-  return false;
-}
+inline bool usingJEMalloc() noexcept { return false; }
 #elif defined(USE_JEMALLOC) && !defined(FOLLY_SANITIZE)
 #define FOLLY_CONSTANT_USING_JE_MALLOC 1
-inline bool usingJEMalloc() noexcept {
-  return true;
-}
+inline bool usingJEMalloc() noexcept { return true; }
 #else
 #define FOLLY_CONSTANT_USING_JE_MALLOC 0
 FOLLY_EXPORT inline bool usingJEMalloc() noexcept {
@@ -162,25 +163,21 @@ FOLLY_EXPORT inline bool usingJEMalloc() noexcept {
 
       // "volatile" because gcc optimizes out the reads from *counter, because
       // it "knows" malloc doesn't modify global state...
-      /* nolint */ volatile uint64_t* counter;
-      size_t counterLen = sizeof(uint64_t*);
+      /* nolint */ volatile uint64_t *counter;
+      size_t counterLen = sizeof(uint64_t *);
 
-      if (mallctl(
-              "thread.allocatedp",
-              static_cast<void*>(&counter),
-              &counterLen,
-              nullptr,
-              0) != 0) {
+      if (mallctl("thread.allocatedp", static_cast<void *>(&counter),
+                  &counterLen, nullptr, 0) != 0) {
         return false;
       }
 
-      if (counterLen != sizeof(uint64_t*)) {
+      if (counterLen != sizeof(uint64_t *)) {
         return false;
       }
 
       uint64_t origAllocated = *counter;
 
-      static void* volatile ptr = malloc(1);
+      static void *volatile ptr = malloc(1);
       if (!ptr) {
         // wtf, failing to allocate 1 byte
         return false;
@@ -203,7 +200,7 @@ FOLLY_EXPORT inline bool usingJEMalloc() noexcept {
  *
  * @return bool
  */
-inline bool getTCMallocNumericProperty(const char* name, size_t* out) noexcept {
+inline bool getTCMallocNumericProperty(const char *name, size_t *out) noexcept {
   return MallocExtension_Internal_GetNumericProperty(name, strlen(name), out);
 }
 
@@ -216,14 +213,10 @@ inline bool getTCMallocNumericProperty(const char* name, size_t* out) noexcept {
  */
 #if defined(FOLLY_ASSUME_NO_TCMALLOC) || defined(FOLLY_SANITIZE)
 #define FOLLY_CONSTANT_USING_TC_MALLOC 1
-inline bool usingTCMalloc() noexcept {
-  return false;
-}
+inline bool usingTCMalloc() noexcept { return false; }
 #elif defined(USE_TCMALLOC) && !defined(FOLLY_SANITIZE)
 #define FOLLY_CONSTANT_USING_TC_MALLOC 1
-inline bool usingTCMalloc() noexcept {
-  return true;
-}
+inline bool usingTCMalloc() noexcept { return true; }
 #else
 #define FOLLY_CONSTANT_USING_TC_MALLOC 0
 FOLLY_EXPORT inline bool usingTCMalloc() noexcept {
@@ -239,7 +232,7 @@ FOLLY_EXPORT inline bool usingTCMalloc() noexcept {
       size_t before_bytes = 0;
       getTCMallocNumericProperty(kAllocBytes, &before_bytes);
 
-      static void* volatile ptr = malloc(1);
+      static void *volatile ptr = malloc(1);
       if (!ptr) {
         // wtf, failing to allocate 1 byte
         return false;
@@ -275,18 +268,14 @@ FOLLY_EXPORT inline bool usingJEMallocOrTCMalloc() noexcept {
  *
  * @return bool
  */
-inline bool canSdallocx() noexcept {
-  return detail::usingJEMallocOrTCMalloc();
-}
+inline bool canSdallocx() noexcept { return detail::usingJEMallocOrTCMalloc(); }
 
 /**
  * @brief Return whether nallocx() is supported by the current allocator.
  *
  * @return bool
  */
-inline bool canNallocx() noexcept {
-  return detail::usingJEMallocOrTCMalloc();
-}
+inline bool canNallocx() noexcept { return detail::usingJEMallocOrTCMalloc(); }
 
 /**
  * @brief Return the same size class values as nallocx from jemalloc.
@@ -407,8 +396,8 @@ static const size_t jemallocMinInPlaceExpandable = 4096;
  *
  * @return void* pointer to allocated buffer
  */
-inline void* checkedMalloc(size_t size) {
-  void* p = malloc(size);
+inline void *checkedMalloc(size_t size) {
+  void *p = malloc(size);
   if (!p) {
     throw_exception<std::bad_alloc>();
   }
@@ -426,8 +415,8 @@ inline void* checkedMalloc(size_t size) {
  *
  * @return void* pointer to allocated buffer
  */
-inline void* checkedCalloc(size_t n, size_t size) {
-  void* p = calloc(n, size);
+inline void *checkedCalloc(size_t n, size_t size) {
+  void *p = calloc(n, size);
   if (!p) {
     throw_exception<std::bad_alloc>();
   }
@@ -445,8 +434,8 @@ inline void* checkedCalloc(size_t n, size_t size) {
  *
  * @return pointer to reallocated buffer
  */
-inline void* checkedRealloc(void* ptr, size_t size) {
-  void* p = realloc(ptr, size);
+inline void *checkedRealloc(void *ptr, size_t size) {
+  void *p = realloc(ptr, size);
   if (!p) {
     throw_exception<std::bad_alloc>();
   }
@@ -464,7 +453,7 @@ inline void* checkedRealloc(void* ptr, size_t size) {
  * @param ptr Pointer to the buffer to free
  * @param size Size to free
  */
-inline void sizedFree(void* ptr, size_t size) {
+inline void sizedFree(void *ptr, size_t size) {
   if (canSdallocx()) {
     sdallocx(ptr, size, 0);
   } else {
@@ -492,11 +481,9 @@ inline void sizedFree(void* ptr, size_t size) {
  *
  * @return pointer to realloc'ed buffer
  */
-FOLLY_MALLOC_CHECKED_MALLOC FOLLY_NOINLINE inline void* smartRealloc(
-    void* p,
-    const size_t currentSize,
-    const size_t currentCapacity,
-    const size_t newCapacity) {
+FOLLY_MALLOC_CHECKED_MALLOC FOLLY_NOINLINE inline void *
+smartRealloc(void *p, const size_t currentSize, const size_t currentCapacity,
+             const size_t newCapacity) {
   assert(p);
   assert(currentSize <= currentCapacity && currentCapacity < newCapacity);
 

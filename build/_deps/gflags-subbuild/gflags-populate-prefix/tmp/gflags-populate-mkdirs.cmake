@@ -4,19 +4,19 @@
 cmake_minimum_required(VERSION 3.5)
 
 file(MAKE_DIRECTORY
-  "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-src"
-  "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-build"
-  "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix"
-  "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/tmp"
-  "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp"
-  "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src"
-  "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp"
+  "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src"
+  "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build"
+  "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix"
+  "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/tmp"
+  "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp"
+  "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src"
+  "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp"
 )
 
 set(configSubDirs )
 foreach(subDir IN LISTS configSubDirs)
-    file(MAKE_DIRECTORY "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/${subDir}")
+    file(MAKE_DIRECTORY "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/${subDir}")
 endforeach()
 if(cfgdir)
-  file(MAKE_DIRECTORY "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp${cfgdir}") # cfgdir has leading slash
+  file(MAKE_DIRECTORY "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp${cfgdir}") # cfgdir has leading slash
 endif()

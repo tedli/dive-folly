@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -52,14 +59,12 @@ using MaskType = uint32_t;
 constexpr unsigned kMaskSpacing = 1;
 #endif
 
-template <unsigned BitCount>
-struct FullMask {
+template <unsigned BitCount> struct FullMask {
   static constexpr MaskType value =
       (FullMask<BitCount - 1>::value << kMaskSpacing) + 1;
 };
 
-template <>
-struct FullMask<1> : std::integral_constant<MaskType, 1> {};
+template <> struct FullMask<1> : std::integral_constant<MaskType, 1> {};
 
 #if FOLLY_ARM
 // Mask iteration is different for ARM because that is the only platform
@@ -71,7 +76,7 @@ class SparseMaskIter {
 
   uint32_t interleavedMask_;
 
- public:
+public:
   explicit SparseMaskIter(MaskType mask)
       : interleavedMask_{static_cast<uint32_t>(((mask >> 32) << 2) | mask)} {}
 
@@ -91,10 +96,10 @@ class DenseMaskIter {
 
   std::size_t count_;
   unsigned index_;
-  uint8_t const* tags_;
+  uint8_t const *tags_;
 
- public:
-  explicit DenseMaskIter(uint8_t const* tags, MaskType mask) {
+public:
+  explicit DenseMaskIter(uint8_t const *tags, MaskType mask) {
     if (mask == 0) {
       count_ = 0;
     } else {
@@ -128,7 +133,7 @@ class DenseMaskIter {
 class SparseMaskIter {
   MaskType mask_;
 
- public:
+public:
   explicit SparseMaskIter(MaskType mask) : mask_{mask} {}
 
   bool hasNext() { return mask_ != 0; }
@@ -146,8 +151,8 @@ class DenseMaskIter {
   MaskType mask_;
   unsigned index_{0};
 
- public:
-  explicit DenseMaskIter(uint8_t const*, MaskType mask) : mask_{mask} {}
+public:
+  explicit DenseMaskIter(uint8_t const *, MaskType mask) : mask_{mask} {}
 
   bool hasNext() { return mask_ != 0; }
 
@@ -173,7 +178,7 @@ class MaskRangeIter {
   MaskType mask_;
   unsigned shift_{0};
 
- public:
+public:
   explicit MaskRangeIter(MaskType mask) {
     // If kMaskSpacing is > 1 then there will be empty bits even for
     // contiguous ranges.  Fill them in.
@@ -199,7 +204,7 @@ class MaskRangeIter {
 class LastOccupiedInMask {
   MaskType mask_;
 
- public:
+public:
   explicit LastOccupiedInMask(MaskType mask) : mask_{mask} {}
 
   bool hasIndex() const { return mask_ != 0; }
@@ -216,7 +221,7 @@ class LastOccupiedInMask {
 class FirstEmptyInMask {
   MaskType mask_;
 
- public:
+public:
   explicit FirstEmptyInMask(MaskType mask) : mask_{mask} {}
 
   bool hasIndex() const { return mask_ != 0; }

@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,7 +44,7 @@
 #endif
 
 #ifdef __APPLE__
-#include <Availability.h> // @manual
+#include <Availability.h>       // @manual
 #include <AvailabilityMacros.h> // @manual
 #include <TargetConditionals.h> // @manual
 #endif

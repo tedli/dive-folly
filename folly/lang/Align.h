@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -48,10 +55,8 @@ constexpr std::size_t register_pass_max_size = kMscVer ? 8u : 16u;
 template <typename T>
 constexpr bool is_register_pass_v =
     (sizeof(T) <= register_pass_max_size) && is_trivially_copyable_v<T>;
-template <typename T>
-constexpr bool is_register_pass_v<T&> = true;
-template <typename T>
-constexpr bool is_register_pass_v<T&&> = true;
+template <typename T> constexpr bool is_register_pass_v<T &> = true;
+template <typename T> constexpr bool is_register_pass_v<T &&> = true;
 
 //  has_extended_alignment
 //
@@ -65,14 +70,13 @@ constexpr bool is_register_pass_v<T&&> = true;
 //  Currently, very heuristical - only non-mobile 64-bit linux gets the extended
 //  alignment treatment. Theoretically, this could be tuned better.
 constexpr bool has_extended_alignment =
-    kIsLinux && sizeof(void*) >= sizeof(std::uint64_t);
+    kIsLinux && sizeof(void *) >= sizeof(std::uint64_t);
 
 namespace detail {
 
 // Implemented this way because of a bug in Clang for ARMv7, which gives the
 // wrong result for `alignof` a `union` with a field of each scalar type.
-template <typename... Ts>
-struct max_align_t_ {
+template <typename... Ts> struct max_align_t_ {
   static constexpr std::size_t value() {
     std::size_t const values[] = {0u, alignof(Ts)...};
     std::size_t r = 0u;
@@ -82,21 +86,10 @@ struct max_align_t_ {
     return r;
   }
 };
-using max_align_v_ = max_align_t_<
-    long double,
-    double,
-    float,
-    long long int,
-    long int,
-    int,
-    short int,
-    bool,
-    char,
-    char16_t,
-    char32_t,
-    wchar_t,
-    void*,
-    std::max_align_t>;
+using max_align_v_ =
+    max_align_t_<long double, double, float, long long int, long int, int,
+                 short int, bool, char, char16_t, char32_t, wchar_t, void *,
+                 std::max_align_t>;
 
 } // namespace detail
 
@@ -166,9 +159,9 @@ static_assert(hardware_constructive_interference_size >= max_align_v, "math?");
 //  A value corresponding to hardware_constructive_interference_size but which
 //  may be used with alignas, since hardware_constructive_interference_size may
 //  be too large on some platforms to be used with alignas.
-constexpr std::size_t cacheline_align_v = has_extended_alignment
-    ? hardware_constructive_interference_size
-    : max_align_v;
+constexpr std::size_t cacheline_align_v =
+    has_extended_alignment ? hardware_constructive_interference_size
+                           : max_align_v;
 struct alignas(cacheline_align_v) cacheline_align_t {};
 
 } // namespace folly

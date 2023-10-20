@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,49 +41,45 @@ namespace detail {
  *  StringPieceLite is here to break that dependency cycle.
  */
 class StringPieceLite {
- public:
-  StringPieceLite(const char* b, const char* e) : b_(b), e_(e) {}
+public:
+  StringPieceLite(const char *b, const char *e) : b_(b), e_(e) {}
   template <typename Range>
-  /* implicit */ StringPieceLite(const Range& r)
+  /* implicit */ StringPieceLite(const Range &r)
       : StringPieceLite(r.data(), r.data() + r.size()) {}
-  const char* data() const { return b_; }
-  const char* begin() const { return b_; }
-  const char* end() const { return e_; }
+  const char *data() const { return b_; }
+  const char *begin() const { return b_; }
+  const char *end() const { return e_; }
   size_t size() const { return size_t(e_ - b_); }
   bool empty() const { return size() == 0; }
-  const char& operator[](size_t i) const {
+  const char &operator[](size_t i) const {
     assert(size() > i);
     return b_[i];
   }
-  template <typename Range>
-  explicit operator Range() const {
+  template <typename Range> explicit operator Range() const {
     return Range(begin(), end());
   }
 
- private:
-  const char* b_;
-  const char* e_;
+private:
+  const char *b_;
+  const char *e_;
 };
 
-inline size_t qfind_first_byte_of_std(
-    const StringPieceLite haystack, const StringPieceLite needles) {
-  auto ret = std::find_first_of(
-      haystack.begin(),
-      haystack.end(),
-      needles.begin(),
-      needles.end(),
-      [](char a, char b) { return a == b; });
+inline size_t qfind_first_byte_of_std(const StringPieceLite haystack,
+                                      const StringPieceLite needles) {
+  auto ret =
+      std::find_first_of(haystack.begin(), haystack.end(), needles.begin(),
+                         needles.end(), [](char a, char b) { return a == b; });
   return ret == haystack.end() ? std::string::npos : ret - haystack.begin();
 }
 
-size_t qfind_first_byte_of_bitset(
-    const StringPieceLite haystack, const StringPieceLite needles);
+size_t qfind_first_byte_of_bitset(const StringPieceLite haystack,
+                                  const StringPieceLite needles);
 
-size_t qfind_first_byte_of_byteset(
-    const StringPieceLite haystack, const StringPieceLite needles);
+size_t qfind_first_byte_of_byteset(const StringPieceLite haystack,
+                                   const StringPieceLite needles);
 
-inline size_t qfind_first_byte_of_nosse(
-    const StringPieceLite haystack, const StringPieceLite needles) {
+inline size_t qfind_first_byte_of_nosse(const StringPieceLite haystack,
+                                        const StringPieceLite needles) {
   if (FOLLY_UNLIKELY(needles.empty() || haystack.empty())) {
     return std::string::npos;
   }

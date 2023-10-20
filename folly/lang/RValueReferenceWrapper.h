@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,9 +45,8 @@ namespace folly {
  *
  * @seealso folly::rref
  */
-template <class T>
-class rvalue_reference_wrapper {
- public:
+template <class T> class rvalue_reference_wrapper {
+public:
   using type = T;
 
   /**
@@ -53,18 +59,18 @@ class rvalue_reference_wrapper {
    * Explicit constructor to make it harder to accidentally create a dangling
    * reference to a temporary.
    */
-  explicit rvalue_reference_wrapper(T&& ref) noexcept
+  explicit rvalue_reference_wrapper(T &&ref) noexcept
       : ptr_(std::addressof(ref)) {}
 
   /**
    * No construction from lvalue reference. Use std::move.
    */
-  explicit rvalue_reference_wrapper(T&) noexcept = delete;
+  explicit rvalue_reference_wrapper(T &) noexcept = delete;
 
   /**
    * Destructive move construction.
    */
-  rvalue_reference_wrapper(rvalue_reference_wrapper<T>&& other) noexcept
+  rvalue_reference_wrapper(rvalue_reference_wrapper<T> &&other) noexcept
       : ptr_(other.ptr_) {
     other.ptr_ = nullptr;
   }
@@ -72,8 +78,8 @@ class rvalue_reference_wrapper {
   /**
    * Destructive move assignment.
    */
-  rvalue_reference_wrapper& operator=(
-      rvalue_reference_wrapper&& other) noexcept {
+  rvalue_reference_wrapper &
+  operator=(rvalue_reference_wrapper &&other) noexcept {
     ptr_ = other.ptr_;
     other.ptr_ = nullptr;
     return *this;
@@ -82,18 +88,18 @@ class rvalue_reference_wrapper {
   /**
    * Implicit conversion to raw reference. Destructive.
    */
-  /* implicit */ operator T&&() && noexcept {
-    return static_cast<rvalue_reference_wrapper&&>(*this).get();
+  /* implicit */ operator T &&() && noexcept {
+    return static_cast<rvalue_reference_wrapper &&>(*this).get();
   }
 
   /**
    * Explicit unwrap. Destructive.
    */
-  T&& get() && noexcept {
+  T &&get() && noexcept {
     assert(valid());
-    T& ref = *ptr_;
+    T &ref = *ptr_;
     ptr_ = nullptr;
-    return static_cast<T&&>(ref);
+    return static_cast<T &&>(ref);
   }
 
   /**
@@ -101,9 +107,9 @@ class rvalue_reference_wrapper {
    * the wrapped reference points to a callable object. Destructive.
    */
   template <class... Args>
-  decltype(auto) operator()(Args&&... args) && noexcept(
+  decltype(auto) operator()(Args &&...args) && noexcept(
       noexcept(std::declval<T>()(std::forward<Args>(args)...))) {
-    return static_cast<rvalue_reference_wrapper&&>(*this).get()(
+    return static_cast<rvalue_reference_wrapper &&>(*this).get()(
         std::forward<Args>(args)...);
   }
 
@@ -112,13 +118,14 @@ class rvalue_reference_wrapper {
    */
   bool valid() const noexcept { return ptr_ != nullptr; }
 
- private:
+private:
   // Disallow copy construction and copy assignment, to make it harder to
   // accidentally use an rvalue reference multiple times.
-  rvalue_reference_wrapper(const rvalue_reference_wrapper&) = delete;
-  rvalue_reference_wrapper& operator=(const rvalue_reference_wrapper&) = delete;
+  rvalue_reference_wrapper(const rvalue_reference_wrapper &) = delete;
+  rvalue_reference_wrapper &
+  operator=(const rvalue_reference_wrapper &) = delete;
 
-  T* ptr_;
+  T *ptr_;
 };
 
 /**
@@ -143,10 +150,8 @@ class rvalue_reference_wrapper {
  *     f(std::move(ref));
  *   }
  */
-template <typename T>
-rvalue_reference_wrapper<T> rref(T&& value) noexcept {
+template <typename T> rvalue_reference_wrapper<T> rref(T &&value) noexcept {
   return rvalue_reference_wrapper<T>(std::move(value));
 }
-template <typename T>
-rvalue_reference_wrapper<T> rref(T&) noexcept = delete;
+template <typename T> rvalue_reference_wrapper<T> rref(T &) noexcept = delete;
 } // namespace folly

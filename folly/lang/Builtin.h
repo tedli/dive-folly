@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +31,7 @@
 #if FOLLY_HAS_BUILTIN(__builtin_unpredictable)
 #define FOLLY_BUILTIN_UNPREDICTABLE(exp) __builtin_unpredictable(exp)
 #else
-#define folly_builtin_unpredictable(exp) \
+#define folly_builtin_unpredictable(exp)                                       \
   ::folly::builtin::detail::predict_<long long>(exp)
 #endif
 
@@ -34,7 +41,7 @@
 #if FOLLY_HAS_BUILTIN(__builtin_expect)
 #define FOLLY_BUILTIN_EXPECT(exp, c) __builtin_expect(static_cast<bool>(exp), c)
 #else
-#define FOLLY_BUILTIN_EXPECT(exp, c) \
+#define FOLLY_BUILTIN_EXPECT(exp, c)                                           \
   ::folly::builtin::detail::predict_<long>(exp, c)
 #endif
 
@@ -42,10 +49,10 @@
 //
 //  mimic: __builtin_expect_with_probability, gcc/clang
 #if FOLLY_HAS_BUILTIN(__builtin_expect_with_probability)
-#define FOLLY_BUILTIN_EXPECT_WITH_PROBABILITY(exp, c, p) \
+#define FOLLY_BUILTIN_EXPECT_WITH_PROBABILITY(exp, c, p)                       \
   __builtin_expect_with_probability(exp, c, p)
 #else
-#define FOLLY_BUILTIN_EXPECT_WITH_PROBABILITY(exp, c, p) \
+#define FOLLY_BUILTIN_EXPECT_WITH_PROBABILITY(exp, c, p)                       \
   ::folly::builtin::detail::predict_<long>(exp, c, p)
 #endif
 
@@ -54,17 +61,15 @@ namespace builtin {
 
 namespace detail {
 
-template <typename V>
-struct predict_constinit_ {
-  FOLLY_ERASE FOLLY_CONSTEVAL /* implicit */ predict_constinit_(
-      V /* anonymous */) noexcept {}
+template <typename V> struct predict_constinit_ {
+  FOLLY_ERASE FOLLY_CONSTEVAL /* implicit */
+  predict_constinit_(V /* anonymous */) noexcept {}
 };
 
 template <typename E>
-FOLLY_ERASE constexpr E predict_(
-    E exp,
-    predict_constinit_<long> /* anonymous */ = 0,
-    predict_constinit_<double> /* anonymous */ = 0.) {
+FOLLY_ERASE constexpr E
+predict_(E exp, predict_constinit_<long> /* anonymous */ = 0,
+         predict_constinit_<double> /* anonymous */ = 0.) {
   return exp;
 }
 

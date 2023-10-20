@@ -22,14 +22,14 @@ function(check_file_hash has_hash hash_is_good)
   set("${has_hash}" TRUE PARENT_SCOPE)
 
   message(STATUS "verifying file...
-       file='C:/Users/lizhen/Documents/Development/folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip'")
+       file='/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip'")
 
-  file("SHA256" "C:/Users/lizhen/Documents/Development/folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip" actual_value)
+  file("SHA256" "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip" actual_value)
 
   if(NOT "${actual_value}" STREQUAL "122fb6b712808ef43fbf80f75c52a21c9760683dae470154f02bddfc61135022")
     set("${hash_is_good}" FALSE PARENT_SCOPE)
     message(STATUS "SHA256 hash of
-    C:/Users/lizhen/Documents/Development/folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip
+    /home/lizhen/Documents/Development/dive-folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip
   does not match expected value
     expected: '122fb6b712808ef43fbf80f75c52a21c9760683dae470154f02bddfc61135022'
       actual: '${actual_value}'")
@@ -71,7 +71,7 @@ function(sleep_before_download attempt)
   execute_process(COMMAND "${CMAKE_COMMAND}" -E sleep "${sleep_seconds}")
 endfunction()
 
-if("C:/Users/lizhen/Documents/Development/folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip" STREQUAL "")
+if("/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip" STREQUAL "")
   message(FATAL_ERROR "LOCAL can't be empty")
 endif()
 
@@ -79,32 +79,32 @@ if("https://github.com/google/glog/archive/v0.6.0.zip" STREQUAL "")
   message(FATAL_ERROR "REMOTE can't be empty")
 endif()
 
-if(EXISTS "C:/Users/lizhen/Documents/Development/folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip")
+if(EXISTS "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip")
   check_file_hash(has_hash hash_is_good)
   if(has_hash)
     if(hash_is_good)
       message(STATUS "File already exists and hash match (skip download):
-  file='C:/Users/lizhen/Documents/Development/folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip'
+  file='/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip'
   SHA256='122fb6b712808ef43fbf80f75c52a21c9760683dae470154f02bddfc61135022'"
       )
       return()
     else()
       message(STATUS "File already exists but hash mismatch. Removing...")
-      file(REMOVE "C:/Users/lizhen/Documents/Development/folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip")
+      file(REMOVE "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip")
     endif()
   else()
     message(STATUS "File already exists but no hash specified (use URL_HASH):
-  file='C:/Users/lizhen/Documents/Development/folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip'
+  file='/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip'
 Old file will be removed and new file downloaded from URL."
     )
-    file(REMOVE "C:/Users/lizhen/Documents/Development/folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip")
+    file(REMOVE "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip")
   endif()
 endif()
 
 set(retry_number 5)
 
 message(STATUS "Downloading...
-   dst='C:/Users/lizhen/Documents/Development/folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip'
+   dst='/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip'
    timeout='none'
    inactivity timeout='none'"
 )
@@ -126,7 +126,7 @@ foreach(i RANGE ${retry_number})
 
       file(
         DOWNLOAD
-        "${url}" "C:/Users/lizhen/Documents/Development/folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip"
+        "${url}" "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip"
         SHOW_PROGRESS
         # no TIMEOUT
         # no INACTIVITY_TIMEOUT
@@ -143,7 +143,7 @@ foreach(i RANGE ${retry_number})
         check_file_hash(has_hash hash_is_good)
         if(has_hash AND NOT hash_is_good)
           message(STATUS "Hash mismatch, removing...")
-          file(REMOVE "C:/Users/lizhen/Documents/Development/folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip")
+          file(REMOVE "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-subbuild/glog-populate-prefix/src/v0.6.0.zip")
         else()
           message(STATUS "Downloading... done")
           return()

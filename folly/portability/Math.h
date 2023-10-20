@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -54,13 +61,9 @@ constexpr long double nextafter(long double x, long double y) {
 
 #else // __GNUC__
 
-inline float nextafter(float x, float y) {
-  return ::nextafterf(x, y);
-}
+inline float nextafter(float x, float y) { return ::nextafterf(x, y); }
 
-inline double nextafter(double x, double y) {
-  return ::nextafter(x, y);
-}
+inline double nextafter(double x, double y) { return ::nextafter(x, y); }
 
 inline long double nextafter(long double x, long double y) {
   return ::nextafterl(x, y);

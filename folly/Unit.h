@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,32 +41,26 @@ namespace folly {
 /// possible to construct a value of this type, but it is always the same value
 /// every time, so it is uninteresting.
 struct Unit {
-  constexpr bool operator==(const Unit& /*other*/) const { return true; }
-  constexpr bool operator!=(const Unit& /*other*/) const { return false; }
+  constexpr bool operator==(const Unit & /*other*/) const { return true; }
+  constexpr bool operator!=(const Unit & /*other*/) const { return false; }
 };
 
 constexpr Unit unit{};
 
-template <typename T>
-struct lift_unit {
+template <typename T> struct lift_unit {
   using type = T;
 };
-template <>
-struct lift_unit<void> {
+template <> struct lift_unit<void> {
   using type = Unit;
 };
-template <typename T>
-using lift_unit_t = typename lift_unit<T>::type;
+template <typename T> using lift_unit_t = typename lift_unit<T>::type;
 
-template <typename T>
-struct drop_unit {
+template <typename T> struct drop_unit {
   using type = T;
 };
-template <>
-struct drop_unit<Unit> {
+template <> struct drop_unit<Unit> {
   using type = void;
 };
-template <typename T>
-using drop_unit_t = typename drop_unit<T>::type;
+template <typename T> using drop_unit_t = typename drop_unit<T>::type;
 
 } // namespace folly

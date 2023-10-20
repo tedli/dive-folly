@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,33 +56,31 @@ namespace folly {
  *    }
  *    // ... *ptr is not protected
  */
-template <template <typename> class Atom>
-class hazptr_holder {
-  hazptr_rec<Atom>* hprec_;
+template <template <typename> class Atom> class hazptr_holder {
+  hazptr_rec<Atom> *hprec_;
 
-  template <uint8_t M, template <typename> class A>
-  friend class hazptr_local;
-  friend hazptr_holder<Atom> make_hazard_pointer<Atom>(hazptr_domain<Atom>&);
+  template <uint8_t M, template <typename> class A> friend class hazptr_local;
+  friend hazptr_holder<Atom> make_hazard_pointer<Atom>(hazptr_domain<Atom> &);
   template <uint8_t M, template <typename> class A>
   friend hazptr_array<M, A> make_hazard_pointer_array();
 
   /** Private constructor used by make_hazard_pointer and
       make_hazard_pointer_array */
-  FOLLY_ALWAYS_INLINE explicit hazptr_holder(hazptr_rec<Atom>* hprec)
+  FOLLY_ALWAYS_INLINE explicit hazptr_holder(hazptr_rec<Atom> *hprec)
       : hprec_(hprec) {}
 
- public:
+public:
   /** Default empty constructor */
   FOLLY_ALWAYS_INLINE hazptr_holder() noexcept : hprec_(nullptr) {}
 
   /** For nonempty construction use make_hazard_pointer. */
 
   /** Move constructor */
-  FOLLY_ALWAYS_INLINE hazptr_holder(hazptr_holder&& rhs) noexcept
+  FOLLY_ALWAYS_INLINE hazptr_holder(hazptr_holder &&rhs) noexcept
       : hprec_(std::exchange(rhs.hprec_, nullptr)) {}
 
-  hazptr_holder(const hazptr_holder&) = delete;
-  hazptr_holder& operator=(const hazptr_holder&) = delete;
+  hazptr_holder(const hazptr_holder &) = delete;
+  hazptr_holder &operator=(const hazptr_holder &) = delete;
 
   /** Destructor */
   FOLLY_ALWAYS_INLINE ~hazptr_holder() {
@@ -94,7 +99,7 @@ class hazptr_holder {
   }
 
   /** Move operator */
-  FOLLY_ALWAYS_INLINE hazptr_holder& operator=(hazptr_holder&& rhs) noexcept {
+  FOLLY_ALWAYS_INLINE hazptr_holder &operator=(hazptr_holder &&rhs) noexcept {
     /* Self-move is a no-op.  */
     if (FOLLY_LIKELY(this != &rhs)) {
       this->~hazptr_holder();
@@ -108,13 +113,13 @@ class hazptr_holder {
 
   /** try_protect */
   template <typename T>
-  FOLLY_ALWAYS_INLINE bool try_protect(T*& ptr, const Atom<T*>& src) noexcept {
-    return try_protect(ptr, src, [](T* t) { return t; });
+  FOLLY_ALWAYS_INLINE bool try_protect(T *&ptr, const Atom<T *> &src) noexcept {
+    return try_protect(ptr, src, [](T *t) { return t; });
   }
 
   template <typename T, typename Func>
-  FOLLY_ALWAYS_INLINE bool try_protect(
-      T*& ptr, const Atom<T*>& src, Func f) noexcept {
+  FOLLY_ALWAYS_INLINE bool try_protect(T *&ptr, const Atom<T *> &src,
+                                       Func f) noexcept {
     /* Filtering the protected pointer through function Func is useful
        for stealing bits of the pointer word */
     auto p = ptr;
@@ -131,13 +136,13 @@ class hazptr_holder {
 
   /** protect */
   template <typename T>
-  FOLLY_ALWAYS_INLINE T* protect(const Atom<T*>& src) noexcept {
-    return protect(src, [](T* t) { return t; });
+  FOLLY_ALWAYS_INLINE T *protect(const Atom<T *> &src) noexcept {
+    return protect(src, [](T *t) { return t; });
   }
 
   template <typename T, typename Func>
-  FOLLY_ALWAYS_INLINE T* protect(const Atom<T*>& src, Func f) noexcept {
-    T* ptr = src.load(std::memory_order_relaxed);
+  FOLLY_ALWAYS_INLINE T *protect(const Atom<T *> &src, Func f) noexcept {
+    T *ptr = src.load(std::memory_order_relaxed);
     while (!try_protect(ptr, src, f)) {
       /* Keep trying */;
     }
@@ -146,8 +151,8 @@ class hazptr_holder {
 
   /** reset_protection */
   template <typename T>
-  FOLLY_ALWAYS_INLINE void reset_protection(const T* ptr) noexcept {
-    auto p = static_cast<hazptr_obj<Atom>*>(const_cast<T*>(ptr));
+  FOLLY_ALWAYS_INLINE void reset_protection(const T *ptr) noexcept {
+    auto p = static_cast<hazptr_obj<Atom> *>(const_cast<T *>(ptr));
     DCHECK(hprec_); // UB if *this is empty
     hprec_->reset_hazptr(p);
   }
@@ -161,17 +166,17 @@ class hazptr_holder {
   /* Note: The owned hazard pointers remain unmodified during the swap
    * and continue to protect the respective objects that they were
    * protecting before the swap, if any. */
-  FOLLY_ALWAYS_INLINE void swap(hazptr_holder<Atom>& rhs) noexcept {
+  FOLLY_ALWAYS_INLINE void swap(hazptr_holder<Atom> &rhs) noexcept {
     std::swap(this->hprec_, rhs.hprec_);
   }
 
   /** Returns a pointer to the owned hazptr_rec */
-  FOLLY_ALWAYS_INLINE hazptr_rec<Atom>* hprec() const noexcept {
+  FOLLY_ALWAYS_INLINE hazptr_rec<Atom> *hprec() const noexcept {
     return hprec_;
   }
 
   /** Set the pointer to the owned hazptr_rec */
-  FOLLY_ALWAYS_INLINE void set_hprec(hazptr_rec<Atom>* hprec) noexcept {
+  FOLLY_ALWAYS_INLINE void set_hprec(hazptr_rec<Atom> *hprec) noexcept {
     hprec_ = hprec;
   }
 }; // hazptr_holder
@@ -180,8 +185,8 @@ class hazptr_holder {
  *  Free function make_hazard_pointer constructs nonempty holder
  */
 template <template <typename> class Atom>
-FOLLY_ALWAYS_INLINE hazptr_holder<Atom> make_hazard_pointer(
-    hazptr_domain<Atom>& domain) {
+FOLLY_ALWAYS_INLINE hazptr_holder<Atom>
+make_hazard_pointer(hazptr_domain<Atom> &domain) {
 #if FOLLY_HAZPTR_THR_LOCAL
   if (FOLLY_LIKELY(&domain == &default_hazptr_domain<Atom>())) {
     auto hprec = hazptr_tc_tls<Atom>().try_get();
@@ -200,8 +205,8 @@ FOLLY_ALWAYS_INLINE hazptr_holder<Atom> make_hazard_pointer(
  *  Free function. Swaps hazptr_holder-s.
  */
 template <template <typename> class Atom>
-FOLLY_ALWAYS_INLINE void swap(
-    hazptr_holder<Atom>& lhs, hazptr_holder<Atom>& rhs) noexcept {
+FOLLY_ALWAYS_INLINE void swap(hazptr_holder<Atom> &lhs,
+                              hazptr_holder<Atom> &rhs) noexcept {
   lhs.swap(rhs);
 }
 
@@ -226,8 +231,7 @@ using aligned_hazptr_holder = aligned_storage_for_t<hazptr_holder<Atom>>;
  *  (i) both hazptr_holder-s are either both empty or both nonempty
  *  and (ii) both belong to the same domain.
  */
-template <uint8_t M, template <typename> class Atom>
-class hazptr_array {
+template <uint8_t M, template <typename> class Atom> class hazptr_array {
   static_assert(M > 0, "M must be a positive integer.");
 
   aligned_hazptr_holder<Atom> raw_[M];
@@ -238,10 +242,10 @@ class hazptr_array {
   /** Private constructor used by make_hazard_pointer_array */
   FOLLY_ALWAYS_INLINE explicit hazptr_array(std::nullptr_t) noexcept {}
 
- public:
+public:
   /** Default empty constructor */
   FOLLY_ALWAYS_INLINE hazptr_array() noexcept : empty_(true) {
-    auto h = reinterpret_cast<hazptr_holder<Atom>*>(&raw_);
+    auto h = reinterpret_cast<hazptr_holder<Atom> *>(&raw_);
     for (uint8_t i = 0; i < M; ++i) {
       new (&h[i]) hazptr_holder<Atom>();
     }
@@ -250,9 +254,9 @@ class hazptr_array {
   /** For nonempty construction use make_hazard_pointer_array. */
 
   /** Move constructor */
-  FOLLY_ALWAYS_INLINE hazptr_array(hazptr_array&& other) noexcept {
-    auto h = reinterpret_cast<hazptr_holder<Atom>*>(&raw_);
-    auto hother = reinterpret_cast<hazptr_holder<Atom>*>(&other.raw_);
+  FOLLY_ALWAYS_INLINE hazptr_array(hazptr_array &&other) noexcept {
+    auto h = reinterpret_cast<hazptr_holder<Atom> *>(&raw_);
+    auto hother = reinterpret_cast<hazptr_holder<Atom> *>(&other.raw_);
     for (uint8_t i = 0; i < M; ++i) {
       new (&h[i]) hazptr_holder<Atom>(std::move(hother[i]));
     }
@@ -260,17 +264,17 @@ class hazptr_array {
     other.empty_ = true;
   }
 
-  hazptr_array(const hazptr_array&) = delete;
-  hazptr_array& operator=(const hazptr_array&) = delete;
+  hazptr_array(const hazptr_array &) = delete;
+  hazptr_array &operator=(const hazptr_array &) = delete;
 
   /** Destructor */
   FOLLY_ALWAYS_INLINE ~hazptr_array() {
     if (empty_) {
       return;
     }
-    auto h = reinterpret_cast<hazptr_holder<Atom>*>(&raw_);
+    auto h = reinterpret_cast<hazptr_holder<Atom> *>(&raw_);
 #if FOLLY_HAZPTR_THR_LOCAL
-    auto& tc = hazptr_tc_tls<Atom>();
+    auto &tc = hazptr_tc_tls<Atom>();
     auto count = tc.count();
     auto cap = hazptr_tc<Atom>::capacity();
     if (FOLLY_UNLIKELY((M + count) > cap)) {
@@ -291,8 +295,8 @@ class hazptr_array {
   }
 
   /** Move operator */
-  FOLLY_ALWAYS_INLINE hazptr_array& operator=(hazptr_array&& other) noexcept {
-    auto h = reinterpret_cast<hazptr_holder<Atom>*>(&raw_);
+  FOLLY_ALWAYS_INLINE hazptr_array &operator=(hazptr_array &&other) noexcept {
+    auto h = reinterpret_cast<hazptr_holder<Atom> *>(&raw_);
     for (uint8_t i = 0; i < M; ++i) {
       h[i] = std::move(other[i]);
     }
@@ -302,8 +306,8 @@ class hazptr_array {
   }
 
   /** [] operator */
-  FOLLY_ALWAYS_INLINE hazptr_holder<Atom>& operator[](uint8_t i) noexcept {
-    auto h = reinterpret_cast<hazptr_holder<Atom>*>(&raw_);
+  FOLLY_ALWAYS_INLINE hazptr_holder<Atom> &operator[](uint8_t i) noexcept {
+    auto h = reinterpret_cast<hazptr_holder<Atom> *>(&raw_);
     DCHECK(i < M);
     return h[i];
   }
@@ -315,12 +319,11 @@ class hazptr_array {
 template <uint8_t M, template <typename> class Atom>
 FOLLY_ALWAYS_INLINE hazptr_array<M, Atom> make_hazard_pointer_array() {
   hazptr_array<M, Atom> a(nullptr);
-  auto h = reinterpret_cast<hazptr_holder<Atom>*>(&a.raw_);
+  auto h = reinterpret_cast<hazptr_holder<Atom> *>(&a.raw_);
 #if FOLLY_HAZPTR_THR_LOCAL
-  static_assert(
-      M <= hazptr_tc<Atom>::capacity(),
-      "M must be within the thread cache capacity.");
-  auto& tc = hazptr_tc_tls<Atom>();
+  static_assert(M <= hazptr_tc<Atom>::capacity(),
+                "M must be within the thread cache capacity.");
+  auto &tc = hazptr_tc_tls<Atom>();
   auto count = tc.count();
   if (FOLLY_UNLIKELY(M > count)) {
     tc.fill(M - count);
@@ -361,21 +364,19 @@ FOLLY_ALWAYS_INLINE hazptr_array<M, Atom> make_hazard_pointer_array() {
  *  implementation (except in debug mode) because it would negate the
  *  performance gains of this class.
  */
-template <uint8_t M, template <typename> class Atom>
-class hazptr_local {
+template <uint8_t M, template <typename> class Atom> class hazptr_local {
   static_assert(M > 0, "M must be a positive integer.");
 
   aligned_hazptr_holder<Atom> raw_[M];
 
- public:
+public:
   /** Constructor */
   FOLLY_ALWAYS_INLINE hazptr_local() {
-    auto h = reinterpret_cast<hazptr_holder<Atom>*>(&raw_);
+    auto h = reinterpret_cast<hazptr_holder<Atom> *>(&raw_);
 #if FOLLY_HAZPTR_THR_LOCAL
-    static_assert(
-        M <= hazptr_tc<Atom>::capacity(),
-        "M must be <= hazptr_tc::capacity().");
-    auto& tc = hazptr_tc_tls<Atom>();
+    static_assert(M <= hazptr_tc<Atom>::capacity(),
+                  "M must be <= hazptr_tc::capacity().");
+    auto &tc = hazptr_tc_tls<Atom>();
     auto count = tc.count();
     if (FOLLY_UNLIKELY(M > count)) {
       tc.fill(M - count);
@@ -396,17 +397,17 @@ class hazptr_local {
 #endif
   }
 
-  hazptr_local(const hazptr_local&) = delete;
-  hazptr_local& operator=(const hazptr_local&) = delete;
-  hazptr_local(hazptr_local&&) = delete;
-  hazptr_local& operator=(hazptr_local&&) = delete;
+  hazptr_local(const hazptr_local &) = delete;
+  hazptr_local &operator=(const hazptr_local &) = delete;
+  hazptr_local(hazptr_local &&) = delete;
+  hazptr_local &operator=(hazptr_local &&) = delete;
 
   /** Destructor */
   FOLLY_ALWAYS_INLINE ~hazptr_local() {
-    auto h = reinterpret_cast<hazptr_holder<Atom>*>(&raw_);
+    auto h = reinterpret_cast<hazptr_holder<Atom> *>(&raw_);
 #if FOLLY_HAZPTR_THR_LOCAL
     if (kIsDebug) {
-      auto& tc = hazptr_tc_tls<Atom>();
+      auto &tc = hazptr_tc_tls<Atom>();
       DCHECK(tc.local());
       tc.set_local(false);
     }
@@ -421,8 +422,8 @@ class hazptr_local {
   }
 
   /** [] operator */
-  FOLLY_ALWAYS_INLINE hazptr_holder<Atom>& operator[](uint8_t i) noexcept {
-    auto h = reinterpret_cast<hazptr_holder<Atom>*>(&raw_);
+  FOLLY_ALWAYS_INLINE hazptr_holder<Atom> &operator[](uint8_t i) noexcept {
+    auto h = reinterpret_cast<hazptr_holder<Atom> *>(&raw_);
     DCHECK(i < M);
     return h[i];
   }

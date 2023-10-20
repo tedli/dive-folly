@@ -6,7 +6,7 @@ if (CMAKE_VERSION VERSION_LESS 3.3)
     "to use CMake 3.3 (or newer)")
 endif (CMAKE_VERSION VERSION_LESS 3.3)
 
-set (glog_MODULE_PATH "C:/Users/lizhen/Documents/Development/folly/build/_deps/glog-build/share/glog/cmake")
+set (glog_MODULE_PATH "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build/share/glog/cmake")
 list (APPEND CMAKE_MODULE_PATH ${glog_MODULE_PATH})
 
 if (NOT glog_MODULE_PATH IN_LIST CMAKE_MODULE_PATH)

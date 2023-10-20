@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -79,11 +86,10 @@ namespace folly {
  *    set_cohort_no_tag are not thread-safe. Thread safety must be
  *    ensured by the calling thread.
  */
-template <template <typename> class Atom>
-class hazptr_obj {
+template <template <typename> class Atom> class hazptr_obj {
   using Obj = hazptr_obj<Atom>;
   using ObjList = hazptr_obj_list<Atom>;
-  using ReclaimFnPtr = void (*)(Obj*, ObjList&);
+  using ReclaimFnPtr = void (*)(Obj *, ObjList &);
 
   friend class hazptr_domain<Atom>;
   template <typename, template <typename> class, typename>
@@ -98,10 +104,10 @@ class hazptr_obj {
   static constexpr uintptr_t kTagBit = 1u;
 
   ReclaimFnPtr reclaim_;
-  Obj* next_;
+  Obj *next_;
   uintptr_t cohort_tag_;
 
- public:
+public:
   /** Constructors */
   /* All constructors set next_ to this in order to catch misuse bugs
      such as double retire. By default, objects are untagged and not
@@ -109,52 +115,52 @@ class hazptr_obj {
 
   hazptr_obj() noexcept : next_(this), cohort_tag_(0) {}
 
-  hazptr_obj(const Obj& o) noexcept : next_(this), cohort_tag_(o.cohort_tag_) {}
+  hazptr_obj(const Obj &o) noexcept : next_(this), cohort_tag_(o.cohort_tag_) {}
 
-  hazptr_obj(Obj&& o) noexcept : next_(this), cohort_tag_(o.cohort_tag_) {}
+  hazptr_obj(Obj &&o) noexcept : next_(this), cohort_tag_(o.cohort_tag_) {}
 
   /** Copy operator */
-  Obj& operator=(const Obj&) noexcept { return *this; }
+  Obj &operator=(const Obj &) noexcept { return *this; }
 
   /** Move operator */
-  Obj& operator=(Obj&&) noexcept { return *this; }
+  Obj &operator=(Obj &&) noexcept { return *this; }
 
   /** cohort_tag */
   uintptr_t cohort_tag() { return cohort_tag_; }
 
   /** cohort */
-  hazptr_obj_cohort<Atom>* cohort() {
+  hazptr_obj_cohort<Atom> *cohort() {
     uintptr_t btag = cohort_tag_;
     btag -= btag & kTagBit;
-    return reinterpret_cast<hazptr_obj_cohort<Atom>*>(btag);
+    return reinterpret_cast<hazptr_obj_cohort<Atom> *>(btag);
   }
 
   /** tagged */
   bool tagged() { return (cohort_tag_ & kTagBit) == kTagBit; }
 
   /** set_cohort_tag: Set cohort and make object tagged. */
-  void set_cohort_tag(hazptr_obj_cohort<Atom>* cohort) {
+  void set_cohort_tag(hazptr_obj_cohort<Atom> *cohort) {
     cohort_tag_ = reinterpret_cast<uintptr_t>(cohort) + kTagBit;
   }
 
   /** set_cohort_no_tag: Set cohort and make object untagged.  */
-  void set_cohort_no_tag(hazptr_obj_cohort<Atom>* cohort) {
+  void set_cohort_no_tag(hazptr_obj_cohort<Atom> *cohort) {
     cohort_tag_ = reinterpret_cast<uintptr_t>(cohort);
   }
 
- private:
+private:
   friend class hazptr_domain<Atom>;
   template <typename, template <typename> class, typename>
   friend class hazptr_obj_base;
   friend class hazptr_obj_cohort<Atom>;
 
-  Obj* next() const noexcept { return next_; }
+  Obj *next() const noexcept { return next_; }
 
-  void set_next(Obj* obj) noexcept { next_ = obj; }
+  void set_next(Obj *obj) noexcept { next_ = obj; }
 
   ReclaimFnPtr reclaim() noexcept { return reclaim_; }
 
-  const void* raw_ptr() const { return this; }
+  const void *raw_ptr() const { return this; }
 
   void pre_retire_check() noexcept {
     // Only for catching misuse bugs like double retire
@@ -163,7 +169,7 @@ class hazptr_obj {
     }
   }
 
-  void push_obj(hazptr_domain<Atom>& domain) {
+  void push_obj(hazptr_domain<Atom> &domain) {
     auto coh = cohort();
     if (coh) {
       DCHECK_EQ(&domain, &default_hazptr_domain<Atom>());
@@ -173,7 +179,7 @@ class hazptr_obj {
     }
   }
 
-  void push_to_retired(hazptr_domain<Atom>& domain) {
+  void push_to_retired(hazptr_domain<Atom> &domain) {
     hazptr_obj_list<Atom> l(this);
     hazptr_domain_push_retired(l, domain);
   }
@@ -188,27 +194,26 @@ class hazptr_obj {
  *
  *  List of hazptr_obj-s.
  */
-template <template <typename> class Atom>
-class hazptr_obj_list {
+template <template <typename> class Atom> class hazptr_obj_list {
   using Obj = hazptr_obj<Atom>;
   using List = hazptr_detail::linked_list<Obj>;
 
   List l_;
   int count_;
 
- public:
+public:
   hazptr_obj_list() noexcept : l_(nullptr, nullptr), count_(0) {}
 
-  explicit hazptr_obj_list(Obj* obj) noexcept : l_(obj, obj), count_(1) {
+  explicit hazptr_obj_list(Obj *obj) noexcept : l_(obj, obj), count_(1) {
     obj->set_next(nullptr);
   }
 
-  explicit hazptr_obj_list(Obj* head, Obj* tail, int count) noexcept
+  explicit hazptr_obj_list(Obj *head, Obj *tail, int count) noexcept
       : l_(head, tail), count_(count) {}
 
-  Obj* head() const noexcept { return l_.head(); }
+  Obj *head() const noexcept { return l_.head(); }
 
-  Obj* tail() const noexcept { return l_.tail(); }
+  Obj *tail() const noexcept { return l_.tail(); }
 
   int count() const noexcept { return count_; }
 
@@ -216,12 +221,12 @@ class hazptr_obj_list {
 
   bool empty() const noexcept { return head() == nullptr; }
 
-  void push(Obj* obj) {
+  void push(Obj *obj) {
     l_.push(obj);
     ++count_;
   }
 
-  void splice(hazptr_obj_list<Atom>& l) {
+  void splice(hazptr_obj_list<Atom> &l) {
     if (l.count() == 0) {
       return;
     }
@@ -248,8 +253,7 @@ class hazptr_obj_list {
  *
  *  [Note: For now supports only the default domain.]
  */
-template <template <typename> class Atom>
-class hazptr_obj_cohort {
+template <template <typename> class Atom> class hazptr_obj_cohort {
   using Obj = hazptr_obj<Atom>;
   using List = hazptr_detail::linked_list<Obj>;
   using SharedList = hazptr_detail::shared_head_tail_list<Obj, Atom>;
@@ -260,22 +264,19 @@ class hazptr_obj_cohort {
   Atom<int> count_;
   Atom<bool> active_;
   Atom<bool> pushed_to_domain_tagged_;
-  Atom<Obj*> safe_list_top_;
+  Atom<Obj *> safe_list_top_;
 
- public:
+public:
   /** Constructor */
   hazptr_obj_cohort() noexcept
-      : l_(),
-        count_(0),
-        active_(true),
-        pushed_to_domain_tagged_{false},
+      : l_(), count_(0), active_(true), pushed_to_domain_tagged_{false},
         safe_list_top_{nullptr} {}
 
   /** Not copyable or moveable */
-  hazptr_obj_cohort(const hazptr_obj_cohort& o) = delete;
-  hazptr_obj_cohort(hazptr_obj_cohort&& o) = delete;
-  hazptr_obj_cohort& operator=(const hazptr_obj_cohort&& o) = delete;
-  hazptr_obj_cohort& operator=(hazptr_obj_cohort&& o) = delete;
+  hazptr_obj_cohort(const hazptr_obj_cohort &o) = delete;
+  hazptr_obj_cohort(hazptr_obj_cohort &&o) = delete;
+  hazptr_obj_cohort &operator=(const hazptr_obj_cohort &&o) = delete;
+  hazptr_obj_cohort &operator=(hazptr_obj_cohort &&o) = delete;
 
   /** Destructor */
   ~hazptr_obj_cohort() {
@@ -297,13 +298,13 @@ class hazptr_obj_cohort {
     if (!l_.empty()) {
       List l = l_.pop_all();
       clear_count();
-      Obj* obj = l.head();
+      Obj *obj = l.head();
       reclaim_list(obj);
     }
     DCHECK(l_.empty());
   }
 
- private:
+private:
   friend class hazptr_domain<Atom>;
   friend class hazptr_obj<Atom>;
 
@@ -317,22 +318,22 @@ class hazptr_obj_cohort {
 
   void inc_count() noexcept { count_.fetch_add(1, std::memory_order_release); }
 
-  bool cas_count(int& expected, int newval) noexcept {
+  bool cas_count(int &expected, int newval) noexcept {
     return count_.compare_exchange_weak(
         expected, newval, std::memory_order_acq_rel, std::memory_order_acquire);
   }
 
-  Obj* safe_list_top() const noexcept {
+  Obj *safe_list_top() const noexcept {
     return safe_list_top_.load(std::memory_order_acquire);
   }
 
-  bool cas_safe_list_top(Obj*& expected, Obj* newval) noexcept {
+  bool cas_safe_list_top(Obj *&expected, Obj *newval) noexcept {
     return safe_list_top_.compare_exchange_weak(
         expected, newval, std::memory_order_acq_rel, std::memory_order_relaxed);
   }
 
   /** push_obj */
-  void push_obj(Obj* obj) {
+  void push_obj(Obj *obj) {
     if (active()) {
       l_.push(obj);
       inc_count();
@@ -346,9 +347,9 @@ class hazptr_obj_cohort {
   }
 
   /** push_safe_obj */
-  void push_safe_obj(Obj* obj) noexcept {
+  void push_safe_obj(Obj *obj) noexcept {
     while (true) {
-      Obj* top = safe_list_top();
+      Obj *top = safe_list_top();
       obj->set_next(top);
       if (cas_safe_list_top(top, obj))
         return;
@@ -356,11 +357,11 @@ class hazptr_obj_cohort {
   }
 
   /** reclaim_list */
-  void reclaim_list(Obj* obj) {
+  void reclaim_list(Obj *obj) {
     while (obj) {
       hazptr_obj_list<Atom> children;
       while (obj) {
-        Obj* next = obj->next();
+        Obj *next = obj->next();
         (*(obj->reclaim()))(obj, children);
         obj = next;
       }
@@ -384,7 +385,7 @@ class hazptr_obj_cohort {
           pushed_to_domain_tagged_.store(true, std::memory_order_relaxed);
         }
         if (kIsDebug) {
-          Obj* p = ll.head();
+          Obj *p = ll.head();
           for (int i = 1; p; ++i, p = p->next()) {
             DCHECK_EQ(reinterpret_cast<uintptr_t>(p) & 7, uintptr_t{0})
                 << p << " " << i;
@@ -399,7 +400,7 @@ class hazptr_obj_cohort {
 
   /** reclaim_safe_list */
   void reclaim_safe_list() {
-    Obj* top = safe_list_top_.exchange(nullptr, std::memory_order_acq_rel);
+    Obj *top = safe_list_top_.exchange(nullptr, std::memory_order_acq_rel);
     reclaim_list(top);
   }
 }; // hazptr_obj_cohort
@@ -412,8 +413,7 @@ class hazptr_obj_cohort {
  *  objects. Unlocked operations are used for the untagged list.
  */
 /** hazptr_obj_retired_list */
-template <template <typename> class Atom>
-class hazptr_obj_retired_list {
+template <template <typename> class Atom> class hazptr_obj_retired_list {
   using Obj = hazptr_obj<Atom>;
   using List = hazptr_detail::linked_list<Obj>;
   using RetiredList = hazptr_detail::shared_head_only_list<Obj, Atom>;
@@ -421,22 +421,22 @@ class hazptr_obj_retired_list {
   alignas(hardware_destructive_interference_size) RetiredList retired_;
   Atom<int> count_;
 
- public:
+public:
   static constexpr bool kAlsoLock = RetiredList::kAlsoLock;
   static constexpr bool kDontLock = RetiredList::kDontLock;
   static constexpr bool kMayBeLocked = RetiredList::kMayBeLocked;
   static constexpr bool kMayNotBeLocked = RetiredList::kMayNotBeLocked;
 
- public:
+public:
   hazptr_obj_retired_list() noexcept : count_(0) {}
 
-  void push(hazptr_obj_list<Atom>& l, bool may_be_locked) noexcept {
+  void push(hazptr_obj_list<Atom> &l, bool may_be_locked) noexcept {
     List ll(l.head(), l.tail());
     retired_.push(ll, may_be_locked);
     add_count(l.count());
   }
 
-  void push_unlock(hazptr_obj_list<Atom>& l) noexcept {
+  void push_unlock(hazptr_obj_list<Atom> &l) noexcept {
     List ll(l.head(), l.tail());
     retired_.push_unlock(ll);
     auto count = l.count();
@@ -459,14 +459,14 @@ class hazptr_obj_retired_list {
     return false;
   }
 
-  Obj* pop_all(bool lock) { return retired_.pop_all(lock); }
+  Obj *pop_all(bool lock) { return retired_.pop_all(lock); }
 
   bool check_lock() { return retired_.check_lock(); }
 
- private:
+private:
   void add_count(int val) { count_.fetch_add(val, std::memory_order_release); }
 
-  bool cas_count(int& expected, int newval) {
+  bool cas_count(int &expected, int newval) {
     return count_.compare_exchange_weak(
         expected, newval, std::memory_order_acq_rel, std::memory_order_acquire);
   }
@@ -477,22 +477,20 @@ class hazptr_obj_retired_list {
  *
  *  For empty base optimization.
  */
-template <typename T, typename D>
-class hazptr_deleter {
+template <typename T, typename D> class hazptr_deleter {
   D deleter_;
 
- public:
+public:
   void set_deleter(D d = {}) { deleter_ = std::move(d); }
 
-  void delete_obj(T* p) { deleter_(p); }
+  void delete_obj(T *p) { deleter_(p); }
 };
 
-template <typename T>
-class hazptr_deleter<T, std::default_delete<T>> {
- public:
+template <typename T> class hazptr_deleter<T, std::default_delete<T>> {
+public:
   void set_deleter(std::default_delete<T> = {}) {}
 
-  void delete_obj(T* p) { delete p; }
+  void delete_obj(T *p) { delete p; }
 };
 
 /**
@@ -502,29 +500,28 @@ class hazptr_deleter<T, std::default_delete<T>> {
  */
 template <typename T, template <typename> class Atom, typename D>
 class hazptr_obj_base : public hazptr_obj<Atom>, public hazptr_deleter<T, D> {
- public:
+public:
   /* Retire a removed object and pass the responsibility for
    * reclaiming it to the hazptr library */
-  void retire(
-      D deleter = {},
-      hazptr_domain<Atom>& domain = default_hazptr_domain<Atom>()) {
+  void retire(D deleter = {},
+              hazptr_domain<Atom> &domain = default_hazptr_domain<Atom>()) {
     pre_retire(std::move(deleter));
     set_reclaim();
     this->push_obj(domain); // defined in hazptr_obj
   }
 
-  void retire(hazptr_domain<Atom>& domain) { retire({}, domain); }
+  void retire(hazptr_domain<Atom> &domain) { retire({}, domain); }
 
- private:
+private:
   void pre_retire(D deleter) {
     this->pre_retire_check(); // defined in hazptr_obj
     this->set_deleter(std::move(deleter));
   }
 
   void set_reclaim() {
-    this->reclaim_ = [](hazptr_obj<Atom>* p, hazptr_obj_list<Atom>&) {
-      auto hobp = static_cast<hazptr_obj_base<T, Atom, D>*>(p);
-      auto obj = static_cast<T*>(hobp);
+    this->reclaim_ = [](hazptr_obj<Atom> *p, hazptr_obj_list<Atom> &) {
+      auto hobp = static_cast<hazptr_obj_base<T, Atom, D> *>(p);
+      auto obj = static_cast<T *>(hobp);
       hobp->delete_obj(obj);
     };
   }

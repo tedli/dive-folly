@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,60 +45,53 @@ namespace detail {
 //  * noop: no-op function with the given arguments
 //  * fail: terminating function with the given return and arguments
 struct thunk {
-  template <typename T, typename... A>
-  static void* make(A... a) {
+  template <typename T, typename... A> static void *make(A... a) {
     return new T(static_cast<A>(a)...);
   }
-  template <typename T>
-  static void ruin(void* const ptr) noexcept {
-    delete static_cast<T*>(ptr);
+  template <typename T> static void ruin(void *const ptr) noexcept {
+    delete static_cast<T *>(ptr);
   }
-  template <typename T>
-  static void* make_copy(void const* const src) {
-    return new T(*reinterpret_cast<T const*>(src));
+  template <typename T> static void *make_copy(void const *const src) {
+    return new T(*reinterpret_cast<T const *>(src));
   }
-  template <typename T>
-  static void* make_move(void* const src) {
-    return new T(static_cast<T&&>(*reinterpret_cast<T*>(src)));
+  template <typename T> static void *make_move(void *const src) {
+    return new T(static_cast<T &&>(*reinterpret_cast<T *>(src)));
   }
 
   template <typename T, typename... A>
-  static void* ctor(void* const ptr, A... a) {
+  static void *ctor(void *const ptr, A... a) {
     return ::new (ptr) T(static_cast<A>(a)...);
   }
-  template <typename T>
-  static void dtor(void* const ptr) noexcept {
-    static_cast<T*>(ptr)->~T();
+  template <typename T> static void dtor(void *const ptr) noexcept {
+    static_cast<T *>(ptr)->~T();
   }
   template <typename T>
-  static void* ctor_copy(void* const dst, void const* const src) noexcept(
-      noexcept(T(FOLLY_DECLVAL(T const&)))) {
-    return ::new (dst) T(*reinterpret_cast<T const*>(src));
+  static void *ctor_copy(void *const dst, void const *const src) noexcept(
+      noexcept(T(FOLLY_DECLVAL(T const &)))) {
+    return ::new (dst) T(*reinterpret_cast<T const *>(src));
   }
   template <typename T>
-  static void* ctor_move(void* const dst, void* const src) noexcept(
-      noexcept(T(FOLLY_DECLVAL(T&&)))) {
-    return ::new (dst) T(static_cast<T&&>(*reinterpret_cast<T*>(src)));
+  static void *
+  ctor_move(void *const dst,
+            void *const src) noexcept(noexcept(T(FOLLY_DECLVAL(T &&)))) {
+    return ::new (dst) T(static_cast<T &&>(*reinterpret_cast<T *>(src)));
   }
 
-  template <std::size_t Size, std::size_t Align>
-  static void* operator_new() {
+  template <std::size_t Size, std::size_t Align> static void *operator_new() {
     return folly::operator_new(Size, align_val_t(Align));
   }
   template <std::size_t Size, std::size_t Align>
-  static void* operator_new_nx() {
+  static void *operator_new_nx() {
     return folly::operator_new(Size, align_val_t(Align), std::nothrow);
   }
   template <std::size_t Size, std::size_t Align>
-  static void operator_delete(void* const ptr) noexcept {
+  static void operator_delete(void *const ptr) noexcept {
     return folly::operator_delete(ptr, Size, align_val_t(Align));
   }
 
-  template <typename... A>
-  static void noop(A...) noexcept {}
+  template <typename... A> static void noop(A...) noexcept {}
 
-  template <typename R, typename... A>
-  static R fail(A...) noexcept {
+  template <typename R, typename... A> static R fail(A...) noexcept {
     std::terminate();
   }
 };

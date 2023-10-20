@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -34,19 +41,19 @@ namespace folly {
 //
 //  Containers should provide overloads via tag-invoke.
 struct order_preserving_reinsertion_view_fn {
- private:
+private:
   using fn = order_preserving_reinsertion_view_fn;
 
- public:
+public:
   template <typename Container>
-  FOLLY_ERASE constexpr auto operator()(Container const& container) const
-      noexcept(is_nothrow_tag_invocable_v<fn, Container const&>)
-          -> tag_invoke_result_t<fn, Container const&> {
+  FOLLY_ERASE constexpr auto operator()(Container const &container) const
+      noexcept(is_nothrow_tag_invocable_v<fn, Container const &>)
+          -> tag_invoke_result_t<fn, Container const &> {
     return tag_invoke(*this, container);
   }
 };
-FOLLY_DEFINE_CPO(
-    order_preserving_reinsertion_view_fn, order_preserving_reinsertion_view)
+FOLLY_DEFINE_CPO(order_preserving_reinsertion_view_fn,
+                 order_preserving_reinsertion_view)
 
 //  order_preserving_reinsertion_view_or_default_fn
 //  order_preserving_reinsertion_view_or_default
@@ -54,28 +61,27 @@ FOLLY_DEFINE_CPO(
 //  If a tag-invoke extension of order_preserving_reinsertion_view is available
 //  over the given argument, forwards to that. Otherwise, returns the argument.
 struct order_preserving_reinsertion_view_or_default_fn {
- private:
+private:
   using fn = order_preserving_reinsertion_view_fn;
 
- public:
+public:
   template <
       typename Container,
-      std::enable_if_t<is_tag_invocable_v<fn, Container const&>, int> = 0>
-  FOLLY_ERASE constexpr auto operator()(Container const& container) const
-      noexcept(is_nothrow_tag_invocable_v<fn, Container const&>)
-          -> tag_invoke_result_t<fn, Container const&> {
+      std::enable_if_t<is_tag_invocable_v<fn, Container const &>, int> = 0>
+  FOLLY_ERASE constexpr auto operator()(Container const &container) const
+      noexcept(is_nothrow_tag_invocable_v<fn, Container const &>)
+          -> tag_invoke_result_t<fn, Container const &> {
     return tag_invoke(fn{}, container);
   }
   template <
       typename Container,
-      std::enable_if_t<!is_tag_invocable_v<fn, Container const&>, int> = 0>
-  FOLLY_ERASE constexpr Container const& operator()(
-      Container const& container) const noexcept {
+      std::enable_if_t<!is_tag_invocable_v<fn, Container const &>, int> = 0>
+  FOLLY_ERASE constexpr Container const &
+  operator()(Container const &container) const noexcept {
     return container;
   }
 };
-FOLLY_DEFINE_CPO(
-    order_preserving_reinsertion_view_or_default_fn,
-    order_preserving_reinsertion_view_or_default)
+FOLLY_DEFINE_CPO(order_preserving_reinsertion_view_or_default_fn,
+                 order_preserving_reinsertion_view_or_default)
 
 } // namespace folly

@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,24 +48,23 @@ namespace hazptr_detail {
  *  Template parameter Node must support set_next
  *
  */
-template <typename Node>
-class linked_list {
-  Node* head_;
-  Node* tail_;
+template <typename Node> class linked_list {
+  Node *head_;
+  Node *tail_;
 
- public:
+public:
   linked_list() noexcept : head_(nullptr), tail_(nullptr) {}
 
-  explicit linked_list(Node* head, Node* tail) noexcept
+  explicit linked_list(Node *head, Node *tail) noexcept
       : head_(head), tail_(tail) {}
 
-  Node* head() const noexcept { return head_; }
+  Node *head() const noexcept { return head_; }
 
-  Node* tail() const noexcept { return tail_; }
+  Node *tail() const noexcept { return tail_; }
 
   bool empty() const noexcept { return head() == nullptr; }
 
-  void push(Node* node) noexcept {
+  void push(Node *node) noexcept {
     node->set_next(nullptr);
     if (tail_) {
       tail_->set_next(node);
@@ -68,7 +74,7 @@ class linked_list {
     tail_ = node;
   }
 
-  void splice(linked_list& l) {
+  void splice(linked_list &l) {
     if (head() == nullptr) {
       head_ = l.head();
     } else {
@@ -93,20 +99,20 @@ class linked_list {
  */
 template <typename Node, template <typename> class Atom = std::atomic>
 class shared_head_tail_list {
-  Atom<Node*> head_;
-  Atom<Node*> tail_;
+  Atom<Node *> head_;
+  Atom<Node *> tail_;
 
- public:
+public:
   shared_head_tail_list() noexcept : head_(nullptr), tail_(nullptr) {}
 
-  shared_head_tail_list(shared_head_tail_list&& o) noexcept {
+  shared_head_tail_list(shared_head_tail_list &&o) noexcept {
     head_.store(o.head(), std::memory_order_relaxed);
     tail_.store(o.tail(), std::memory_order_relaxed);
     o.head_.store(nullptr, std::memory_order_relaxed);
     o.tail_.store(nullptr, std::memory_order_relaxed);
   }
 
-  shared_head_tail_list& operator=(shared_head_tail_list&& o) noexcept {
+  shared_head_tail_list &operator=(shared_head_tail_list &&o) noexcept {
     head_.store(o.head(), std::memory_order_relaxed);
     tail_.store(o.tail(), std::memory_order_relaxed);
     o.head_.store(nullptr, std::memory_order_relaxed);
@@ -119,7 +125,7 @@ class shared_head_tail_list {
     DCHECK(tail() == nullptr);
   }
 
-  void push(Node* node) noexcept {
+  void push(Node *node) noexcept {
     bool done = false;
     while (!done) {
       if (tail()) {
@@ -138,34 +144,34 @@ class shared_head_tail_list {
 
   bool empty() const noexcept { return head() == nullptr; }
 
- private:
-  Node* head() const noexcept { return head_.load(std::memory_order_acquire); }
+private:
+  Node *head() const noexcept { return head_.load(std::memory_order_acquire); }
 
-  Node* tail() const noexcept { return tail_.load(std::memory_order_acquire); }
+  Node *tail() const noexcept { return tail_.load(std::memory_order_acquire); }
 
-  void set_head(Node* node) noexcept {
+  void set_head(Node *node) noexcept {
     head_.store(node, std::memory_order_release);
   }
 
-  bool cas_head(Node* expected, Node* node) noexcept {
+  bool cas_head(Node *expected, Node *node) noexcept {
     return head_.compare_exchange_weak(
         expected, node, std::memory_order_acq_rel, std::memory_order_relaxed);
   }
 
-  bool cas_tail(Node* expected, Node* node) noexcept {
+  bool cas_tail(Node *expected, Node *node) noexcept {
     return tail_.compare_exchange_weak(
         expected, node, std::memory_order_acq_rel, std::memory_order_relaxed);
   }
 
-  Node* exchange_head() noexcept {
+  Node *exchange_head() noexcept {
     return head_.exchange(nullptr, std::memory_order_acq_rel);
   }
 
-  Node* exchange_tail() noexcept {
+  Node *exchange_tail() noexcept {
     return tail_.exchange(nullptr, std::memory_order_acq_rel);
   }
 
-  bool push_in_non_empty_list(Node* node) noexcept {
+  bool push_in_non_empty_list(Node *node) noexcept {
     auto h = head();
     if (h) {
       node->set_next(h); // Node must support set_next
@@ -176,8 +182,8 @@ class shared_head_tail_list {
     return false;
   }
 
-  bool push_in_empty_list(Node* node) noexcept {
-    Node* t = nullptr;
+  bool push_in_empty_list(Node *node) noexcept {
+    Node *t = nullptr;
     node->set_next(nullptr); // Node must support set_next
     if (cas_tail(t, node)) {
       set_head(node);
@@ -211,14 +217,14 @@ class shared_head_only_list {
   static constexpr uintptr_t kLockBit = 1u;
   static constexpr uintptr_t kUnlocked = 0u;
 
- public:
+public:
   static constexpr bool kAlsoLock = true;
   static constexpr bool kDontLock = false;
   static constexpr bool kMayBeLocked = true;
   static constexpr bool kMayNotBeLocked = false;
 
- public:
-  void push(linked_list<Node>& l, bool may_be_locked) noexcept {
+public:
+  void push(linked_list<Node> &l, bool may_be_locked) noexcept {
     if (l.empty()) {
       return;
     }
@@ -233,7 +239,7 @@ class shared_head_only_list {
       } else {
         DCHECK_EQ(lockbit, kUnlocked);
       }
-      auto ptr = reinterpret_cast<Node*>(ptrval);
+      auto ptr = reinterpret_cast<Node *>(ptrval);
       l.tail()->set_next(ptr); // Node must support set_next
       if (cas_head(oldval, newval)) {
         break;
@@ -241,11 +247,11 @@ class shared_head_only_list {
     }
   }
 
-  Node* pop_all(bool lock) noexcept {
+  Node *pop_all(bool lock) noexcept {
     return lock == kAlsoLock ? pop_all_lock() : pop_all_no_lock();
   }
 
-  void push_unlock(linked_list<Node>& l) noexcept {
+  void push_unlock(linked_list<Node> &l) noexcept {
     DCHECK_EQ(owner(), std::this_thread::get_id());
     uintptr_t lockbit;
     if (reentrance_ > 0) {
@@ -261,7 +267,7 @@ class shared_head_only_list {
       auto oldval = head();
       DCHECK_EQ(oldval & kLockBit, kLockBit); // Should be already locked
       auto ptrval = oldval - kLockBit;
-      auto ptr = reinterpret_cast<Node*>(ptrval);
+      auto ptr = reinterpret_cast<Node *>(ptrval);
       auto t = l.tail();
       if (t) {
         t->set_next(ptr); // Node must support set_next
@@ -279,7 +285,7 @@ class shared_head_only_list {
 
   bool empty() const noexcept { return head() == 0u; }
 
- private:
+private:
   uintptr_t head() const noexcept {
     return head_.load(std::memory_order_acquire);
   }
@@ -290,7 +296,7 @@ class shared_head_only_list {
     return oldval;
   }
 
-  bool cas_head(uintptr_t& oldval, uintptr_t newval) noexcept {
+  bool cas_head(uintptr_t &oldval, uintptr_t newval) noexcept {
     return head_.compare_exchange_weak(
         oldval, newval, std::memory_order_acq_rel, std::memory_order_acquire);
   }
@@ -306,13 +312,13 @@ class shared_head_only_list {
     owner_.store(std::thread::id(), std::memory_order_relaxed);
   }
 
-  Node* pop_all_no_lock() noexcept {
+  Node *pop_all_no_lock() noexcept {
     auto oldval = exchange_head();
     DCHECK_EQ(oldval & kLockBit, kUnlocked);
-    return reinterpret_cast<Node*>(oldval);
+    return reinterpret_cast<Node *>(oldval);
   }
 
-  Node* pop_all_lock() noexcept {
+  Node *pop_all_lock() noexcept {
     while (true) {
       auto oldval = head();
       auto lockbit = oldval & kLockBit;
@@ -327,7 +333,7 @@ class shared_head_only_list {
             ++reentrance_;
           }
           auto ptrval = oldval - lockbit;
-          return reinterpret_cast<Node*>(ptrval);
+          return reinterpret_cast<Node *>(ptrval);
         }
       }
       std::this_thread::sleep_for(folly::detail::Sleeper::kMinYieldingSleep);

@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -57,19 +64,17 @@ enum class align_val_t : std::size_t {};
 
 //  operator_new
 struct operator_new_fn {
-  FOLLY_NODISCARD FOLLY_ERASE void* operator()( //
-      std::size_t const s) const //
+  FOLLY_NODISCARD FOLLY_ERASE void *operator()( //
+      std::size_t const s) const                //
       noexcept(noexcept(::operator new(0))) {
     return FOLLY_DETAIL_LANG_NEW_IMPL_N(s);
   }
-  FOLLY_NODISCARD FOLLY_ERASE void* operator()( //
-      std::size_t const s,
-      std::nothrow_t const&) const noexcept {
+  FOLLY_NODISCARD FOLLY_ERASE void *operator()( //
+      std::size_t const s, std::nothrow_t const &) const noexcept {
     return FOLLY_DETAIL_LANG_NEW_IMPL_N(s, std::nothrow);
   }
-  FOLLY_NODISCARD FOLLY_ERASE void* operator()( //
-      std::size_t const s,
-      FOLLY_MAYBE_UNUSED align_val_t const a) const
+  FOLLY_NODISCARD FOLLY_ERASE void *operator()( //
+      std::size_t const s, FOLLY_MAYBE_UNUSED align_val_t const a) const
       noexcept(noexcept(::operator new(0))) {
 #if FOLLY_DETAIL_LANG_NEW_HAVE_AN
     return FOLLY_DETAIL_LANG_NEW_IMPL_N(s, a);
@@ -77,10 +82,9 @@ struct operator_new_fn {
     return FOLLY_DETAIL_LANG_NEW_IMPL_N(s);
 #endif
   }
-  FOLLY_NODISCARD FOLLY_ERASE void* operator()( //
-      std::size_t const s,
-      FOLLY_MAYBE_UNUSED align_val_t const a,
-      std::nothrow_t const&) const noexcept {
+  FOLLY_NODISCARD FOLLY_ERASE void *operator()( //
+      std::size_t const s, FOLLY_MAYBE_UNUSED align_val_t const a,
+      std::nothrow_t const &) const noexcept {
 #if FOLLY_DETAIL_LANG_NEW_HAVE_AN
     return FOLLY_DETAIL_LANG_NEW_IMPL_N(s, a, std::nothrow);
 #else
@@ -93,12 +97,11 @@ FOLLY_INLINE_VARIABLE constexpr operator_new_fn operator_new{};
 //  operator_delete
 struct operator_delete_fn {
   FOLLY_ERASE void operator()( //
-      void* const p) const noexcept {
+      void *const p) const noexcept {
     return FOLLY_DETAIL_LANG_NEW_IMPL_D(p);
   }
   FOLLY_ERASE void operator()( //
-      void* const p,
-      FOLLY_MAYBE_UNUSED std::size_t const s) const noexcept {
+      void *const p, FOLLY_MAYBE_UNUSED std::size_t const s) const noexcept {
 #if FOLLY_DETAIL_LANG_NEW_HAVE_SD
     return FOLLY_DETAIL_LANG_NEW_IMPL_D(p, s);
 #else
@@ -106,8 +109,7 @@ struct operator_delete_fn {
 #endif
   }
   FOLLY_ERASE void operator()( //
-      void* const p,
-      FOLLY_MAYBE_UNUSED align_val_t const a) const noexcept {
+      void *const p, FOLLY_MAYBE_UNUSED align_val_t const a) const noexcept {
 #if FOLLY_DETAIL_LANG_NEW_HAVE_AN
     return FOLLY_DETAIL_LANG_NEW_IMPL_D(p, a);
 #else
@@ -115,8 +117,7 @@ struct operator_delete_fn {
 #endif
   }
   FOLLY_ERASE void operator()( //
-      void* const p,
-      FOLLY_MAYBE_UNUSED std::size_t const s,
+      void *const p, FOLLY_MAYBE_UNUSED std::size_t const s,
       FOLLY_MAYBE_UNUSED align_val_t const a) const noexcept {
 #if FOLLY_DETAIL_LANG_NEW_HAVE_AN
 #if FOLLY_DETAIL_LANG_NEW_HAVE_SD

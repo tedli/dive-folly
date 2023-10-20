@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -36,7 +43,7 @@ inline void asm_volatile_memory() {
 inline void asm_volatile_pause() {
 #if defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
   ::_mm_pause();
-#elif defined(__i386__) || FOLLY_X64 || \
+#elif defined(__i386__) || FOLLY_X64 ||                                        \
     (defined(__mips_isa_rev) && __mips_isa_rev > 1)
   asm volatile("pause");
 #elif FOLLY_AARCH64

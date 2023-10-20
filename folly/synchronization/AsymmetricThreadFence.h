@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -51,7 +58,7 @@ struct asymmetric_thread_fence_heavy_fn {
     }
   }
 
- private:
+private:
   static void impl_(std::memory_order) noexcept;
 };
 FOLLY_INLINE_VARIABLE constexpr asymmetric_thread_fence_heavy_fn

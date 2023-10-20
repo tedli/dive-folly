@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -161,16 +168,16 @@ struct FOLLY_EXPORT ConversionErrorBase : std::range_error {
 };
 
 class FOLLY_EXPORT ConversionError : public ConversionErrorBase {
- public:
-  ConversionError(const std::string& str, ConversionCode code)
+public:
+  ConversionError(const std::string &str, ConversionCode code)
       : ConversionErrorBase(str), code_(code) {}
 
-  ConversionError(const char* str, ConversionCode code)
+  ConversionError(const char *str, ConversionCode code)
       : ConversionErrorBase(str), code_(code) {}
 
   ConversionCode errorCode() const { return code_; }
 
- private:
+private:
   ConversionCode code_;
 };
 
@@ -231,8 +238,8 @@ template <class Tgt, class Src>
 typename std::enable_if<
     std::is_same<Tgt, typename std::decay<Src>::type>::value,
     Expected<Tgt, ConversionCode>>::type
-tryTo(Src&& value) {
-  return static_cast<Src&&>(value);
+tryTo(Src &&value) {
+  return static_cast<Src &&>(value);
 }
 
 /**
@@ -240,10 +247,9 @@ tryTo(Src&& value) {
  */
 template <class Tgt, class Src>
 typename std::enable_if<
-    std::is_same<Tgt, typename std::decay<Src>::type>::value,
-    Tgt>::type
-to(Src&& value) {
-  return static_cast<Src&&>(value);
+    std::is_same<Tgt, typename std::decay<Src>::type>::value, Tgt>::type
+to(Src &&value) {
+  return static_cast<Src &&>(value);
 }
 
 /**
@@ -256,20 +262,20 @@ to(Src&& value) {
  * non-zero value as true, instead of range checking.
  */
 template <class Tgt, class Src>
-typename std::enable_if<
-    is_arithmetic_v<Src> && !std::is_same<Tgt, Src>::value &&
-        std::is_same<Tgt, bool>::value,
-    Expected<Tgt, ConversionCode>>::type
-tryTo(const Src& value) {
+typename std::enable_if<is_arithmetic_v<Src> &&
+                            !std::is_same<Tgt, Src>::value &&
+                            std::is_same<Tgt, bool>::value,
+                        Expected<Tgt, ConversionCode>>::type
+tryTo(const Src &value) {
   return value != Src();
 }
 
 template <class Tgt, class Src>
-typename std::enable_if<
-    is_arithmetic_v<Src> && !std::is_same<Tgt, Src>::value &&
-        std::is_same<Tgt, bool>::value,
-    Tgt>::type
-to(const Src& value) {
+typename std::enable_if<is_arithmetic_v<Src> &&
+                            !std::is_same<Tgt, Src>::value &&
+                            std::is_same<Tgt, bool>::value,
+                        Tgt>::type
+to(const Src &value) {
   return value != Src();
 }
 
@@ -289,28 +295,24 @@ using LastElement = type_pack_element_t<sizeof...(T) - 1, T...>;
 // though the runtime performance is the same.
 
 template <typename... Ts>
-const LastElement<Ts...>& getLastElement(const Ts&... ts) {
+const LastElement<Ts...> &getLastElement(const Ts &...ts) {
   return std::get<sizeof...(Ts) - 1>(std::forward_as_tuple(ts...));
 }
 
 inline void getLastElement() {}
 #else
-template <typename...>
-struct LastElementImpl;
-template <>
-struct LastElementImpl<> {
+template <typename...> struct LastElementImpl;
+template <> struct LastElementImpl<> {
   static void call() {}
 };
-template <typename Ign, typename... Igns>
-struct LastElementImpl<Ign, Igns...> {
-  template <typename Last>
-  static const Last& call(Igns..., const Last& last) {
+template <typename Ign, typename... Igns> struct LastElementImpl<Ign, Igns...> {
+  template <typename Last> static const Last &call(Igns..., const Last &last) {
     return last;
   }
 };
 
 template <typename... Ts>
-const LastElement<Ts...>& getLastElement(const Ts&... ts) {
+const LastElement<Ts...> &getLastElement(const Ts &...ts) {
   return LastElementImpl<Ignored<Ts>...>::call(ts...);
 }
 #endif
@@ -324,8 +326,7 @@ const LastElement<Ts...>& getLastElement(const Ts&... ts) {
 #if FOLLY_HAVE_INT128_T
 namespace detail {
 
-template <typename IntegerType>
-constexpr unsigned int digitsEnough() {
+template <typename IntegerType> constexpr unsigned int digitsEnough() {
   // digits10 returns the number of decimal digits that this type can represent,
   // not the number of characters required for the max value, so we need to add
   // one. ex: char digits10 returns 2, because 256-999 cannot be represented,
@@ -334,7 +335,7 @@ constexpr unsigned int digitsEnough() {
   return static_cast<unsigned int>(digits10) + 1;
 }
 
-inline size_t unsafeTelescope128(char* outb, char* oute, unsigned __int128 x) {
+inline size_t unsafeTelescope128(char *outb, char *oute, unsigned __int128 x) {
   using Usrc = unsigned __int128;
 
   // Decompose the input into at most 3 components using the largest power-of-10
@@ -353,8 +354,8 @@ inline size_t unsafeTelescope128(char* outb, char* oute, unsigned __int128 x) {
     assert(v < kBase);
     assert(outb + p + kBaseDigits <= oute);
     auto v64 = static_cast<uint64_t>(v);
-    detail::to_ascii_with_route<10, to_ascii_alphabet_lower>(
-        outb + p, kBaseDigits, v64);
+    detail::to_ascii_with_route<10, to_ascii_alphabet_lower>(outb + p,
+                                                             kBaseDigits, v64);
     p += kBaseDigits;
   };
 
@@ -389,8 +390,7 @@ inline size_t unsafeTelescope128(char* outb, char* oute, unsigned __int128 x) {
  *
  * A single char gets appended.
  */
-template <class Tgt>
-void toAppend(char value, Tgt* result) {
+template <class Tgt> void toAppend(char value, Tgt *result) {
   *result += value;
 }
 
@@ -404,8 +404,7 @@ estimateSpaceNeeded(T) {
   return 1;
 }
 
-template <size_t N>
-constexpr size_t estimateSpaceNeeded(const char (&)[N]) {
+template <size_t N> constexpr size_t estimateSpaceNeeded(const char (&)[N]) {
   return N;
 }
 
@@ -413,52 +412,48 @@ constexpr size_t estimateSpaceNeeded(const char (&)[N]) {
  * Everything implicitly convertible to const char* gets appended.
  */
 template <class Tgt, class Src>
-typename std::enable_if<
-    std::is_convertible<Src, const char*>::value &&
-    IsSomeString<Tgt>::value>::type
-toAppend(Src value, Tgt* result) {
+typename std::enable_if<std::is_convertible<Src, const char *>::value &&
+                        IsSomeString<Tgt>::value>::type
+toAppend(Src value, Tgt *result) {
   // Treat null pointers like an empty string, as in:
   // operator<<(std::ostream&, const char*).
-  const char* c = value;
+  const char *c = value;
   if (c) {
     result->append(value);
   }
 }
 
 template <class Src>
-typename std::enable_if<std::is_convertible<Src, const char*>::value, size_t>::
-    type
-    estimateSpaceNeeded(Src value) {
-  const char* c = value;
+typename std::enable_if<std::is_convertible<Src, const char *>::value,
+                        size_t>::type
+estimateSpaceNeeded(Src value) {
+  const char *c = value;
   return c ? std::strlen(c) : 0;
 }
 
 template <class Src>
 typename std::enable_if<IsSomeString<Src>::value, size_t>::type
-estimateSpaceNeeded(Src const& value) {
+estimateSpaceNeeded(Src const &value) {
   return value.size();
 }
 
 template <class Src>
-typename std::enable_if<
-    std::is_convertible<Src, folly::StringPiece>::value &&
-        !IsSomeString<Src>::value &&
-        !std::is_convertible<Src, const char*>::value,
-    size_t>::type
+typename std::enable_if<std::is_convertible<Src, folly::StringPiece>::value &&
+                            !IsSomeString<Src>::value &&
+                            !std::is_convertible<Src, const char *>::value,
+                        size_t>::type
 estimateSpaceNeeded(Src value) {
   return folly::StringPiece(value).size();
 }
 
-template <>
-inline size_t estimateSpaceNeeded(std::nullptr_t /* value */) {
+template <> inline size_t estimateSpaceNeeded(std::nullptr_t /* value */) {
   return 0;
 }
 
 template <class Src>
-typename std::enable_if<
-    std::is_pointer<Src>::value &&
-        IsSomeString<std::remove_pointer<Src>>::value,
-    size_t>::type
+typename std::enable_if<std::is_pointer<Src>::value &&
+                            IsSomeString<std::remove_pointer<Src>>::value,
+                        size_t>::type
 estimateSpaceNeeded(Src value) {
   return value->size();
 }
@@ -467,9 +462,9 @@ estimateSpaceNeeded(Src value) {
  * Strings get appended, too.
  */
 template <class Tgt, class Src>
-typename std::enable_if<
-    IsSomeString<Src>::value && IsSomeString<Tgt>::value>::type
-toAppend(const Src& value, Tgt* result) {
+typename std::enable_if<IsSomeString<Src>::value &&
+                        IsSomeString<Tgt>::value>::type
+toAppend(const Src &value, Tgt *result) {
   result->append(value);
 }
 
@@ -477,8 +472,8 @@ toAppend(const Src& value, Tgt* result) {
  * and StringPiece objects too
  */
 template <class Tgt>
-typename std::enable_if<IsSomeString<Tgt>::value>::type toAppend(
-    StringPiece value, Tgt* result) {
+typename std::enable_if<IsSomeString<Tgt>::value>::type
+toAppend(StringPiece value, Tgt *result) {
   result->append(value.data(), value.size());
 }
 
@@ -487,8 +482,8 @@ typename std::enable_if<IsSomeString<Tgt>::value>::type toAppend(
  * so make a specialization.
  */
 template <class Tgt>
-typename std::enable_if<IsSomeString<Tgt>::value>::type toAppend(
-    const fbstring& value, Tgt* result) {
+typename std::enable_if<IsSomeString<Tgt>::value>::type
+toAppend(const fbstring &value, Tgt *result) {
   result->append(value.data(), value.size());
 }
 
@@ -497,8 +492,7 @@ typename std::enable_if<IsSomeString<Tgt>::value>::type toAppend(
  * Special handling for 128 bit integers.
  */
 
-template <class Tgt>
-void toAppend(__int128 value, Tgt* result) {
+template <class Tgt> void toAppend(__int128 value, Tgt *result) {
   typedef unsigned __int128 Usrc;
   char buffer[detail::digitsEnough<unsigned __int128>() + 1];
   const auto oute = buffer + sizeof(buffer);
@@ -514,8 +508,7 @@ void toAppend(__int128 value, Tgt* result) {
   result->append(buffer, p);
 }
 
-template <class Tgt>
-void toAppend(unsigned __int128 value, Tgt* result) {
+template <class Tgt> void toAppend(unsigned __int128 value, Tgt *result) {
   char buffer[detail::digitsEnough<unsigned __int128>()];
   size_t p = detail::unsafeTelescope128(buffer, buffer + sizeof(buffer), value);
   result->append(buffer, p);
@@ -529,9 +522,9 @@ constexpr
 }
 
 template <class T>
-constexpr typename std::
-    enable_if<std::is_same<T, unsigned __int128>::value, size_t>::type
-    estimateSpaceNeeded(T) {
+constexpr typename std::enable_if<std::is_same<T, unsigned __int128>::value,
+                                  size_t>::type
+estimateSpaceNeeded(T) {
   return detail::digitsEnough<unsigned __int128>();
 }
 
@@ -546,10 +539,9 @@ constexpr typename std::
  * sign, one for the terminating 0).
  */
 template <class Tgt, class Src>
-typename std::enable_if<
-    is_integral_v<Src> && is_signed_v<Src> && IsSomeString<Tgt>::value &&
-    sizeof(Src) >= 4>::type
-toAppend(Src value, Tgt* result) {
+typename std::enable_if<is_integral_v<Src> && is_signed_v<Src> &&
+                        IsSomeString<Tgt>::value && sizeof(Src) >= 4>::type
+toAppend(Src value, Tgt *result) {
   char buffer[to_ascii_size_max_decimal<uint64_t>];
   auto uvalue = value < 0 ? ~static_cast<uint64_t>(value) + 1
                           : static_cast<uint64_t>(value);
@@ -560,10 +552,9 @@ toAppend(Src value, Tgt* result) {
 }
 
 template <class Src>
-typename std::enable_if<
-    is_integral_v<Src> && is_signed_v<Src> && sizeof(Src) >= 4 &&
-        sizeof(Src) < 16,
-    size_t>::type
+typename std::enable_if<is_integral_v<Src> && is_signed_v<Src> &&
+                            sizeof(Src) >= 4 && sizeof(Src) < 16,
+                        size_t>::type
 estimateSpaceNeeded(Src value) {
   auto uvalue = value < 0 ? ~static_cast<uint64_t>(value) + 1
                           : static_cast<uint64_t>(value);
@@ -574,19 +565,17 @@ estimateSpaceNeeded(Src value) {
  * As above, but for uint32_t and uint64_t.
  */
 template <class Tgt, class Src>
-typename std::enable_if<
-    is_integral_v<Src> && !is_signed_v<Src> && IsSomeString<Tgt>::value &&
-    sizeof(Src) >= 4>::type
-toAppend(Src value, Tgt* result) {
+typename std::enable_if<is_integral_v<Src> && !is_signed_v<Src> &&
+                        IsSomeString<Tgt>::value && sizeof(Src) >= 4>::type
+toAppend(Src value, Tgt *result) {
   char buffer[to_ascii_size_max_decimal<uint64_t>];
   result->append(buffer, to_ascii_decimal(buffer, value));
 }
 
 template <class Src>
-typename std::enable_if<
-    is_integral_v<Src> && !is_signed_v<Src> && sizeof(Src) >= 4 &&
-        sizeof(Src) < 16,
-    size_t>::type
+typename std::enable_if<is_integral_v<Src> && !is_signed_v<Src> &&
+                            sizeof(Src) >= 4 && sizeof(Src) < 16,
+                        size_t>::type
 estimateSpaceNeeded(Src value) {
   return to_ascii_size_decimal(value);
 }
@@ -596,18 +585,18 @@ estimateSpaceNeeded(Src value) {
  * types int32_t and uint32_t, respectively.
  */
 template <class Tgt, class Src>
-typename std::enable_if<
-    is_integral_v<Src> && IsSomeString<Tgt>::value && sizeof(Src) < 4>::type
-toAppend(Src value, Tgt* result) {
+typename std::enable_if<is_integral_v<Src> && IsSomeString<Tgt>::value &&
+                        sizeof(Src) < 4>::type
+toAppend(Src value, Tgt *result) {
   typedef typename std::conditional<is_signed_v<Src>, int64_t, uint64_t>::type
       Intermediate;
   toAppend<Tgt>(static_cast<Intermediate>(value), result);
 }
 
 template <class Src>
-typename std::enable_if<
-    is_integral_v<Src> && sizeof(Src) < 4 && !std::is_same<Src, char>::value,
-    size_t>::type
+typename std::enable_if<is_integral_v<Src> && sizeof(Src) < 4 &&
+                            !std::is_same<Src, char>::value,
+                        size_t>::type
 estimateSpaceNeeded(Src value) {
   typedef typename std::conditional<is_signed_v<Src>, int64_t, uint64_t>::type
       Intermediate;
@@ -618,9 +607,9 @@ estimateSpaceNeeded(Src value) {
  * Enumerated values get appended as integers.
  */
 template <class Tgt, class Src>
-typename std::enable_if<
-    std::is_enum<Src>::value && IsSomeString<Tgt>::value>::type
-toAppend(Src value, Tgt* result) {
+typename std::enable_if<std::is_enum<Src>::value &&
+                        IsSomeString<Tgt>::value>::type
+toAppend(Src value, Tgt *result) {
   toAppend(to_underlying(value), result);
 }
 
@@ -641,44 +630,38 @@ constexpr int kConvMaxDecimalInShortestHigh = 21;
 
 /** Wrapper around DoubleToStringConverter */
 template <class Tgt, class Src>
-typename std::enable_if<
-    std::is_floating_point<Src>::value && IsSomeString<Tgt>::value>::type
-toAppend(
-    Src value,
-    Tgt* result,
-    double_conversion::DoubleToStringConverter::DtoaMode mode,
-    unsigned int numDigits,
-    double_conversion::DoubleToStringConverter::Flags flags =
-        double_conversion::DoubleToStringConverter::NO_FLAGS) {
+typename std::enable_if<std::is_floating_point<Src>::value &&
+                        IsSomeString<Tgt>::value>::type
+toAppend(Src value, Tgt *result,
+         double_conversion::DoubleToStringConverter::DtoaMode mode,
+         unsigned int numDigits,
+         double_conversion::DoubleToStringConverter::Flags flags =
+             double_conversion::DoubleToStringConverter::NO_FLAGS) {
   using namespace double_conversion;
-  DoubleToStringConverter conv(
-      flags,
-      "Infinity",
-      "NaN",
-      'E',
-      detail::kConvMaxDecimalInShortestLow,
-      detail::kConvMaxDecimalInShortestHigh,
-      6, // max leading padding zeros
-      1); // max trailing padding zeros
+  DoubleToStringConverter conv(flags, "Infinity", "NaN", 'E',
+                               detail::kConvMaxDecimalInShortestLow,
+                               detail::kConvMaxDecimalInShortestHigh,
+                               6,  // max leading padding zeros
+                               1); // max trailing padding zeros
   char buffer[256];
   StringBuilder builder(buffer, sizeof(buffer));
   FOLLY_PUSH_WARNING
   FOLLY_CLANG_DISABLE_WARNING("-Wcovered-switch-default")
   switch (mode) {
-    case DoubleToStringConverter::SHORTEST:
-      conv.ToShortest(value, &builder);
-      break;
-    case DoubleToStringConverter::SHORTEST_SINGLE:
-      conv.ToShortestSingle(static_cast<float>(value), &builder);
-      break;
-    case DoubleToStringConverter::FIXED:
-      conv.ToFixed(value, int(numDigits), &builder);
-      break;
-    case DoubleToStringConverter::PRECISION:
-    default:
-      assert(mode == DoubleToStringConverter::PRECISION);
-      conv.ToPrecision(value, int(numDigits), &builder);
-      break;
+  case DoubleToStringConverter::SHORTEST:
+    conv.ToShortest(value, &builder);
+    break;
+  case DoubleToStringConverter::SHORTEST_SINGLE:
+    conv.ToShortestSingle(static_cast<float>(value), &builder);
+    break;
+  case DoubleToStringConverter::FIXED:
+    conv.ToFixed(value, int(numDigits), &builder);
+    break;
+  case DoubleToStringConverter::PRECISION:
+  default:
+    assert(mode == DoubleToStringConverter::PRECISION);
+    conv.ToPrecision(value, int(numDigits), &builder);
+    break;
   }
   FOLLY_POP_WARNING
   const size_t length = size_t(builder.position());
@@ -690,11 +673,11 @@ toAppend(
  * As above, but for floating point
  */
 template <class Tgt, class Src>
-typename std::enable_if<
-    std::is_floating_point<Src>::value && IsSomeString<Tgt>::value>::type
-toAppend(Src value, Tgt* result) {
-  toAppend(
-      value, result, double_conversion::DoubleToStringConverter::SHORTEST, 0);
+typename std::enable_if<std::is_floating_point<Src>::value &&
+                        IsSomeString<Tgt>::value>::type
+toAppend(Src value, Tgt *result) {
+  toAppend(value, result, double_conversion::DoubleToStringConverter::SHORTEST,
+           0);
 }
 
 /**
@@ -721,9 +704,8 @@ estimateSpaceNeeded(Src value) {
       // so 21 is the longest non-exponential number > 1.
       detail::kConvMaxDecimalInShortestHigh,
   });
-  return size_t(
-      kMaxPositiveSpace +
-      (value < 0 ? 1 : 0)); // +1 for minus sign, if negative
+  return size_t(kMaxPositiveSpace +
+                (value < 0 ? 1 : 0)); // +1 for minus sign, if negative
 }
 
 /**
@@ -731,8 +713,7 @@ estimateSpaceNeeded(Src value) {
  * for estimateSpaceNeed for your type, so that we allocate
  * as much as you need instead of the default
  */
-template <class Src>
-struct HasLengthEstimator : std::false_type {};
+template <class Src> struct HasLengthEstimator : std::false_type {};
 
 template <class Src>
 constexpr typename std::enable_if<
@@ -743,34 +724,33 @@ constexpr typename std::enable_if<
         !std::is_same<unsigned __int128, Src>::value &&
 #endif
         !IsSomeString<Src>::value &&
-        !std::is_convertible<Src, const char*>::value &&
+        !std::is_convertible<Src, const char *>::value &&
         !std::is_convertible<Src, StringPiece>::value &&
         !std::is_enum<Src>::value && !HasLengthEstimator<Src>::value,
     size_t>::type
-estimateSpaceNeeded(const Src&) {
+estimateSpaceNeeded(const Src &) {
   return sizeof(Src) + 1; // dumbest best effort ever?
 }
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace detail {
 
-FOLLY_ERASE constexpr size_t estimateSpaceToReserveOne(std::false_type, void*) {
+FOLLY_ERASE constexpr size_t estimateSpaceToReserveOne(std::false_type,
+                                                       void *) {
   return 0;
 }
 template <typename T>
-FOLLY_ERASE constexpr size_t estimateSpaceToReserveOne(
-    std::true_type, const T& v) {
+FOLLY_ERASE constexpr size_t estimateSpaceToReserveOne(std::true_type,
+                                                       const T &v) {
   return estimateSpaceNeeded(v);
 }
 
-template <typename>
-struct EstimateSpaceToReserveAll;
+template <typename> struct EstimateSpaceToReserveAll;
 template <size_t... I>
 struct EstimateSpaceToReserveAll<std::index_sequence<I...>> {
   template <size_t J, size_t N = sizeof...(I)>
   using tag = bool_constant<J + 1 < N>;
-  template <class... T>
-  static size_t call(const T&... v) {
+  template <class... T> static size_t call(const T &...v) {
     const size_t sizes[] = {estimateSpaceToReserveOne(tag<I>{}, v)...};
     size_t size = 0;
     for (const auto s : sizes) {
@@ -780,46 +760,39 @@ struct EstimateSpaceToReserveAll<std::index_sequence<I...>> {
   }
 };
 
-template <class O>
-void reserveInTarget(const O& o) {
-  (void)o;
-}
-template <class T, class O>
-void reserveInTarget(const T& v, const O& o) {
+template <class O> void reserveInTarget(const O &o) { (void)o; }
+template <class T, class O> void reserveInTarget(const T &v, const O &o) {
   o->reserve(estimateSpaceNeeded(v));
 }
 template <class T0, class T1, class... Ts>
-void reserveInTarget(const T0& v0, const T1& v1, const Ts&... vs) {
+void reserveInTarget(const T0 &v0, const T1 &v1, const Ts &...vs) {
   using seq = std::index_sequence_for<T0, T1, Ts...>;
   getLastElement(vs...)->reserve(
       EstimateSpaceToReserveAll<seq>::call(v0, v1, vs...));
 }
 
 template <class Delimiter, class... Ts>
-void reserveInTargetDelim(const Delimiter& d, const Ts&... vs) {
+void reserveInTargetDelim(const Delimiter &d, const Ts &...vs) {
   static_assert(sizeof...(vs) >= 2, "Needs at least 2 args");
   using seq = std::index_sequence_for<Ts...>;
   size_t fordelim = (sizeof...(vs) - 2) * estimateSpaceNeeded(d);
-  getLastElement(vs...)->reserve(
-      fordelim + EstimateSpaceToReserveAll<seq>::call(vs...));
+  getLastElement(vs...)->reserve(fordelim +
+                                 EstimateSpaceToReserveAll<seq>::call(vs...));
 }
 
 template <class T>
-FOLLY_ERASE constexpr int toAppendStrImplOne(
-    std::false_type, const T& v, void*) {
+FOLLY_ERASE constexpr int toAppendStrImplOne(std::false_type, const T &v,
+                                             void *) {
   (void)v;
   return 0;
 }
 template <class T, class Tgt>
-FOLLY_ERASE int toAppendStrImplOne(std::true_type, const T& v, Tgt result) {
+FOLLY_ERASE int toAppendStrImplOne(std::true_type, const T &v, Tgt result) {
   return toAppend(v, result), 0;
 }
-template <typename>
-struct ToAppendStrImplAll;
-template <size_t... I>
-struct ToAppendStrImplAll<std::index_sequence<I...>> {
-  template <class... T>
-  static void call(const T&... v) {
+template <typename> struct ToAppendStrImplAll;
+template <size_t... I> struct ToAppendStrImplAll<std::index_sequence<I...>> {
+  template <class... T> static void call(const T &...v) {
     using _ = int[];
     auto r = getLastElement(v...);
     void(_{toAppendStrImplOne(bool_constant<I + 1 < sizeof...(T)>{}, v, r)...});
@@ -827,45 +800,44 @@ struct ToAppendStrImplAll<std::index_sequence<I...>> {
 };
 
 template <class Delimiter, class T>
-FOLLY_ERASE constexpr int toAppendDelimStrImplOne(
-    index_constant<0>, const Delimiter& d, const T& v, void*) {
+FOLLY_ERASE constexpr int toAppendDelimStrImplOne(index_constant<0>,
+                                                  const Delimiter &d,
+                                                  const T &v, void *) {
   (void)d;
   (void)v;
   return 0;
 }
 template <class Delimiter, class T, class Tgt>
-FOLLY_ERASE int toAppendDelimStrImplOne(
-    index_constant<1>, const Delimiter& d, const T& v, Tgt result) {
+FOLLY_ERASE int toAppendDelimStrImplOne(index_constant<1>, const Delimiter &d,
+                                        const T &v, Tgt result) {
   (void)d;
   toAppend(v, result);
   return 0;
 }
 template <class Delimiter, class T, class Tgt>
-FOLLY_ERASE int toAppendDelimStrImplOne(
-    index_constant<2>, const Delimiter& d, const T& v, Tgt result) {
+FOLLY_ERASE int toAppendDelimStrImplOne(index_constant<2>, const Delimiter &d,
+                                        const T &v, Tgt result) {
   toAppend(v, result);
   toAppend(d, result);
   return 0;
 }
-template <typename>
-struct ToAppendDelimStrImplAll;
+template <typename> struct ToAppendDelimStrImplAll;
 template <size_t... I>
 struct ToAppendDelimStrImplAll<std::index_sequence<I...>> {
   template <size_t J, size_t N = sizeof...(I), size_t K = N - J - 1>
   using tag = index_constant<(K < 2 ? K : 2)>;
   template <class Delimiter, class... T>
-  static void call(const Delimiter& d, const T&... v) {
+  static void call(const Delimiter &d, const T &...v) {
     using _ = int[];
     auto r = detail::getLastElement(v...);
     void(_{toAppendDelimStrImplOne(tag<I>{}, d, v, r)...});
   }
 };
 template <class Delimiter, class T, class... Ts>
-typename std::enable_if<
-    sizeof...(Ts) >= 2 &&
-    IsSomeString<typename std::remove_pointer<
-        detail::LastElement<Ts...>>::type>::value>::type
-toAppendDelimStrImpl(const Delimiter& delim, const T& v, const Ts&... vs) {
+typename std::enable_if<sizeof...(Ts) >= 2 &&
+                        IsSomeString<typename std::remove_pointer<
+                            detail::LastElement<Ts...>>::type>::value>::type
+toAppendDelimStrImpl(const Delimiter &delim, const T &v, const Ts &...vs) {
   using seq = std::index_sequence_for<T, Ts...>;
   ToAppendDelimStrImplAll<seq>::call(delim, v, vs...);
 }
@@ -894,11 +866,10 @@ toAppendDelimStrImpl(const Delimiter& delim, const T& v, const Ts&... vs) {
  * }
  */
 template <class... Ts>
-typename std::enable_if<
-    sizeof...(Ts) >= 3 &&
-    IsSomeString<typename std::remove_pointer<
-        detail::LastElement<Ts...>>::type>::value>::type
-toAppend(const Ts&... vs) {
+typename std::enable_if<sizeof...(Ts) >= 3 &&
+                        IsSomeString<typename std::remove_pointer<
+                            detail::LastElement<Ts...>>::type>::value>::type
+toAppend(const Ts &...vs) {
   using seq = std::index_sequence_for<Ts...>;
   detail::ToAppendStrImplAll<seq>::call(vs...);
 }
@@ -917,20 +888,19 @@ toAppend(const Ts&... vs) {
 template <class... Ts>
 typename std::enable_if<IsSomeString<typename std::remove_pointer<
     detail::LastElement<Ts...>>::type>::value>::type
-toAppendFit(const Ts&... vs) {
+toAppendFit(const Ts &...vs) {
   ::folly::detail::reserveInTarget(vs...);
   toAppend(vs...);
 }
 
-template <class Ts>
-void toAppendFit(const Ts&) {}
+template <class Ts> void toAppendFit(const Ts &) {}
 
 /**
  * Variadic base case: do nothing.
  */
 template <class Tgt>
-typename std::enable_if<IsSomeString<Tgt>::value>::type toAppend(
-    Tgt* /* result */) {}
+typename std::enable_if<IsSomeString<Tgt>::value>::type
+toAppend(Tgt * /* result */) {}
 
 /**
  * @overloadbrief Use a specified delimiter between appendees.
@@ -938,15 +908,15 @@ typename std::enable_if<IsSomeString<Tgt>::value>::type toAppend(
  * Variadic base case: do nothing.
  */
 template <class Delimiter, class Tgt>
-typename std::enable_if<IsSomeString<Tgt>::value>::type toAppendDelim(
-    const Delimiter& /* delim */, Tgt* /* result */) {}
+typename std::enable_if<IsSomeString<Tgt>::value>::type
+toAppendDelim(const Delimiter & /* delim */, Tgt * /* result */) {}
 
 /**
  * 1 element: same as toAppend.
  */
 template <class Delimiter, class T, class Tgt>
-typename std::enable_if<IsSomeString<Tgt>::value>::type toAppendDelim(
-    const Delimiter& /* delim */, const T& v, Tgt* tgt) {
+typename std::enable_if<IsSomeString<Tgt>::value>::type
+toAppendDelim(const Delimiter & /* delim */, const T &v, Tgt *tgt) {
   toAppend(v, tgt);
 }
 
@@ -955,11 +925,10 @@ typename std::enable_if<IsSomeString<Tgt>::value>::type toAppendDelim(
  * comments for toAppend for details about memory allocation.
  */
 template <class Delimiter, class... Ts>
-typename std::enable_if<
-    sizeof...(Ts) >= 3 &&
-    IsSomeString<typename std::remove_pointer<
-        detail::LastElement<Ts...>>::type>::value>::type
-toAppendDelim(const Delimiter& delim, const Ts&... vs) {
+typename std::enable_if<sizeof...(Ts) >= 3 &&
+                        IsSomeString<typename std::remove_pointer<
+                            detail::LastElement<Ts...>>::type>::value>::type
+toAppendDelim(const Delimiter &delim, const Ts &...vs) {
   detail::toAppendDelimStrImpl(delim, vs...);
 }
 
@@ -971,13 +940,12 @@ toAppendDelim(const Delimiter& delim, const Ts&... vs) {
 template <class Delimiter, class... Ts>
 typename std::enable_if<IsSomeString<typename std::remove_pointer<
     detail::LastElement<Ts...>>::type>::value>::type
-toAppendDelimFit(const Delimiter& delim, const Ts&... vs) {
+toAppendDelimFit(const Delimiter &delim, const Ts &...vs) {
   detail::reserveInTargetDelim(delim, vs...);
   toAppendDelim(delim, vs...);
 }
 
-template <class De, class Ts>
-void toAppendDelimFit(const De&, const Ts&) {}
+template <class De, class Ts> void toAppendDelimFit(const De &, const Ts &) {}
 
 /**
  * to<SomeString>(v1, v2, ...) uses toAppend() (see below) as back-end
@@ -989,7 +957,7 @@ typename std::enable_if<
         (sizeof...(Ts) != 1 ||
          !std::is_same<Tgt, detail::LastElement<void, Ts...>>::value),
     Tgt>::type
-to(const Ts&... vs) {
+to(const Ts &...vs) {
   Tgt result;
   toAppendFit(vs..., &result);
   return result;
@@ -1008,8 +976,7 @@ to(const Ts&... vs) {
  */
 template <class Tgt, class Src>
 typename std::enable_if<
-    IsSomeString<Tgt>::value && std::is_floating_point<Src>::value,
-    Tgt>::type
+    IsSomeString<Tgt>::value && std::is_floating_point<Src>::value, Tgt>::type
 to(Src value) {
   Tgt result;
   toAppend(value, &result);
@@ -1026,8 +993,8 @@ typename std::enable_if<
     IsSomeString<Tgt>::value &&
         std::is_same<Tgt, typename std::decay<Src>::type>::value,
     Tgt>::type
-toDelim(const Delim& /* delim */, Src&& value) {
-  return static_cast<Src&&>(value);
+toDelim(const Delim & /* delim */, Src &&value) {
+  return static_cast<Src &&>(value);
 }
 
 /**
@@ -1040,7 +1007,7 @@ typename std::enable_if<
         (sizeof...(Ts) != 1 ||
          !std::is_same<Tgt, detail::LastElement<void, Ts...>>::value),
     Tgt>::type
-toDelim(const Delim& delim, const Ts&... vs) {
+toDelim(const Delim &delim, const Ts &...vs) {
   Tgt result;
   toAppendDelimFit(delim, vs..., &result);
   return result;
@@ -1052,110 +1019,108 @@ toDelim(const Delim& delim, const Ts&... vs) {
 
 namespace detail {
 
-Expected<bool, ConversionCode> str_to_bool(StringPiece* src) noexcept;
+Expected<bool, ConversionCode> str_to_bool(StringPiece *src) noexcept;
 
 template <typename T>
-Expected<T, ConversionCode> str_to_floating(StringPiece* src) noexcept;
+Expected<T, ConversionCode> str_to_floating(StringPiece *src) noexcept;
 
-extern template Expected<float, ConversionCode> str_to_floating<float>(
-    StringPiece* src) noexcept;
-extern template Expected<double, ConversionCode> str_to_floating<double>(
-    StringPiece* src) noexcept;
+extern template Expected<float, ConversionCode>
+str_to_floating<float>(StringPiece *src) noexcept;
+extern template Expected<double, ConversionCode>
+str_to_floating<double>(StringPiece *src) noexcept;
 
 template <class Tgt>
-Expected<Tgt, ConversionCode> digits_to(const char* b, const char* e) noexcept;
+Expected<Tgt, ConversionCode> digits_to(const char *b, const char *e) noexcept;
 
-extern template Expected<char, ConversionCode> digits_to<char>(
-    const char*, const char*) noexcept;
-extern template Expected<signed char, ConversionCode> digits_to<signed char>(
-    const char*, const char*) noexcept;
+extern template Expected<char, ConversionCode>
+digits_to<char>(const char *, const char *) noexcept;
+extern template Expected<signed char, ConversionCode>
+digits_to<signed char>(const char *, const char *) noexcept;
 extern template Expected<unsigned char, ConversionCode>
-digits_to<unsigned char>(const char*, const char*) noexcept;
+digits_to<unsigned char>(const char *, const char *) noexcept;
 
-extern template Expected<short, ConversionCode> digits_to<short>(
-    const char*, const char*) noexcept;
+extern template Expected<short, ConversionCode>
+digits_to<short>(const char *, const char *) noexcept;
 extern template Expected<unsigned short, ConversionCode>
-digits_to<unsigned short>(const char*, const char*) noexcept;
+digits_to<unsigned short>(const char *, const char *) noexcept;
 
-extern template Expected<int, ConversionCode> digits_to<int>(
-    const char*, const char*) noexcept;
-extern template Expected<unsigned int, ConversionCode> digits_to<unsigned int>(
-    const char*, const char*) noexcept;
+extern template Expected<int, ConversionCode>
+digits_to<int>(const char *, const char *) noexcept;
+extern template Expected<unsigned int, ConversionCode>
+digits_to<unsigned int>(const char *, const char *) noexcept;
 
-extern template Expected<long, ConversionCode> digits_to<long>(
-    const char*, const char*) noexcept;
+extern template Expected<long, ConversionCode>
+digits_to<long>(const char *, const char *) noexcept;
 extern template Expected<unsigned long, ConversionCode>
-digits_to<unsigned long>(const char*, const char*) noexcept;
+digits_to<unsigned long>(const char *, const char *) noexcept;
 
-extern template Expected<long long, ConversionCode> digits_to<long long>(
-    const char*, const char*) noexcept;
+extern template Expected<long long, ConversionCode>
+digits_to<long long>(const char *, const char *) noexcept;
 extern template Expected<unsigned long long, ConversionCode>
-digits_to<unsigned long long>(const char*, const char*) noexcept;
+digits_to<unsigned long long>(const char *, const char *) noexcept;
 
 #if FOLLY_HAVE_INT128_T
-extern template Expected<__int128, ConversionCode> digits_to<__int128>(
-    const char*, const char*) noexcept;
+extern template Expected<__int128, ConversionCode>
+digits_to<__int128>(const char *, const char *) noexcept;
 extern template Expected<unsigned __int128, ConversionCode>
-digits_to<unsigned __int128>(const char*, const char*) noexcept;
+digits_to<unsigned __int128>(const char *, const char *) noexcept;
 #endif
 
 template <class T>
-Expected<T, ConversionCode> str_to_integral(StringPiece* src) noexcept;
+Expected<T, ConversionCode> str_to_integral(StringPiece *src) noexcept;
 
-extern template Expected<char, ConversionCode> str_to_integral<char>(
-    StringPiece* src) noexcept;
+extern template Expected<char, ConversionCode>
+str_to_integral<char>(StringPiece *src) noexcept;
 extern template Expected<signed char, ConversionCode>
-str_to_integral<signed char>(StringPiece* src) noexcept;
+str_to_integral<signed char>(StringPiece *src) noexcept;
 extern template Expected<unsigned char, ConversionCode>
-str_to_integral<unsigned char>(StringPiece* src) noexcept;
+str_to_integral<unsigned char>(StringPiece *src) noexcept;
 
-extern template Expected<short, ConversionCode> str_to_integral<short>(
-    StringPiece* src) noexcept;
+extern template Expected<short, ConversionCode>
+str_to_integral<short>(StringPiece *src) noexcept;
 extern template Expected<unsigned short, ConversionCode>
-str_to_integral<unsigned short>(StringPiece* src) noexcept;
+str_to_integral<unsigned short>(StringPiece *src) noexcept;
 
-extern template Expected<int, ConversionCode> str_to_integral<int>(
-    StringPiece* src) noexcept;
+extern template Expected<int, ConversionCode>
+str_to_integral<int>(StringPiece *src) noexcept;
 extern template Expected<unsigned int, ConversionCode>
-str_to_integral<unsigned int>(StringPiece* src) noexcept;
+str_to_integral<unsigned int>(StringPiece *src) noexcept;
 
-extern template Expected<long, ConversionCode> str_to_integral<long>(
-    StringPiece* src) noexcept;
+extern template Expected<long, ConversionCode>
+str_to_integral<long>(StringPiece *src) noexcept;
 extern template Expected<unsigned long, ConversionCode>
-str_to_integral<unsigned long>(StringPiece* src) noexcept;
+str_to_integral<unsigned long>(StringPiece *src) noexcept;
 
-extern template Expected<long long, ConversionCode> str_to_integral<long long>(
-    StringPiece* src) noexcept;
+extern template Expected<long long, ConversionCode>
+str_to_integral<long long>(StringPiece *src) noexcept;
 extern template Expected<unsigned long long, ConversionCode>
-str_to_integral<unsigned long long>(StringPiece* src) noexcept;
+str_to_integral<unsigned long long>(StringPiece *src) noexcept;
 
 #if FOLLY_HAVE_INT128_T
-extern template Expected<__int128, ConversionCode> str_to_integral<__int128>(
-    StringPiece* src) noexcept;
+extern template Expected<__int128, ConversionCode>
+str_to_integral<__int128>(StringPiece *src) noexcept;
 extern template Expected<unsigned __int128, ConversionCode>
-str_to_integral<unsigned __int128>(StringPiece* src) noexcept;
+str_to_integral<unsigned __int128>(StringPiece *src) noexcept;
 #endif
 
 template <typename T>
-typename std::
-    enable_if<std::is_same<T, bool>::value, Expected<T, ConversionCode>>::type
-    convertTo(StringPiece* src) noexcept {
+typename std::enable_if<std::is_same<T, bool>::value,
+                        Expected<T, ConversionCode>>::type
+convertTo(StringPiece *src) noexcept {
   return str_to_bool(src);
 }
 
 template <typename T>
-typename std::enable_if<
-    std::is_floating_point<T>::value,
-    Expected<T, ConversionCode>>::type
-convertTo(StringPiece* src) noexcept {
+typename std::enable_if<std::is_floating_point<T>::value,
+                        Expected<T, ConversionCode>>::type
+convertTo(StringPiece *src) noexcept {
   return str_to_floating<T>(src);
 }
 
 template <typename T>
-typename std::enable_if<
-    is_integral_v<T> && !std::is_same<T, bool>::value,
-    Expected<T, ConversionCode>>::type
-convertTo(StringPiece* src) noexcept {
+typename std::enable_if<is_integral_v<T> && !std::is_same<T, bool>::value,
+                        Expected<T, ConversionCode>>::type
+convertTo(StringPiece *src) noexcept {
   return str_to_integral<T>(src);
 }
 
@@ -1166,18 +1131,16 @@ convertTo(StringPiece* src) noexcept {
  * integrals. Assumes NO whitespace before or after.
  */
 template <typename Tgt>
-typename std::enable_if<
-    is_integral_v<Tgt> && !std::is_same<Tgt, bool>::value,
-    Expected<Tgt, ConversionCode>>::type
-tryTo(const char* b, const char* e) {
+typename std::enable_if<is_integral_v<Tgt> && !std::is_same<Tgt, bool>::value,
+                        Expected<Tgt, ConversionCode>>::type
+tryTo(const char *b, const char *e) {
   return detail::digits_to<Tgt>(b, e);
 }
 
 template <typename Tgt>
 typename std::enable_if< //
-    is_integral_v<Tgt> && !std::is_same<Tgt, bool>::value,
-    Tgt>::type
-to(const char* b, const char* e) {
+    is_integral_v<Tgt> && !std::is_same<Tgt, bool>::value, Tgt>::type
+to(const char *b, const char *e) {
   return tryTo<Tgt>(b, e).thenOrThrow(identity, [=](ConversionCode code) {
     return makeConversionError(code, StringPiece(b, e));
   });
@@ -1192,9 +1155,8 @@ to(const char* b, const char* e) {
  */
 template <typename Tgt>
 FOLLY_NODISCARD inline typename std::enable_if< //
-    is_arithmetic_v<Tgt>,
-    Expected<StringPiece, ConversionCode>>::type
-parseTo(StringPiece src, Tgt& out) {
+    is_arithmetic_v<Tgt>, Expected<StringPiece, ConversionCode>>::type
+parseTo(StringPiece src, Tgt &out) {
   return detail::convertTo<Tgt>(&src).then(
       [&](Tgt res) { return void(out = res), src; });
 }
@@ -1211,11 +1173,11 @@ namespace detail {
  * an integer.
  */
 template <class Tgt>
-typename std::enable_if<
-    !std::is_same<Tgt, bool>::value &&
-        (is_integral_v<Tgt> || std::is_floating_point<Tgt>::value),
-    Expected<Tgt, ConversionCode>>::type
-convertTo(const bool& value) noexcept {
+typename std::enable_if<!std::is_same<Tgt, bool>::value &&
+                            (is_integral_v<Tgt> ||
+                             std::is_floating_point<Tgt>::value),
+                        Expected<Tgt, ConversionCode>>::type
+convertTo(const bool &value) noexcept {
   return static_cast<Tgt>(value ? 1 : 0);
 }
 
@@ -1225,20 +1187,19 @@ convertTo(const bool& value) noexcept {
  * unchecked.
  */
 template <class Tgt, class Src>
-typename std::enable_if<
-    is_integral_v<Src> && !std::is_same<Tgt, Src>::value &&
-        !std::is_same<Tgt, bool>::value && is_integral_v<Tgt>,
-    Expected<Tgt, ConversionCode>>::type
-convertTo(const Src& value) noexcept {
-  if /* constexpr */ (
-      make_unsigned_t<Tgt>(std::numeric_limits<Tgt>::max()) <
-      make_unsigned_t<Src>(std::numeric_limits<Src>::max())) {
+typename std::enable_if<is_integral_v<Src> && !std::is_same<Tgt, Src>::value &&
+                            !std::is_same<Tgt, bool>::value &&
+                            is_integral_v<Tgt>,
+                        Expected<Tgt, ConversionCode>>::type
+convertTo(const Src &value) noexcept {
+  if /* constexpr */ (make_unsigned_t<Tgt>(std::numeric_limits<Tgt>::max()) <
+                      make_unsigned_t<Src>(std::numeric_limits<Src>::max())) {
     if (greater_than<Tgt, std::numeric_limits<Tgt>::max()>(value)) {
       return makeUnexpected(ConversionCode::ARITH_POSITIVE_OVERFLOW);
     }
   }
-  if /* constexpr */ (
-      is_signed_v<Src> && (!is_signed_v<Tgt> || sizeof(Src) > sizeof(Tgt))) {
+  if /* constexpr */ (is_signed_v<Src> &&
+                      (!is_signed_v<Tgt> || sizeof(Src) > sizeof(Tgt))) {
     if (less_than<Tgt, std::numeric_limits<Tgt>::min()>(value)) {
       return makeUnexpected(ConversionCode::ARITH_NEGATIVE_OVERFLOW);
     }
@@ -1252,16 +1213,16 @@ convertTo(const Src& value) noexcept {
  * unchecked.
  */
 template <class Tgt, class Src>
-typename std::enable_if<
-    std::is_floating_point<Tgt>::value && std::is_floating_point<Src>::value &&
-        !std::is_same<Tgt, Src>::value,
-    Expected<Tgt, ConversionCode>>::type
-convertTo(const Src& value) noexcept {
+typename std::enable_if<std::is_floating_point<Tgt>::value &&
+                            std::is_floating_point<Src>::value &&
+                            !std::is_same<Tgt, Src>::value,
+                        Expected<Tgt, ConversionCode>>::type
+convertTo(const Src &value) noexcept {
   if (FOLLY_UNLIKELY(std::isinf(value))) {
     return static_cast<Tgt>(value);
   }
-  if /* constexpr */ (
-      std::numeric_limits<Tgt>::max() < std::numeric_limits<Src>::max()) {
+  if /* constexpr */ (std::numeric_limits<Tgt>::max() <
+                      std::numeric_limits<Src>::max()) {
     if (value > std::numeric_limits<Tgt>::max()) {
       return makeUnexpected(ConversionCode::ARITH_POSITIVE_OVERFLOW);
     }
@@ -1277,11 +1238,11 @@ convertTo(const Src& value) noexcept {
  * integer value without triggering undefined behaviour.
  */
 template <typename Tgt, typename Src>
-inline typename std::enable_if<
-    std::is_floating_point<Src>::value && is_integral_v<Tgt> &&
-        !std::is_same<Tgt, bool>::value,
-    bool>::type
-checkConversion(const Src& value) {
+inline typename std::enable_if<std::is_floating_point<Src>::value &&
+                                   is_integral_v<Tgt> &&
+                                   !std::is_same<Tgt, bool>::value,
+                               bool>::type
+checkConversion(const Src &value) {
   constexpr Src tgtMaxAsSrc = static_cast<Src>(std::numeric_limits<Tgt>::max());
   constexpr Src tgtMinAsSrc = static_cast<Src>(std::numeric_limits<Tgt>::min());
   // NOTE: The following two comparisons also handle the case where value is
@@ -1311,19 +1272,18 @@ checkConversion(const Src& value) {
 // Integers can always safely be converted to floating point values
 template <typename Tgt, typename Src>
 constexpr typename std::enable_if<
-    is_integral_v<Src> && std::is_floating_point<Tgt>::value,
-    bool>::type
-checkConversion(const Src&) {
+    is_integral_v<Src> && std::is_floating_point<Tgt>::value, bool>::type
+checkConversion(const Src &) {
   return true;
 }
 
 // Also, floating point values can always be safely converted to bool
 // Per the standard, any floating point value that is not zero will yield true
 template <typename Tgt, typename Src>
-constexpr typename std::enable_if<
-    std::is_floating_point<Src>::value && std::is_same<Tgt, bool>::value,
-    bool>::type
-checkConversion(const Src&) {
+constexpr typename std::enable_if<std::is_floating_point<Src>::value &&
+                                      std::is_same<Tgt, bool>::value,
+                                  bool>::type
+checkConversion(const Src &) {
   return true;
 }
 
@@ -1339,7 +1299,7 @@ typename std::enable_if<
     (is_integral_v<Src> && std::is_floating_point<Tgt>::value) ||
         (std::is_floating_point<Src>::value && is_integral_v<Tgt>),
     Expected<Tgt, ConversionCode>>::type
-convertTo(const Src& value) noexcept {
+convertTo(const Src &value) noexcept {
   if (FOLLY_LIKELY(checkConversion<Tgt>(value))) {
     Tgt result = static_cast<Tgt>(value);
     if (FOLLY_LIKELY(checkConversion<Src>(result))) {
@@ -1353,28 +1313,28 @@ convertTo(const Src& value) noexcept {
 }
 
 template <typename Tgt, typename Src>
-inline std::string errorValue(const Src& value) {
+inline std::string errorValue(const Src &value) {
   return to<std::string>("(", pretty_name<Tgt>(), ") ", value);
 }
 
 template <typename Tgt, typename Src>
-using IsArithToArith = bool_constant<
-    !std::is_same<Tgt, Src>::value && !std::is_same<Tgt, bool>::value &&
-    is_arithmetic_v<Src> && is_arithmetic_v<Tgt>>;
+using IsArithToArith =
+    bool_constant<!std::is_same<Tgt, Src>::value &&
+                  !std::is_same<Tgt, bool>::value && is_arithmetic_v<Src> &&
+                  is_arithmetic_v<Tgt>>;
 
 } // namespace detail
 
 template <typename Tgt, typename Src>
-typename std::enable_if<
-    detail::IsArithToArith<Tgt, Src>::value,
-    Expected<Tgt, ConversionCode>>::type
-tryTo(const Src& value) noexcept {
+typename std::enable_if<detail::IsArithToArith<Tgt, Src>::value,
+                        Expected<Tgt, ConversionCode>>::type
+tryTo(const Src &value) noexcept {
   return detail::convertTo<Tgt>(value);
 }
 
 template <typename Tgt, typename Src>
-typename std::enable_if<detail::IsArithToArith<Tgt, Src>::value, Tgt>::type to(
-    const Src& value) {
+typename std::enable_if<detail::IsArithToArith<Tgt, Src>::value, Tgt>::type
+to(const Src &value) {
   return tryTo<Tgt>(value).thenOrThrow(identity, [&](ConversionCode e) {
     return makeConversionError(e, detail::errorValue<Tgt>(value));
   });
@@ -1393,10 +1353,10 @@ typename std::enable_if<detail::IsArithToArith<Tgt, Src>::value, Tgt>::type to(
  * }
  */
 template <class T>
-FOLLY_NODISCARD typename std::enable_if<
-    std::is_enum<T>::value,
-    Expected<StringPiece, ConversionCode>>::type
-parseTo(StringPiece in, T& out) noexcept {
+FOLLY_NODISCARD
+    typename std::enable_if<std::is_enum<T>::value,
+                            Expected<StringPiece, ConversionCode>>::type
+    parseTo(StringPiece in, T &out) noexcept {
   typename std::underlying_type<T>::type tmp{};
   auto restOrError = parseTo(in, tmp);
   out = static_cast<T>(tmp); // Harmless if parseTo fails
@@ -1404,8 +1364,8 @@ parseTo(StringPiece in, T& out) noexcept {
 }
 
 FOLLY_NODISCARD
-inline Expected<StringPiece, ConversionCode> parseTo(
-    StringPiece in, StringPiece& out) noexcept {
+inline Expected<StringPiece, ConversionCode>
+parseTo(StringPiece in, StringPiece &out) noexcept {
   out = in;
   return StringPiece{in.end(), in.end()};
 }
@@ -1413,8 +1373,8 @@ inline Expected<StringPiece, ConversionCode> parseTo(
 namespace detail {
 
 template <class Str>
-FOLLY_ERASE Expected<StringPiece, ConversionCode> parseToStr(
-    StringPiece in, Str& out) {
+FOLLY_ERASE Expected<StringPiece, ConversionCode> parseToStr(StringPiece in,
+                                                             Str &out) {
   out.clear();
   out.append(in.data(), in.size()); // TODO try/catch?
   return StringPiece{in.end(), in.end()};
@@ -1423,37 +1383,37 @@ FOLLY_ERASE Expected<StringPiece, ConversionCode> parseToStr(
 } // namespace detail
 
 FOLLY_NODISCARD
-inline Expected<StringPiece, ConversionCode> parseTo(
-    StringPiece in, std::string& out) {
+inline Expected<StringPiece, ConversionCode> parseTo(StringPiece in,
+                                                     std::string &out) {
   return detail::parseToStr(in, out);
 }
 
 #if FOLLY_HAS_STRING_VIEW
 FOLLY_NODISCARD
-inline Expected<StringPiece, ConversionCode> parseTo(
-    StringPiece in, std::string_view& out) {
+inline Expected<StringPiece, ConversionCode> parseTo(StringPiece in,
+                                                     std::string_view &out) {
   out = std::string_view(in.data(), in.size());
   return StringPiece{in.end(), in.end()};
 }
 #endif
 
 FOLLY_NODISCARD
-inline Expected<StringPiece, ConversionCode> parseTo(
-    StringPiece in, fbstring& out) {
+inline Expected<StringPiece, ConversionCode> parseTo(StringPiece in,
+                                                     fbstring &out) {
   return detail::parseToStr(in, out);
 }
 
 template <class Str>
-FOLLY_NODISCARD inline typename std::enable_if<
-    IsSomeString<Str>::value,
-    Expected<StringPiece, ConversionCode>>::type
-parseTo(StringPiece in, Str& out) {
+FOLLY_NODISCARD inline
+    typename std::enable_if<IsSomeString<Str>::value,
+                            Expected<StringPiece, ConversionCode>>::type
+    parseTo(StringPiece in, Str &out) {
   return detail::parseToStr(in, out);
 }
 
 namespace detail {
 template <typename Tgt>
-using ParseToResult = decltype(parseTo(StringPiece{}, std::declval<Tgt&>()));
+using ParseToResult = decltype(parseTo(StringPiece{}, std::declval<Tgt &>()));
 
 struct CheckTrailingSpace {
   Expected<Unit, ConversionCode> operator()(StringPiece sp) const {
@@ -1465,10 +1425,8 @@ struct CheckTrailingSpace {
   }
 };
 
-template <class Error>
-struct ReturnUnit {
-  template <class T>
-  constexpr Expected<Unit, Error> operator()(T&&) const {
+template <class Error> struct ReturnUnit {
+  template <class T> constexpr Expected<Unit, Error> operator()(T &&) const {
     return unit;
   }
 };
@@ -1476,25 +1434,23 @@ struct ReturnUnit {
 // Older versions of the parseTo customization point threw on error and
 // returned void. Handle that.
 template <class Tgt>
-inline typename std::enable_if<
-    std::is_void<ParseToResult<Tgt>>::value,
-    Expected<StringPiece, ConversionCode>>::type
-parseToWrap(StringPiece sp, Tgt& out) {
+inline typename std::enable_if<std::is_void<ParseToResult<Tgt>>::value,
+                               Expected<StringPiece, ConversionCode>>::type
+parseToWrap(StringPiece sp, Tgt &out) {
   parseTo(sp, out);
   return StringPiece(sp.end(), sp.end());
 }
 
 template <class Tgt>
-inline typename std::enable_if<
-    !std::is_void<ParseToResult<Tgt>>::value,
-    ParseToResult<Tgt>>::type
-parseToWrap(StringPiece sp, Tgt& out) {
+inline typename std::enable_if<!std::is_void<ParseToResult<Tgt>>::value,
+                               ParseToResult<Tgt>>::type
+parseToWrap(StringPiece sp, Tgt &out) {
   return parseTo(sp, out);
 }
 
 template <typename Tgt>
 using ParseToError = ExpectedErrorType<decltype(detail::parseToWrap(
-    StringPiece{}, std::declval<Tgt&>()))>;
+    StringPiece{}, std::declval<Tgt &>()))>;
 
 } // namespace detail
 
@@ -1504,26 +1460,24 @@ using ParseToError = ExpectedErrorType<decltype(detail::parseToWrap(
  */
 
 template <class Tgt>
-inline typename std::enable_if<
-    !std::is_same<StringPiece, Tgt>::value,
-    Expected<Tgt, detail::ParseToError<Tgt>>>::type
+inline typename std::enable_if<!std::is_same<StringPiece, Tgt>::value,
+                               Expected<Tgt, detail::ParseToError<Tgt>>>::type
 tryTo(StringPiece src) {
   Tgt result{};
   using Error = detail::ParseToError<Tgt>;
-  using Check = typename std::conditional<
-      is_arithmetic_v<Tgt>,
-      detail::CheckTrailingSpace,
-      detail::ReturnUnit<Error>>::type;
+  using Check = typename std::conditional<is_arithmetic_v<Tgt>,
+                                          detail::CheckTrailingSpace,
+                                          detail::ReturnUnit<Error>>::type;
   return parseTo(src, result).then(Check(), [&](Unit) {
     return std::move(result);
   });
 }
 
 template <class Tgt, class Src>
-inline typename std::enable_if<
-    IsSomeString<Src>::value && !std::is_same<StringPiece, Tgt>::value,
-    Tgt>::type
-to(Src const& src) {
+inline typename std::enable_if<IsSomeString<Src>::value &&
+                                   !std::is_same<StringPiece, Tgt>::value,
+                               Tgt>::type
+to(Src const &src) {
   return to<Tgt>(StringPiece(src.data(), src.size()));
 }
 
@@ -1533,20 +1487,18 @@ inline
     to(StringPiece src) {
   Tgt result{};
   using Error = detail::ParseToError<Tgt>;
-  using Check = typename std::conditional<
-      is_arithmetic_v<Tgt>,
-      detail::CheckTrailingSpace,
-      detail::ReturnUnit<Error>>::type;
+  using Check = typename std::conditional<is_arithmetic_v<Tgt>,
+                                          detail::CheckTrailingSpace,
+                                          detail::ReturnUnit<Error>>::type;
   auto tmp = detail::parseToWrap(src, result);
   return tmp
       .thenOrThrow(
           Check(),
           [&](Error e) { throw_exception(makeConversionError(e, src)); })
-      .thenOrThrow(
-          [&](Unit) { return std::move(result); },
-          [&](Error e) {
-            throw_exception(makeConversionError(e, tmp.value()));
-          });
+      .thenOrThrow([&](Unit) { return std::move(result); },
+                   [&](Error e) {
+                     throw_exception(makeConversionError(e, tmp.value()));
+                   });
 }
 
 /**
@@ -1555,7 +1507,7 @@ inline
  * check for trailing whitespace.
  */
 template <class Tgt>
-Expected<Tgt, detail::ParseToError<Tgt>> tryTo(StringPiece* src) {
+Expected<Tgt, detail::ParseToError<Tgt>> tryTo(StringPiece *src) {
   Tgt result;
   return parseTo(*src, result).then([&, src](StringPiece sp) -> Tgt {
     *src = sp;
@@ -1563,8 +1515,7 @@ Expected<Tgt, detail::ParseToError<Tgt>> tryTo(StringPiece* src) {
   });
 }
 
-template <class Tgt>
-Tgt to(StringPiece* src) {
+template <class Tgt> Tgt to(StringPiece *src) {
   Tgt result{};
   using Error = detail::ParseToError<Tgt>;
   return parseTo(*src, result)
@@ -1581,39 +1532,39 @@ Tgt to(StringPiece* src) {
  */
 
 template <class Tgt, class Src>
-typename std::enable_if<
-    std::is_enum<Src>::value && !std::is_same<Src, Tgt>::value &&
-        !std::is_convertible<Tgt, StringPiece>::value,
-    Expected<Tgt, ConversionCode>>::type
-tryTo(const Src& value) {
+typename std::enable_if<std::is_enum<Src>::value &&
+                            !std::is_same<Src, Tgt>::value &&
+                            !std::is_convertible<Tgt, StringPiece>::value,
+                        Expected<Tgt, ConversionCode>>::type
+tryTo(const Src &value) {
   return tryTo<Tgt>(to_underlying(value));
 }
 
 template <class Tgt, class Src>
-typename std::enable_if<
-    !std::is_convertible<Src, StringPiece>::value && std::is_enum<Tgt>::value &&
-        !std::is_same<Src, Tgt>::value,
-    Expected<Tgt, ConversionCode>>::type
-tryTo(const Src& value) {
+typename std::enable_if<!std::is_convertible<Src, StringPiece>::value &&
+                            std::is_enum<Tgt>::value &&
+                            !std::is_same<Src, Tgt>::value,
+                        Expected<Tgt, ConversionCode>>::type
+tryTo(const Src &value) {
   using I = typename std::underlying_type<Tgt>::type;
   return tryTo<I>(value).then([](I i) { return static_cast<Tgt>(i); });
 }
 
 template <class Tgt, class Src>
-typename std::enable_if<
-    std::is_enum<Src>::value && !std::is_same<Src, Tgt>::value &&
-        !std::is_convertible<Tgt, StringPiece>::value,
-    Tgt>::type
-to(const Src& value) {
+typename std::enable_if<std::is_enum<Src>::value &&
+                            !std::is_same<Src, Tgt>::value &&
+                            !std::is_convertible<Tgt, StringPiece>::value,
+                        Tgt>::type
+to(const Src &value) {
   return to<Tgt>(to_underlying(value));
 }
 
 template <class Tgt, class Src>
-typename std::enable_if<
-    !std::is_convertible<Src, StringPiece>::value && std::is_enum<Tgt>::value &&
-        !std::is_same<Src, Tgt>::value,
-    Tgt>::type
-to(const Src& value) {
+typename std::enable_if<!std::is_convertible<Src, StringPiece>::value &&
+                            std::is_enum<Tgt>::value &&
+                            !std::is_same<Src, Tgt>::value,
+                        Tgt>::type
+to(const Src &value) {
   return static_cast<Tgt>(to<typename std::underlying_type<Tgt>::type>(value));
 }
 

@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -75,8 +82,8 @@ void compiler_may_unsafely_assume(bool cond);
 //  to the compiler. For example, modifying some_vector[0] never modifies the
 //  vector itself; changes to parser state don't need to be stored to memory
 //  before reading the next byte of data to be parsed, etc.
-void compiler_may_unsafely_assume_separate_storage(
-    const void* a, const void* b);
+void compiler_may_unsafely_assume_separate_storage(const void *a,
+                                                   const void *b);
 
 //  compiler_must_not_elide
 //
@@ -90,7 +97,7 @@ void compiler_may_unsafely_assume_separate_storage(
 //  treat the value as though it were used.
 struct compiler_must_not_elide_fn {
   template <typename T>
-  FOLLY_ALWAYS_INLINE void operator()(T const& t) const noexcept;
+  FOLLY_ALWAYS_INLINE void operator()(T const &t) const noexcept;
 };
 FOLLY_INLINE_VARIABLE constexpr compiler_must_not_elide_fn
     compiler_must_not_elide{};
@@ -108,7 +115,7 @@ FOLLY_INLINE_VARIABLE constexpr compiler_must_not_elide_fn
 //  were unpredictable.
 struct compiler_must_not_predict_fn {
   template <typename T>
-  FOLLY_ALWAYS_INLINE void operator()(T& t) const noexcept;
+  FOLLY_ALWAYS_INLINE void operator()(T &t) const noexcept;
 };
 FOLLY_INLINE_VARIABLE constexpr compiler_must_not_predict_fn
     compiler_must_not_predict{};

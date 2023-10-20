@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,17 +32,16 @@ namespace detail {
 
 struct FOLLY_EXPORT DefaultTag {};
 
-template <typename T>
-struct DefaultMake {
+template <typename T> struct DefaultMake {
   struct Heap {
     std::unique_ptr<T> ptr{std::make_unique<T>()};
-    /* implicit */ operator T&() { return *ptr; }
+    /* implicit */ operator T &() { return *ptr; }
   };
 
-  using is_returnable = StrictDisjunction<
-      bool_constant<__cplusplus >= 201703ULL>,
-      std::is_copy_constructible<T>,
-      std::is_move_constructible<T>>;
+  using is_returnable =
+      StrictDisjunction<bool_constant<__cplusplus >= 201703ULL>,
+                        std::is_copy_constructible<T>,
+                        std::is_move_constructible<T>>;
   using type = std::conditional_t<is_returnable::value, T, Heap>;
 
   type operator()() const { return type(); }

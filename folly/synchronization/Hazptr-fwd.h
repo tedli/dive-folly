@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -39,8 +46,7 @@ namespace folly {
 ///
 
 /** hazptr_rec */
-template <template <typename> class Atom = std::atomic>
-class hazptr_rec;
+template <template <typename> class Atom = std::atomic> class hazptr_rec;
 
 ///
 /// Classes related to objects protectable by hazard pointers.
@@ -48,38 +54,30 @@ class hazptr_rec;
 ///
 
 /** hazptr_obj */
-template <template <typename> class Atom = std::atomic>
-class hazptr_obj;
+template <template <typename> class Atom = std::atomic> class hazptr_obj;
 
 /** hazptr_obj_list */
-template <template <typename> class Atom = std::atomic>
-class hazptr_obj_list;
+template <template <typename> class Atom = std::atomic> class hazptr_obj_list;
 
 /** hazptr_obj_cohort */
-template <template <typename> class Atom = std::atomic>
-class hazptr_obj_cohort;
+template <template <typename> class Atom = std::atomic> class hazptr_obj_cohort;
 
 /** hazptr_obj_retired_list */
 template <template <typename> class Atom = std::atomic>
 class hazptr_obj_retired_list;
 
 /** hazptr_deleter */
-template <typename T, typename D>
-class hazptr_deleter;
+template <typename T, typename D> class hazptr_deleter;
 
 /** hazptr_obj_base */
-template <
-    typename T,
-    template <typename> class Atom = std::atomic,
-    typename D = std::default_delete<T>>
+template <typename T, template <typename> class Atom = std::atomic,
+          typename D = std::default_delete<T>>
 class hazptr_obj_base;
 
 /** hazard_pointer_obj_base
     class template name consistent with standard proposal */
-template <
-    typename T,
-    template <typename> class Atom = std::atomic,
-    typename D = std::default_delete<T>>
+template <typename T, template <typename> class Atom = std::atomic,
+          typename D = std::default_delete<T>>
 using hazard_pointer_obj_base = hazptr_obj_base<T, Atom, D>;
 
 ///
@@ -92,14 +90,11 @@ template <typename T, template <typename> class Atom = std::atomic>
 class hazptr_root;
 
 /** hazptr_obj_linked */
-template <template <typename> class Atom = std::atomic>
-class hazptr_obj_linked;
+template <template <typename> class Atom = std::atomic> class hazptr_obj_linked;
 
 /** hazptr_obj_base_linked */
-template <
-    typename T,
-    template <typename> class Atom = std::atomic,
-    typename Deleter = std::default_delete<T>>
+template <typename T, template <typename> class Atom = std::atomic,
+          typename Deleter = std::default_delete<T>>
 class hazptr_obj_base_linked;
 
 ///
@@ -108,20 +103,17 @@ class hazptr_obj_base_linked;
 ///
 
 /** hazptr_tc_entry */
-template <template <typename> class Atom = std::atomic>
-class hazptr_tc_entry;
+template <template <typename> class Atom = std::atomic> class hazptr_tc_entry;
 
 /** hazptr_tc */
-template <template <typename> class Atom = std::atomic>
-class hazptr_tc;
+template <template <typename> class Atom = std::atomic> class hazptr_tc;
 
 /** hazptr_tc_tls */
 template <template <typename> class Atom = std::atomic>
-hazptr_tc<Atom>& hazptr_tc_tls();
+hazptr_tc<Atom> &hazptr_tc_tls();
 
 /** hazptr_tc_evict -- Used only for benchmarking */
-template <template <typename> class Atom = std::atomic>
-void hazptr_tc_evict();
+template <template <typename> class Atom = std::atomic> void hazptr_tc_evict();
 
 ///
 /// Hazard pointer domain
@@ -129,8 +121,7 @@ void hazptr_tc_evict();
 ///
 
 /** hazptr_domain */
-template <template <typename> class Atom = std::atomic>
-class hazptr_domain;
+template <template <typename> class Atom = std::atomic> class hazptr_domain;
 
 /** hazard_pointer_domain
     class name consistent with standard proposal */
@@ -139,36 +130,34 @@ using hazard_pointer_domain = hazptr_domain<Atom>;
 
 /** default_hazptr_domain */
 template <template <typename> class Atom = std::atomic>
-hazptr_domain<Atom>& default_hazptr_domain();
+hazptr_domain<Atom> &default_hazptr_domain();
 
 /** hazard_pointer_default_domain
     function name consistent with standard proposal */
 template <template <typename> class Atom = std::atomic>
-hazard_pointer_domain<Atom>& hazard_pointer_default_domain();
+hazard_pointer_domain<Atom> &hazard_pointer_default_domain();
 
 /** hazptr_domain_push_retired */
 template <template <typename> class Atom = std::atomic>
 void hazptr_domain_push_retired(
-    hazptr_obj_list<Atom>& l,
-    hazptr_domain<Atom>& domain = default_hazptr_domain<Atom>()) noexcept;
+    hazptr_obj_list<Atom> &l,
+    hazptr_domain<Atom> &domain = default_hazptr_domain<Atom>()) noexcept;
 
 /** hazptr_retire */
-template <
-    template <typename> class Atom = std::atomic,
-    typename T,
-    typename D = std::default_delete<T>>
-void hazptr_retire(T* obj, D reclaim = {});
+template <template <typename> class Atom = std::atomic, typename T,
+          typename D = std::default_delete<T>>
+void hazptr_retire(T *obj, D reclaim = {});
 
 /** hazptr_cleanup */
 template <template <typename> class Atom = std::atomic>
 void hazptr_cleanup(
-    hazptr_domain<Atom>& domain = default_hazptr_domain<Atom>()) noexcept;
+    hazptr_domain<Atom> &domain = default_hazptr_domain<Atom>()) noexcept;
 
 /** hazard_pointer_clean_up
     function name consistent with standard proposal */
 template <template <typename> class Atom = std::atomic>
 void hazard_pointer_clean_up(
-    hazard_pointer_domain<Atom>& domain =
+    hazard_pointer_domain<Atom> &domain =
         hazard_pointer_default_domain<Atom>()) noexcept;
 
 /** Global default domain defined in Hazptr.cpp */
@@ -183,8 +172,7 @@ bool hazptr_use_executor();
 ///
 
 /** hazptr_holder */
-template <template <typename> class Atom = std::atomic>
-class hazptr_holder;
+template <template <typename> class Atom = std::atomic> class hazptr_holder;
 
 /** hazard_pointer
     class name consistent with standard proposal  */
@@ -194,11 +182,11 @@ using hazard_pointer = hazptr_holder<Atom>;
 /** Free function make_hazard_pointer constructs nonempty holder */
 template <template <typename> class Atom = std::atomic>
 hazptr_holder<Atom> make_hazard_pointer(
-    hazptr_domain<Atom>& domain = default_hazptr_domain<Atom>());
+    hazptr_domain<Atom> &domain = default_hazptr_domain<Atom>());
 
 /** Free function swap of hazptr_holder-s */
 template <template <typename> class Atom = std::atomic>
-void swap(hazptr_holder<Atom>&, hazptr_holder<Atom>&) noexcept;
+void swap(hazptr_holder<Atom> &, hazptr_holder<Atom> &) noexcept;
 
 /** hazptr_array */
 template <uint8_t M = 1, template <typename> class Atom = std::atomic>

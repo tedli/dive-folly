@@ -22,14 +22,14 @@ function(check_file_hash has_hash hash_is_good)
   set("${has_hash}" TRUE PARENT_SCOPE)
 
   message(STATUS "verifying file...
-       file='C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip'")
+       file='/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip'")
 
-  file("SHA256" "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip" actual_value)
+  file("SHA256" "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip" actual_value)
 
   if(NOT "${actual_value}" STREQUAL "19713a36c9f32b33df59d1c79b4958434cb005b5b47dc5400a7a4b078111d9b5")
     set("${hash_is_good}" FALSE PARENT_SCOPE)
     message(STATUS "SHA256 hash of
-    C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip
+    /home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip
   does not match expected value
     expected: '19713a36c9f32b33df59d1c79b4958434cb005b5b47dc5400a7a4b078111d9b5'
       actual: '${actual_value}'")
@@ -71,7 +71,7 @@ function(sleep_before_download attempt)
   execute_process(COMMAND "${CMAKE_COMMAND}" -E sleep "${sleep_seconds}")
 endfunction()
 
-if("C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip" STREQUAL "")
+if("/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip" STREQUAL "")
   message(FATAL_ERROR "LOCAL can't be empty")
 endif()
 
@@ -79,32 +79,32 @@ if("https://github.com/gflags/gflags/archive/v2.2.2.zip" STREQUAL "")
   message(FATAL_ERROR "REMOTE can't be empty")
 endif()
 
-if(EXISTS "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip")
+if(EXISTS "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip")
   check_file_hash(has_hash hash_is_good)
   if(has_hash)
     if(hash_is_good)
       message(STATUS "File already exists and hash match (skip download):
-  file='C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip'
+  file='/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip'
   SHA256='19713a36c9f32b33df59d1c79b4958434cb005b5b47dc5400a7a4b078111d9b5'"
       )
       return()
     else()
       message(STATUS "File already exists but hash mismatch. Removing...")
-      file(REMOVE "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip")
+      file(REMOVE "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip")
     endif()
   else()
     message(STATUS "File already exists but no hash specified (use URL_HASH):
-  file='C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip'
+  file='/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip'
 Old file will be removed and new file downloaded from URL."
     )
-    file(REMOVE "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip")
+    file(REMOVE "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip")
   endif()
 endif()
 
 set(retry_number 5)
 
 message(STATUS "Downloading...
-   dst='C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip'
+   dst='/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip'
    timeout='none'
    inactivity timeout='none'"
 )
@@ -126,7 +126,7 @@ foreach(i RANGE ${retry_number})
 
       file(
         DOWNLOAD
-        "${url}" "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip"
+        "${url}" "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip"
         SHOW_PROGRESS
         # no TIMEOUT
         # no INACTIVITY_TIMEOUT
@@ -143,7 +143,7 @@ foreach(i RANGE ${retry_number})
         check_file_hash(has_hash hash_is_good)
         if(has_hash AND NOT hash_is_good)
           message(STATUS "Hash mismatch, removing...")
-          file(REMOVE "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip")
+          file(REMOVE "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/v2.2.2.zip")
         else()
           message(STATUS "Downloading... done")
           return()

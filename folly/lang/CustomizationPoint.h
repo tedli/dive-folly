@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -35,15 +42,15 @@
 //  named reference in an anonymous namespace is required to avoid duplicate
 //  symbol definitions.
 #if FOLLY_HAS_INLINE_VARIABLES
-#define FOLLY_DEFINE_CPO(Type, Name) \
-  namespace folly_cpo__ {            \
-  inline constexpr Type Name{};      \
-  }                                  \
+#define FOLLY_DEFINE_CPO(Type, Name)                                           \
+  namespace folly_cpo__ {                                                      \
+  inline constexpr Type Name{};                                                \
+  }                                                                            \
   using namespace folly_cpo__;
 #else
-#define FOLLY_DEFINE_CPO(Type, Name)                        \
-  namespace {                                               \
-  constexpr auto& Name = ::folly::StaticConst<Type>::value; \
+#define FOLLY_DEFINE_CPO(Type, Name)                                           \
+  namespace {                                                                  \
+  constexpr auto &Name = ::folly::StaticConst<Type>::value;                    \
   }
 #endif
 
@@ -68,8 +75,7 @@ namespace folly {
 //   };
 //
 //  See <folly/functional/Invoke.h> for more details.
-template <const auto& Tag>
-using cpo_t = std::decay_t<decltype(Tag)>;
+template <const auto &Tag> using cpo_t = std::decay_t<decltype(Tag)>;
 
 #endif // FOLLY_CPLUSPLUS >= 201703L
 

@@ -1,11 +1,11 @@
-prefix=C:/Program Files (x86)/dive-folly
-exec_prefix=C:/Program Files (x86)/dive-folly/bin
-libdir=C:/Program Files (x86)/dive-folly/lib
-includedir=C:/Program Files (x86)/dive-folly/include
+prefix=/usr/local
+exec_prefix=/usr/local/bin
+libdir=/usr/local/lib
+includedir=/usr/local/include
 
 Name: libglog
 Description: Google Log (glog) C++ logging framework
 Version: 0.6.0
 Libs: -L${libdir} -lglog
-Libs.private: -ldbghelp -lpthread
+Libs.private: 
 Cflags: -I${includedir}

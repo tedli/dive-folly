@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,7 +40,7 @@ using Func = Function<void()>;
 namespace detail {
 
 class ExecutorKeepAliveBase {
- public:
+public:
   //  A dummy keep-alive is a keep-alive to an executor which does not support
   //  the keep-alive mechanism.
   static constexpr uintptr_t kDummyFlag = uintptr_t(1) << 0;
@@ -52,7 +59,7 @@ class ExecutorKeepAliveBase {
 /// An Executor accepts units of work with add(), which should be
 /// threadsafe.
 class Executor {
- public:
+public:
   virtual ~Executor() = default;
 
   /// Enqueue a function to be executed by this executor. This and all
@@ -84,74 +91,70 @@ class Executor {
    */
   template <typename ExecutorT = Executor>
   class KeepAlive : private detail::ExecutorKeepAliveBase {
-   public:
-    using KeepAliveFunc = Function<void(KeepAlive&&)>;
+  public:
+    using KeepAliveFunc = Function<void(KeepAlive &&)>;
 
     KeepAlive() = default;
 
     ~KeepAlive() {
-      static_assert(
-          std::is_standard_layout<KeepAlive>::value, "standard-layout");
-      static_assert(sizeof(KeepAlive) == sizeof(void*), "pointer size");
-      static_assert(alignof(KeepAlive) == alignof(void*), "pointer align");
+      static_assert(std::is_standard_layout<KeepAlive>::value,
+                    "standard-layout");
+      static_assert(sizeof(KeepAlive) == sizeof(void *), "pointer size");
+      static_assert(alignof(KeepAlive) == alignof(void *), "pointer align");
 
       reset();
     }
 
-    KeepAlive(KeepAlive&& other) noexcept
+    KeepAlive(KeepAlive &&other) noexcept
         : storage_(std::exchange(other.storage_, 0)) {}
 
-    KeepAlive(const KeepAlive& other) noexcept
+    KeepAlive(const KeepAlive &other) noexcept
         : KeepAlive(getKeepAliveToken(other.get())) {}
 
-    template <
-        typename OtherExecutor,
-        typename = typename std::enable_if<
-            std::is_convertible<OtherExecutor*, ExecutorT*>::value>::type>
-    /* implicit */ KeepAlive(KeepAlive<OtherExecutor>&& other) noexcept
+    template <typename OtherExecutor,
+              typename = typename std::enable_if<std::is_convertible<
+                  OtherExecutor *, ExecutorT *>::value>::type>
+    /* implicit */ KeepAlive(KeepAlive<OtherExecutor> &&other) noexcept
         : KeepAlive(other.get(), other.storage_ & kFlagMask) {
       other.storage_ = 0;
     }
 
-    template <
-        typename OtherExecutor,
-        typename = typename std::enable_if<
-            std::is_convertible<OtherExecutor*, ExecutorT*>::value>::type>
-    /* implicit */ KeepAlive(const KeepAlive<OtherExecutor>& other) noexcept
+    template <typename OtherExecutor,
+              typename = typename std::enable_if<std::is_convertible<
+                  OtherExecutor *, ExecutorT *>::value>::type>
+    /* implicit */ KeepAlive(const KeepAlive<OtherExecutor> &other) noexcept
         : KeepAlive(getKeepAliveToken(other.get())) {}
 
-    /* implicit */ KeepAlive(ExecutorT* executor) {
+    /* implicit */ KeepAlive(ExecutorT *executor) {
       *this = getKeepAliveToken(executor);
     }
 
-    KeepAlive& operator=(KeepAlive&& other) noexcept {
+    KeepAlive &operator=(KeepAlive &&other) noexcept {
       reset();
       storage_ = std::exchange(other.storage_, 0);
       return *this;
     }
 
-    KeepAlive& operator=(KeepAlive const& other) {
+    KeepAlive &operator=(KeepAlive const &other) {
       return operator=(folly::copy(other));
     }
 
-    template <
-        typename OtherExecutor,
-        typename = typename std::enable_if<
-            std::is_convertible<OtherExecutor*, ExecutorT*>::value>::type>
-    KeepAlive& operator=(KeepAlive<OtherExecutor>&& other) noexcept {
+    template <typename OtherExecutor,
+              typename = typename std::enable_if<std::is_convertible<
+                  OtherExecutor *, ExecutorT *>::value>::type>
+    KeepAlive &operator=(KeepAlive<OtherExecutor> &&other) noexcept {
       return *this = KeepAlive(std::move(other));
     }
 
-    template <
-        typename OtherExecutor,
-        typename = typename std::enable_if<
-            std::is_convertible<OtherExecutor*, ExecutorT*>::value>::type>
-    KeepAlive& operator=(const KeepAlive<OtherExecutor>& other) {
+    template <typename OtherExecutor,
+              typename = typename std::enable_if<std::is_convertible<
+                  OtherExecutor *, ExecutorT *>::value>::type>
+    KeepAlive &operator=(const KeepAlive<OtherExecutor> &other) {
       return *this = KeepAlive(other);
     }
 
     void reset() noexcept {
-      if (Executor* executor = get()) {
+      if (Executor *executor = get()) {
         auto const flags = std::exchange(storage_, 0) & kFlagMask;
         if (!(flags & (kDummyFlag | kAliasFlag))) {
           executor->keepAliveRelease();
@@ -161,39 +164,36 @@ class Executor {
 
     explicit operator bool() const { return storage_; }
 
-    ExecutorT* get() const {
-      return reinterpret_cast<ExecutorT*>(storage_ & kExecutorMask);
+    ExecutorT *get() const {
+      return reinterpret_cast<ExecutorT *>(storage_ & kExecutorMask);
     }
 
-    ExecutorT& operator*() const { return *get(); }
+    ExecutorT &operator*() const { return *get(); }
 
-    ExecutorT* operator->() const { return get(); }
+    ExecutorT *operator->() const { return get(); }
 
     KeepAlive copy() const {
       return isKeepAliveDummy(*this) //
-          ? makeKeepAliveDummy(get())
-          : getKeepAliveToken(get());
+                 ? makeKeepAliveDummy(get())
+                 : getKeepAliveToken(get());
     }
 
     KeepAlive get_alias() const { return KeepAlive(storage_ | kAliasFlag); }
 
-    template <class KAF>
-    void add(KAF&& f) && {
-      static_assert(
-          is_invocable<KAF, KeepAlive&&>::value,
-          "Parameter to add must be void(KeepAlive&&)>");
+    template <class KAF> void add(KAF &&f) && {
+      static_assert(is_invocable<KAF, KeepAlive &&>::value,
+                    "Parameter to add must be void(KeepAlive&&)>");
       auto ex = get();
       ex->add([ka = std::move(*this), f = std::forward<KAF>(f)]() mutable {
         f(std::move(ka));
       });
     }
 
-   private:
+  private:
     friend class Executor;
-    template <typename OtherExecutor>
-    friend class KeepAlive;
+    template <typename OtherExecutor> friend class KeepAlive;
 
-    KeepAlive(ExecutorT* executor, uintptr_t flags) noexcept
+    KeepAlive(ExecutorT *executor, uintptr_t flags) noexcept
         : storage_(reinterpret_cast<uintptr_t>(executor) | flags) {
       assert(executor);
       assert(!(reinterpret_cast<uintptr_t>(executor) & ~kExecutorMask));
@@ -207,14 +207,14 @@ class Executor {
   };
 
   template <typename ExecutorT>
-  static KeepAlive<ExecutorT> getKeepAliveToken(ExecutorT* executor) {
+  static KeepAlive<ExecutorT> getKeepAliveToken(ExecutorT *executor) {
     static_assert(
         std::is_base_of<Executor, ExecutorT>::value,
         "getKeepAliveToken only works for folly::Executor implementations.");
     if (!executor) {
       return {};
     }
-    folly::Executor* executorPtr = executor;
+    folly::Executor *executorPtr = executor;
     if (executorPtr->keepAliveAcquire()) {
       return makeKeepAlive<ExecutorT>(executor);
     }
@@ -222,7 +222,7 @@ class Executor {
   }
 
   template <typename ExecutorT>
-  static KeepAlive<ExecutorT> getKeepAliveToken(ExecutorT& executor) {
+  static KeepAlive<ExecutorT> getKeepAliveToken(ExecutorT &executor) {
     static_assert(
         std::is_base_of<Executor, ExecutorT>::value,
         "getKeepAliveToken only works for folly::Executor implementations.");
@@ -230,24 +230,24 @@ class Executor {
   }
 
   template <typename F>
-  FOLLY_ERASE static void invokeCatchingExns(char const* p, F f) noexcept {
+  FOLLY_ERASE static void invokeCatchingExns(char const *p, F f) noexcept {
     catch_exception(f, invokeCatchingExnsLog, p);
   }
 
- protected:
+protected:
   /**
    * Returns true if the KeepAlive is constructed from an executor that does
    * not support the keep alive ref-counting functionality
    */
   template <typename ExecutorT>
-  static bool isKeepAliveDummy(const KeepAlive<ExecutorT>& keepAlive) {
+  static bool isKeepAliveDummy(const KeepAlive<ExecutorT> &keepAlive) {
     return keepAlive.storage_ & KeepAlive<ExecutorT>::kDummyFlag;
   }
 
-  static bool keepAliveAcquire(Executor* executor) {
+  static bool keepAliveAcquire(Executor *executor) {
     return executor->keepAliveAcquire();
   }
-  static void keepAliveRelease(Executor* executor) {
+  static void keepAliveRelease(Executor *executor) {
     return executor->keepAliveRelease();
   }
 
@@ -259,18 +259,18 @@ class Executor {
   virtual void keepAliveRelease() noexcept;
 
   template <typename ExecutorT>
-  static KeepAlive<ExecutorT> makeKeepAlive(ExecutorT* executor) {
+  static KeepAlive<ExecutorT> makeKeepAlive(ExecutorT *executor) {
     static_assert(
         std::is_base_of<Executor, ExecutorT>::value,
         "makeKeepAlive only works for folly::Executor implementations.");
     return KeepAlive<ExecutorT>{executor, uintptr_t(0)};
   }
 
- private:
-  static void invokeCatchingExnsLog(char const* prefix) noexcept;
+private:
+  static void invokeCatchingExnsLog(char const *prefix) noexcept;
 
   template <typename ExecutorT>
-  static KeepAlive<ExecutorT> makeKeepAliveDummy(ExecutorT* executor) {
+  static KeepAlive<ExecutorT> makeKeepAliveDummy(ExecutorT *executor) {
     static_assert(
         std::is_base_of<Executor, ExecutorT>::value,
         "makeKeepAliveDummy only works for folly::Executor implementations.");
@@ -282,7 +282,7 @@ class Executor {
 /// processing tasks until the token is released (if supported by Executor).
 /// KeepAlive always contains a valid pointer to an Executor.
 template <typename ExecutorT>
-Executor::KeepAlive<ExecutorT> getKeepAliveToken(ExecutorT* executor) {
+Executor::KeepAlive<ExecutorT> getKeepAliveToken(ExecutorT *executor) {
   static_assert(
       std::is_base_of<Executor, ExecutorT>::value,
       "getKeepAliveToken only works for folly::Executor implementations.");
@@ -290,7 +290,7 @@ Executor::KeepAlive<ExecutorT> getKeepAliveToken(ExecutorT* executor) {
 }
 
 template <typename ExecutorT>
-Executor::KeepAlive<ExecutorT> getKeepAliveToken(ExecutorT& executor) {
+Executor::KeepAlive<ExecutorT> getKeepAliveToken(ExecutorT &executor) {
   static_assert(
       std::is_base_of<Executor, ExecutorT>::value,
       "getKeepAliveToken only works for folly::Executor implementations.");
@@ -298,31 +298,29 @@ Executor::KeepAlive<ExecutorT> getKeepAliveToken(ExecutorT& executor) {
 }
 
 template <typename ExecutorT>
-Executor::KeepAlive<ExecutorT> getKeepAliveToken(
-    Executor::KeepAlive<ExecutorT>& ka) {
+Executor::KeepAlive<ExecutorT>
+getKeepAliveToken(Executor::KeepAlive<ExecutorT> &ka) {
   return ka.copy();
 }
 
 struct ExecutorBlockingContext {
   bool forbid;
   bool allowTerminationOnBlocking;
-  Executor* ex = nullptr;
+  Executor *ex = nullptr;
   StringPiece tag;
 };
-static_assert(
-    std::is_standard_layout<ExecutorBlockingContext>::value,
-    "non-standard layout");
+static_assert(std::is_standard_layout<ExecutorBlockingContext>::value,
+              "non-standard layout");
 
 struct ExecutorBlockingList {
-  ExecutorBlockingList* prev;
+  ExecutorBlockingList *prev;
   ExecutorBlockingContext curr;
 };
-static_assert(
-    std::is_standard_layout<ExecutorBlockingList>::value,
-    "non-standard layout");
+static_assert(std::is_standard_layout<ExecutorBlockingList>::value,
+              "non-standard layout");
 
 class ExecutorBlockingGuard {
- public:
+public:
   struct PermitTag {};
   struct TrackTag {};
   struct ProhibitTag {};
@@ -331,18 +329,18 @@ class ExecutorBlockingGuard {
   ExecutorBlockingGuard() = delete;
 
   explicit ExecutorBlockingGuard(PermitTag) noexcept;
-  explicit ExecutorBlockingGuard(
-      TrackTag, Executor* ex, StringPiece tag) noexcept;
-  explicit ExecutorBlockingGuard(
-      ProhibitTag, Executor* ex, StringPiece tag) noexcept;
+  explicit ExecutorBlockingGuard(TrackTag, Executor *ex,
+                                 StringPiece tag) noexcept;
+  explicit ExecutorBlockingGuard(ProhibitTag, Executor *ex,
+                                 StringPiece tag) noexcept;
 
-  ExecutorBlockingGuard(ExecutorBlockingGuard&&) = delete;
-  ExecutorBlockingGuard(ExecutorBlockingGuard const&) = delete;
+  ExecutorBlockingGuard(ExecutorBlockingGuard &&) = delete;
+  ExecutorBlockingGuard(ExecutorBlockingGuard const &) = delete;
 
-  ExecutorBlockingGuard& operator=(ExecutorBlockingGuard const&) = delete;
-  ExecutorBlockingGuard& operator=(ExecutorBlockingGuard&&) = delete;
+  ExecutorBlockingGuard &operator=(ExecutorBlockingGuard const &) = delete;
+  ExecutorBlockingGuard &operator=(ExecutorBlockingGuard &&) = delete;
 
- private:
+private:
   ExecutorBlockingList list_;
 };
 

@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,75 +27,51 @@
 #include <folly/memory/MemoryResource.h>
 
 namespace folly {
-template <
-    typename Key,
-    typename Hasher = f14::DefaultHasher<Key>,
-    typename KeyEqual = f14::DefaultKeyEqual<Key>,
-    typename Alloc = f14::DefaultAlloc<Key>>
+template <typename Key, typename Hasher = f14::DefaultHasher<Key>,
+          typename KeyEqual = f14::DefaultKeyEqual<Key>,
+          typename Alloc = f14::DefaultAlloc<Key>>
 class F14NodeSet;
 
-template <
-    typename Key,
-    typename Hasher = f14::DefaultHasher<Key>,
-    typename KeyEqual = f14::DefaultKeyEqual<Key>,
-    typename Alloc = f14::DefaultAlloc<Key>>
+template <typename Key, typename Hasher = f14::DefaultHasher<Key>,
+          typename KeyEqual = f14::DefaultKeyEqual<Key>,
+          typename Alloc = f14::DefaultAlloc<Key>>
 class F14ValueSet;
 
-template <
-    typename Key,
-    typename Hasher = f14::DefaultHasher<Key>,
-    typename KeyEqual = f14::DefaultKeyEqual<Key>,
-    typename Alloc = f14::DefaultAlloc<Key>>
+template <typename Key, typename Hasher = f14::DefaultHasher<Key>,
+          typename KeyEqual = f14::DefaultKeyEqual<Key>,
+          typename Alloc = f14::DefaultAlloc<Key>>
 class F14VectorSet;
 
-template <
-    typename Key,
-    typename Hasher = f14::DefaultHasher<Key>,
-    typename KeyEqual = f14::DefaultKeyEqual<Key>,
-    typename Alloc = f14::DefaultAlloc<Key>>
+template <typename Key, typename Hasher = f14::DefaultHasher<Key>,
+          typename KeyEqual = f14::DefaultKeyEqual<Key>,
+          typename Alloc = f14::DefaultAlloc<Key>>
 class F14FastSet;
 
 #if FOLLY_HAS_MEMORY_RESOURCE
 namespace pmr {
-template <
-    typename Key,
-    typename Hasher = f14::DefaultHasher<Key>,
-    typename KeyEqual = f14::DefaultKeyEqual<Key>>
-using F14NodeSet = folly::F14NodeSet<
-    Key,
-    Hasher,
-    KeyEqual,
-    folly::detail::std_pmr::polymorphic_allocator<Key>>;
+template <typename Key, typename Hasher = f14::DefaultHasher<Key>,
+          typename KeyEqual = f14::DefaultKeyEqual<Key>>
+using F14NodeSet =
+    folly::F14NodeSet<Key, Hasher, KeyEqual,
+                      folly::detail::std_pmr::polymorphic_allocator<Key>>;
 
-template <
-    typename Key,
-    typename Hasher = f14::DefaultHasher<Key>,
-    typename KeyEqual = f14::DefaultKeyEqual<Key>>
-using F14ValueSet = folly::F14ValueSet<
-    Key,
-    Hasher,
-    KeyEqual,
-    folly::detail::std_pmr::polymorphic_allocator<Key>>;
+template <typename Key, typename Hasher = f14::DefaultHasher<Key>,
+          typename KeyEqual = f14::DefaultKeyEqual<Key>>
+using F14ValueSet =
+    folly::F14ValueSet<Key, Hasher, KeyEqual,
+                       folly::detail::std_pmr::polymorphic_allocator<Key>>;
 
-template <
-    typename Key,
-    typename Hasher = f14::DefaultHasher<Key>,
-    typename KeyEqual = f14::DefaultKeyEqual<Key>>
-using F14VectorSet = folly::F14VectorSet<
-    Key,
-    Hasher,
-    KeyEqual,
-    folly::detail::std_pmr::polymorphic_allocator<Key>>;
+template <typename Key, typename Hasher = f14::DefaultHasher<Key>,
+          typename KeyEqual = f14::DefaultKeyEqual<Key>>
+using F14VectorSet =
+    folly::F14VectorSet<Key, Hasher, KeyEqual,
+                        folly::detail::std_pmr::polymorphic_allocator<Key>>;
 
-template <
-    typename Key,
-    typename Hasher = f14::DefaultHasher<Key>,
-    typename KeyEqual = f14::DefaultKeyEqual<Key>>
-using F14FastSet = folly::F14FastSet<
-    Key,
-    Hasher,
-    KeyEqual,
-    folly::detail::std_pmr::polymorphic_allocator<Key>>;
+template <typename Key, typename Hasher = f14::DefaultHasher<Key>,
+          typename KeyEqual = f14::DefaultKeyEqual<Key>>
+using F14FastSet =
+    folly::F14FastSet<Key, Hasher, KeyEqual,
+                      folly::detail::std_pmr::polymorphic_allocator<Key>>;
 } // namespace pmr
 #endif // FOLLY_HAS_MEMORY_RESOURCE
 

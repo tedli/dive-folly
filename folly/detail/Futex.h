@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,9 +37,9 @@ namespace detail {
 
 enum class FutexResult {
   VALUE_CHANGED, /* futex value didn't match expected */
-  AWOKEN, /* wakeup by matching futex wake, or spurious wakeup */
-  INTERRUPTED, /* wakeup by interrupting signal */
-  TIMEDOUT, /* wakeup by expiring deadline */
+  AWOKEN,        /* wakeup by matching futex wake, or spurious wakeup */
+  INTERRUPTED,   /* wakeup by interrupting signal */
+  TIMEDOUT,      /* wakeup by expiring deadline */
 };
 
 /**
@@ -56,8 +63,8 @@ using Futex = Atom<std::uint32_t>;
  * other return (signal, this->load() != expected, or spurious wakeup).
  */
 template <typename Futex>
-FutexResult futexWait(
-    const Futex* futex, uint32_t expected, uint32_t waitMask = -1);
+FutexResult futexWait(const Futex *futex, uint32_t expected,
+                      uint32_t waitMask = -1);
 
 /**
  * Similar to futexWait but also accepts a deadline until when the wait call
@@ -70,11 +77,10 @@ FutexResult futexWait(
  * For any other clock type, now() will be invoked twice.
  */
 template <typename Futex, class Clock, class Duration>
-FutexResult futexWaitUntil(
-    const Futex* futex,
-    uint32_t expected,
-    std::chrono::time_point<Clock, Duration> const& deadline,
-    uint32_t waitMask = -1);
+FutexResult
+futexWaitUntil(const Futex *futex, uint32_t expected,
+               std::chrono::time_point<Clock, Duration> const &deadline,
+               uint32_t waitMask = -1);
 
 /**
  * Wakes up to count waiters where (waitMask & wakeMask) != 0, returning the
@@ -86,21 +92,18 @@ FutexResult futexWaitUntil(
  * https://sourceware.org/bugzilla/show_bug.cgi?id=13690
  */
 template <typename Futex>
-int futexWake(
-    const Futex* futex,
-    int count = std::numeric_limits<int>::max(),
-    uint32_t wakeMask = -1);
+int futexWake(const Futex *futex, int count = std::numeric_limits<int>::max(),
+              uint32_t wakeMask = -1);
 
 /** A std::atomic subclass that can be used to force Futex to emulate
  *  the underlying futex() syscall.  This is primarily useful to test or
  *  benchmark the emulated implementation on systems that don't need it. */
-template <typename T>
-struct EmulatedFutexAtomic : public std::atomic<T> {
+template <typename T> struct EmulatedFutexAtomic : public std::atomic<T> {
   EmulatedFutexAtomic() noexcept = default;
   constexpr /* implicit */ EmulatedFutexAtomic(T init) noexcept
       : std::atomic<T>(init) {}
   // It doesn't copy or move
-  EmulatedFutexAtomic(EmulatedFutexAtomic&& rhs) = delete;
+  EmulatedFutexAtomic(EmulatedFutexAtomic &&rhs) = delete;
 };
 
 } // namespace detail

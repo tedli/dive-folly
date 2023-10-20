@@ -1,7 +1,7 @@
 # Distributed under the OSI-approved BSD 3-Clause License.  See accompanying
 # file Copyright.txt or https://cmake.org/licensing for details.
 
-cmake_minimum_required(VERSION 3.27.1)
+cmake_minimum_required(VERSION 3.27.7)
 
 # Reject any attempt to use a toolchain file. We must not use one because
 # we could be downloading it here. If the CMAKE_TOOLCHAIN_FILE environment
@@ -19,9 +19,9 @@ project(unwind-populate NONE)
 
 include(ExternalProject)
 ExternalProject_Add(unwind-populate
-                     "UPDATE_DISCONNECTED" "False" "DOWNLOAD_EXTRACT_TIMESTAMP" "TRUE" "EXTERNALPROJECT_INTERNAL_ARGUMENT_SEPARATOR" "URL" "https://github.com/libunwind/libunwind/archive/v1.7.2.zip" "URL_HASH" "SHA256=f39929bff6ebd4426e806f0e834e077f2dc3c16fa19dbfb8996a1c93b3caf8cb"
-                    SOURCE_DIR          "C:/Users/lizhen/Documents/Development/folly/build/_deps/unwind-src"
-                    BINARY_DIR          "C:/Users/lizhen/Documents/Development/folly/build/_deps/unwind-build"
+                     "UPDATE_DISCONNECTED" "False" "DOWNLOAD_EXTRACT_TIMESTAMP" "FALSE" "EXTERNALPROJECT_INTERNAL_ARGUMENT_SEPARATOR" "URL" "https://github.com/libunwind/libunwind/archive/v1.7.2.zip" "URL_HASH" "SHA256=f39929bff6ebd4426e806f0e834e077f2dc3c16fa19dbfb8996a1c93b3caf8cb"
+                    SOURCE_DIR          "/home/lizhen/Documents/Development/dive-folly/build/_deps/unwind-src"
+                    BINARY_DIR          "/home/lizhen/Documents/Development/dive-folly/build/_deps/unwind-build"
                     CONFIGURE_COMMAND   ""
                     BUILD_COMMAND       ""
                     INSTALL_COMMAND     ""

@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,16 +49,16 @@ constexpr byte operator~(byte b) noexcept {
   return static_cast<byte>(~static_cast<unsigned>(b));
 }
 constexpr byte operator&(byte b0, byte b1) noexcept {
-  return static_cast<byte>(
-      static_cast<unsigned>(b0) & static_cast<unsigned>(b1));
+  return static_cast<byte>(static_cast<unsigned>(b0) &
+                           static_cast<unsigned>(b1));
 }
 constexpr byte operator|(byte b0, byte b1) noexcept {
-  return static_cast<byte>(
-      static_cast<unsigned>(b0) | static_cast<unsigned>(b1));
+  return static_cast<byte>(static_cast<unsigned>(b0) |
+                           static_cast<unsigned>(b1));
 }
 constexpr byte operator^(byte b0, byte b1) noexcept {
-  return static_cast<byte>(
-      static_cast<unsigned>(b0) ^ static_cast<unsigned>(b1));
+  return static_cast<byte>(static_cast<unsigned>(b0) ^
+                           static_cast<unsigned>(b1));
 }
 template <typename I, std::enable_if_t<std::is_integral<I>::value, int> = 0>
 constexpr byte operator<<(byte b, I shift) noexcept {
@@ -62,21 +69,15 @@ constexpr byte operator>>(byte b, I shift) noexcept {
   return static_cast<byte>(static_cast<unsigned>(b) >> shift);
 }
 
-constexpr byte& operator&=(byte& b, byte o) noexcept {
-  return b = b & o;
-}
-constexpr byte& operator|=(byte& b, byte o) noexcept {
-  return b = b | o;
-}
-constexpr byte& operator^=(byte& b, byte o) noexcept {
-  return b = b ^ o;
-}
+constexpr byte &operator&=(byte &b, byte o) noexcept { return b = b & o; }
+constexpr byte &operator|=(byte &b, byte o) noexcept { return b = b | o; }
+constexpr byte &operator^=(byte &b, byte o) noexcept { return b = b ^ o; }
 template <typename I, std::enable_if_t<std::is_integral<I>::value, int> = 0>
-constexpr byte& operator<<=(byte& b, I shift) noexcept {
+constexpr byte &operator<<=(byte &b, I shift) noexcept {
   return b = b << shift;
 }
 template <typename I, std::enable_if_t<std::is_integral<I>::value, int> = 0>
-constexpr byte& operator>>=(byte& b, I shift) noexcept {
+constexpr byte &operator>>=(byte &b, I shift) noexcept {
   return b = b >> shift;
 }
 

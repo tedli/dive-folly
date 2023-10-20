@@ -1,8 +1,494 @@
 [
 {
-  "directory": "C:/Users/lizhen/Documents/Development/folly/build",
-  "command": "C:\\PROGRA~1\\mingw64\\bin\\CLANG_~1.EXE -DFOLLY_NO_CONFIG @CMakeFiles/dive-folly.dir/includes_CXX.rsp -g -std=gnu++20 -o CMakeFiles\\dive-folly.dir\\src\\main.cpp.obj -c C:\\Users\\lizhen\\Documents\\Development\\folly\\src\\main.cpp",
-  "file": "C:/Users/lizhen/Documents/Development/folly/src/main.cpp",
-  "output": "CMakeFiles/dive-folly.dir/src/main.cpp.obj"
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/src/main.cpp.o -c /home/lizhen/Documents/Development/dive-folly/src/main.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/src/main.cpp",
+  "output": "CMakeFiles/dive-folly.dir/src/main.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/Demangle.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/Demangle.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/Demangle.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/Demangle.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/ExceptionString.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/ExceptionString.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/ExceptionString.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/ExceptionString.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/Executor.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/Executor.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/Executor.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/Executor.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/MicroLock.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/MicroLock.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/MicroLock.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/MicroLock.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/ScopeGuard.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/ScopeGuard.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/ScopeGuard.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/ScopeGuard.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/SharedMutex.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/SharedMutex.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/SharedMutex.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/SharedMutex.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/concurrency/CacheLocality.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/concurrency/CacheLocality.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/concurrency/CacheLocality.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/concurrency/CacheLocality.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/container/detail/F14Table.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/container/detail/F14Table.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/container/detail/F14Table.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/container/detail/F14Table.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/detail/FileUtilDetail.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/detail/FileUtilDetail.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/detail/FileUtilDetail.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/detail/FileUtilDetail.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/detail/Futex.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/detail/Futex.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/detail/Futex.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/detail/Futex.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/detail/StaticSingletonManager.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/detail/StaticSingletonManager.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/detail/StaticSingletonManager.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/detail/StaticSingletonManager.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/detail/ThreadLocalDetail.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/detail/ThreadLocalDetail.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/detail/ThreadLocalDetail.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/detail/ThreadLocalDetail.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/executors/InlineExecutor.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/executors/InlineExecutor.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/executors/InlineExecutor.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/executors/InlineExecutor.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/executors/QueuedImmediateExecutor.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/executors/QueuedImmediateExecutor.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/executors/QueuedImmediateExecutor.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/executors/QueuedImmediateExecutor.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/lang/CString.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/lang/CString.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/lang/CString.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/lang/CString.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/lang/Exception.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/lang/Exception.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/lang/Exception.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/lang/Exception.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/lang/SafeAssert.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/lang/SafeAssert.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/lang/SafeAssert.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/lang/SafeAssert.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/lang/ToAscii.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/lang/ToAscii.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/lang/ToAscii.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/lang/ToAscii.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/memory/ReentrantAllocator.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/memory/ReentrantAllocator.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/memory/ReentrantAllocator.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/memory/ReentrantAllocator.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/memory/detail/MallocImpl.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/memory/detail/MallocImpl.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/memory/detail/MallocImpl.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/memory/detail/MallocImpl.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/portability/SysMembarrier.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/portability/SysMembarrier.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/portability/SysMembarrier.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/portability/SysMembarrier.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/portability/SysMman.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/portability/SysMman.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/portability/SysMman.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/portability/SysMman.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/portability/SysResource.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/portability/SysResource.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/portability/SysResource.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/portability/SysResource.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/synchronization/AsymmetricThreadFence.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/synchronization/AsymmetricThreadFence.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/synchronization/AsymmetricThreadFence.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/synchronization/AsymmetricThreadFence.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/synchronization/Hazptr.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/synchronization/Hazptr.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/synchronization/Hazptr.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/synchronization/Hazptr.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/synchronization/HazptrDomain.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/synchronization/HazptrDomain.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/synchronization/HazptrDomain.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/synchronization/HazptrDomain.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/synchronization/ParkingLot.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/synchronization/ParkingLot.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/synchronization/ParkingLot.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/synchronization/ParkingLot.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/synchronization/SanitizeThread.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/synchronization/SanitizeThread.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/synchronization/SanitizeThread.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/synchronization/SanitizeThread.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/system/AtFork.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/system/AtFork.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/system/AtFork.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/system/AtFork.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DFOLLY_NO_CONFIG -DGLOG_CUSTOM_PREFIX_SUPPORT -I/home/lizhen/Documents/Development/dive-folly -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o CMakeFiles/dive-folly.dir/folly/system/ThreadId.cpp.o -c /home/lizhen/Documents/Development/dive-folly/folly/system/ThreadId.cpp",
+  "file": "/home/lizhen/Documents/Development/dive-folly/folly/system/ThreadId.cpp",
+  "output": "CMakeFiles/dive-folly.dir/folly/system/ThreadId.cpp.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGFLAGS_IS_A_DLL=0 -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build/include -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build/include/gflags -g -std=gnu++20 -o _deps/gflags-build/CMakeFiles/gflags_static.dir/src/gflags.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/src/gflags.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/src/gflags.cc",
+  "output": "_deps/gflags-build/CMakeFiles/gflags_static.dir/src/gflags.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGFLAGS_IS_A_DLL=0 -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build/include -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build/include/gflags -g -std=gnu++20 -o _deps/gflags-build/CMakeFiles/gflags_static.dir/src/gflags_reporting.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/src/gflags_reporting.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/src/gflags_reporting.cc",
+  "output": "_deps/gflags-build/CMakeFiles/gflags_static.dir/src/gflags_reporting.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGFLAGS_IS_A_DLL=0 -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build/include -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build/include/gflags -g -std=gnu++20 -o _deps/gflags-build/CMakeFiles/gflags_static.dir/src/gflags_completions.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/src/gflags_completions.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/src/gflags_completions.cc",
+  "output": "_deps/gflags-build/CMakeFiles/gflags_static.dir/src/gflags_completions.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGFLAGS_IS_A_DLL=0 -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/test -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build/include -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build/include/gflags -g -std=gnu++20 -o _deps/gflags-build/test/CMakeFiles/gflags_strip_flags_test.dir/gflags_strip_flags_test.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/test/gflags_strip_flags_test.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/test/gflags_strip_flags_test.cc",
+  "output": "_deps/gflags-build/test/CMakeFiles/gflags_strip_flags_test.dir/gflags_strip_flags_test.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGFLAGS_IS_A_DLL=0 -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/test -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build/include -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build/include/gflags -g -std=gnu++20 -o _deps/gflags-build/test/CMakeFiles/gflags_unittest.dir/gflags_unittest.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/test/gflags_unittest.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/test/gflags_unittest.cc",
+  "output": "_deps/gflags-build/test/CMakeFiles/gflags_unittest.dir/gflags_unittest.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGFLAGS_IS_A_DLL=0 -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/test -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build/include -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build/include/gflags -g -std=gnu++20 -o _deps/gflags-build/test/CMakeFiles/gflags_unittest-main.dir/gflags_unittest-main.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build/test/gflags_unittest-main.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build/test/gflags_unittest-main.cc",
+  "output": "_deps/gflags-build/test/CMakeFiles/gflags_unittest-main.dir/gflags_unittest-main.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGFLAGS_IS_A_DLL=0 -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/test -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build/include -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build/include/gflags -g -std=gnu++20 -o _deps/gflags-build/test/CMakeFiles/gflags_unittest_main.dir/gflags_unittest_main.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build/test/gflags_unittest_main.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build/test/gflags_unittest_main.cc",
+  "output": "_deps/gflags-build/test/CMakeFiles/gflags_unittest_main.dir/gflags_unittest_main.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGFLAGS_IS_A_DLL=0 -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/test -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build/include -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build/include/gflags -g -std=gnu++20 -o _deps/gflags-build/test/CMakeFiles/gflags_declare_test.dir/gflags_declare_test.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/test/gflags_declare_test.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/test/gflags_declare_test.cc",
+  "output": "_deps/gflags-build/test/CMakeFiles/gflags_declare_test.dir/gflags_declare_test.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGFLAGS_IS_A_DLL=0 -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/test -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build/include -I/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-build/include/gflags -g -std=gnu++20 -o _deps/gflags-build/test/CMakeFiles/gflags_declare_test.dir/gflags_declare_flags.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/test/gflags_declare_flags.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-src/test/gflags_declare_flags.cc",
+  "output": "_deps/gflags-build/test/CMakeFiles/gflags_declare_test.dir/gflags_declare_flags.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGLOG_CUSTOM_PREFIX_SUPPORT -DGLOG_NO_SYMBOLIZE_DETECTION -DGOOGLE_GLOG_IS_A_DLL -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -g -std=gnu++20 -fPIC -fvisibility=hidden -fvisibility-inlines-hidden -Wno-unnamed-type-template-args -o _deps/glog-build/CMakeFiles/glogbase.dir/src/demangle.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/demangle.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/demangle.cc",
+  "output": "_deps/glog-build/CMakeFiles/glogbase.dir/src/demangle.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGLOG_CUSTOM_PREFIX_SUPPORT -DGLOG_NO_SYMBOLIZE_DETECTION -DGOOGLE_GLOG_IS_A_DLL -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -g -std=gnu++20 -fPIC -fvisibility=hidden -fvisibility-inlines-hidden -Wno-unnamed-type-template-args -o _deps/glog-build/CMakeFiles/glogbase.dir/src/logging.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/logging.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/logging.cc",
+  "output": "_deps/glog-build/CMakeFiles/glogbase.dir/src/logging.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGLOG_CUSTOM_PREFIX_SUPPORT -DGLOG_NO_SYMBOLIZE_DETECTION -DGOOGLE_GLOG_IS_A_DLL -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -g -std=gnu++20 -fPIC -fvisibility=hidden -fvisibility-inlines-hidden -Wno-unnamed-type-template-args -o _deps/glog-build/CMakeFiles/glogbase.dir/src/raw_logging.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/raw_logging.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/raw_logging.cc",
+  "output": "_deps/glog-build/CMakeFiles/glogbase.dir/src/raw_logging.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGLOG_CUSTOM_PREFIX_SUPPORT -DGLOG_NO_SYMBOLIZE_DETECTION -DGOOGLE_GLOG_IS_A_DLL -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -g -std=gnu++20 -fPIC -fvisibility=hidden -fvisibility-inlines-hidden -Wno-unnamed-type-template-args -o _deps/glog-build/CMakeFiles/glogbase.dir/src/symbolize.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/symbolize.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/symbolize.cc",
+  "output": "_deps/glog-build/CMakeFiles/glogbase.dir/src/symbolize.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGLOG_CUSTOM_PREFIX_SUPPORT -DGLOG_NO_SYMBOLIZE_DETECTION -DGOOGLE_GLOG_IS_A_DLL -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -g -std=gnu++20 -fPIC -fvisibility=hidden -fvisibility-inlines-hidden -Wno-unnamed-type-template-args -o _deps/glog-build/CMakeFiles/glogbase.dir/src/utilities.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/utilities.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/utilities.cc",
+  "output": "_deps/glog-build/CMakeFiles/glogbase.dir/src/utilities.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGLOG_CUSTOM_PREFIX_SUPPORT -DGLOG_NO_SYMBOLIZE_DETECTION -DGOOGLE_GLOG_IS_A_DLL -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -g -std=gnu++20 -fPIC -fvisibility=hidden -fvisibility-inlines-hidden -Wno-unnamed-type-template-args -o _deps/glog-build/CMakeFiles/glogbase.dir/src/vlog_is_on.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/vlog_is_on.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/vlog_is_on.cc",
+  "output": "_deps/glog-build/CMakeFiles/glogbase.dir/src/vlog_is_on.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGLOG_CUSTOM_PREFIX_SUPPORT -DGLOG_NO_SYMBOLIZE_DETECTION -DGOOGLE_GLOG_IS_A_DLL -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -g -std=gnu++20 -fPIC -fvisibility=hidden -fvisibility-inlines-hidden -Wno-unnamed-type-template-args -o _deps/glog-build/CMakeFiles/glogbase.dir/src/signalhandler.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/signalhandler.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/signalhandler.cc",
+  "output": "_deps/glog-build/CMakeFiles/glogbase.dir/src/signalhandler.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGLOG_CUSTOM_PREFIX_SUPPORT -DGLOG_NO_SYMBOLIZE_DETECTION -DGLOG_STATIC_DEFINE -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -g -std=gnu++20 -fPIE -fvisibility=hidden -fvisibility-inlines-hidden -Wno-unnamed-type-template-args -o _deps/glog-build/CMakeFiles/logging_unittest.dir/src/logging_unittest.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/logging_unittest.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/logging_unittest.cc",
+  "output": "_deps/glog-build/CMakeFiles/logging_unittest.dir/src/logging_unittest.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGLOG_CUSTOM_PREFIX_SUPPORT -DGLOG_NO_SYMBOLIZE_DETECTION -DGLOG_STATIC_DEFINE -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -g -std=gnu++20 -fPIE -fvisibility=hidden -fvisibility-inlines-hidden -Wno-unnamed-type-template-args -o _deps/glog-build/CMakeFiles/logging_custom_prefix_unittest.dir/src/logging_custom_prefix_unittest.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/logging_custom_prefix_unittest.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/logging_custom_prefix_unittest.cc",
+  "output": "_deps/glog-build/CMakeFiles/logging_custom_prefix_unittest.dir/src/logging_custom_prefix_unittest.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGLOG_CUSTOM_PREFIX_SUPPORT -DGLOG_NO_SYMBOLIZE_DETECTION -DGLOG_STATIC_DEFINE -DGLOG_STL_LOGGING_FOR_EXT_HASH -DGLOG_STL_LOGGING_FOR_EXT_SLIST -DGLOG_STL_LOGGING_FOR_TR1_UNORDERED -DGLOG_STL_LOGGING_FOR_UNORDERED -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -g -std=gnu++20 -fPIE -fvisibility=hidden -fvisibility-inlines-hidden -Wno-unnamed-type-template-args -Wno-deprecated -o _deps/glog-build/CMakeFiles/stl_logging_unittest.dir/src/stl_logging_unittest.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/stl_logging_unittest.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/stl_logging_unittest.cc",
+  "output": "_deps/glog-build/CMakeFiles/stl_logging_unittest.dir/src/stl_logging_unittest.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGLOG_CUSTOM_PREFIX_SUPPORT -DGLOG_NO_SYMBOLIZE_DETECTION -DGLOG_STATIC_DEFINE -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -g -std=gnu++20 -fPIE -fvisibility=hidden -fvisibility-inlines-hidden -Wno-unnamed-type-template-args -o _deps/glog-build/CMakeFiles/symbolize_unittest.dir/src/symbolize_unittest.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/symbolize_unittest.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/symbolize_unittest.cc",
+  "output": "_deps/glog-build/CMakeFiles/symbolize_unittest.dir/src/symbolize_unittest.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGLOG_CUSTOM_PREFIX_SUPPORT -DGLOG_NO_SYMBOLIZE_DETECTION -DGLOG_STATIC_DEFINE -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -g -std=gnu++20 -fPIE -fvisibility=hidden -fvisibility-inlines-hidden -Wno-unnamed-type-template-args -o _deps/glog-build/CMakeFiles/demangle_unittest.dir/src/demangle_unittest.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/demangle_unittest.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/demangle_unittest.cc",
+  "output": "_deps/glog-build/CMakeFiles/demangle_unittest.dir/src/demangle_unittest.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGLOG_CUSTOM_PREFIX_SUPPORT -DGLOG_NO_SYMBOLIZE_DETECTION -DGLOG_STATIC_DEFINE -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -g -std=gnu++20 -fPIE -fvisibility=hidden -fvisibility-inlines-hidden -Wno-unnamed-type-template-args -o _deps/glog-build/CMakeFiles/stacktrace_unittest.dir/src/stacktrace_unittest.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/stacktrace_unittest.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/stacktrace_unittest.cc",
+  "output": "_deps/glog-build/CMakeFiles/stacktrace_unittest.dir/src/stacktrace_unittest.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGLOG_CUSTOM_PREFIX_SUPPORT -DGLOG_NO_SYMBOLIZE_DETECTION -DGLOG_STATIC_DEFINE -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -g -std=gnu++20 -fPIE -fvisibility=hidden -fvisibility-inlines-hidden -Wno-unnamed-type-template-args -o _deps/glog-build/CMakeFiles/utilities_unittest.dir/src/utilities_unittest.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/utilities_unittest.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/utilities_unittest.cc",
+  "output": "_deps/glog-build/CMakeFiles/utilities_unittest.dir/src/utilities_unittest.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGLOG_CUSTOM_PREFIX_SUPPORT -DGLOG_NO_SYMBOLIZE_DETECTION -DGLOG_STATIC_DEFINE -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -g -std=gnu++20 -fPIE -fvisibility=hidden -fvisibility-inlines-hidden -Wno-unnamed-type-template-args -o _deps/glog-build/CMakeFiles/signalhandler_unittest.dir/src/signalhandler_unittest.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/signalhandler_unittest.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/signalhandler_unittest.cc",
+  "output": "_deps/glog-build/CMakeFiles/signalhandler_unittest.dir/src/signalhandler_unittest.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGLOG_CUSTOM_PREFIX_SUPPORT -DGLOG_NO_SYMBOLIZE_DETECTION -DGLOG_STATIC_DEFINE -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -g -std=gnu++20 -fPIE -fvisibility=hidden -fvisibility-inlines-hidden -Wno-unnamed-type-template-args -o _deps/glog-build/CMakeFiles/cleanup_immediately_unittest.dir/src/cleanup_immediately_unittest.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/cleanup_immediately_unittest.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/cleanup_immediately_unittest.cc",
+  "output": "_deps/glog-build/CMakeFiles/cleanup_immediately_unittest.dir/src/cleanup_immediately_unittest.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGLOG_CUSTOM_PREFIX_SUPPORT -DGLOG_NO_SYMBOLIZE_DETECTION -DGLOG_STATIC_DEFINE -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -g -std=gnu++20 -fPIE -fvisibility=hidden -fvisibility-inlines-hidden -Wno-unnamed-type-template-args -o _deps/glog-build/CMakeFiles/cleanup_with_absolute_prefix_unittest.dir/src/cleanup_with_absolute_prefix_unittest.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/cleanup_with_absolute_prefix_unittest.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/cleanup_with_absolute_prefix_unittest.cc",
+  "output": "_deps/glog-build/CMakeFiles/cleanup_with_absolute_prefix_unittest.dir/src/cleanup_with_absolute_prefix_unittest.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -DGLOG_CUSTOM_PREFIX_SUPPORT -DGLOG_NO_SYMBOLIZE_DETECTION -DGLOG_STATIC_DEFINE -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src -I/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-build -g -std=gnu++20 -fPIE -fvisibility=hidden -fvisibility-inlines-hidden -Wno-unnamed-type-template-args -o _deps/glog-build/CMakeFiles/cleanup_with_relative_prefix_unittest.dir/src/cleanup_with_relative_prefix_unittest.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/cleanup_with_relative_prefix_unittest.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/glog-src/src/cleanup_with_relative_prefix_unittest.cc",
+  "output": "_deps/glog-build/CMakeFiles/cleanup_with_relative_prefix_unittest.dir/src/cleanup_with_relative_prefix_unittest.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -g -std=gnu++20 -o _deps/double-conversion-build/CMakeFiles/double-conversion.dir/double-conversion/bignum.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/double-conversion/bignum.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/double-conversion/bignum.cc",
+  "output": "_deps/double-conversion-build/CMakeFiles/double-conversion.dir/double-conversion/bignum.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -g -std=gnu++20 -o _deps/double-conversion-build/CMakeFiles/double-conversion.dir/double-conversion/bignum-dtoa.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/double-conversion/bignum-dtoa.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/double-conversion/bignum-dtoa.cc",
+  "output": "_deps/double-conversion-build/CMakeFiles/double-conversion.dir/double-conversion/bignum-dtoa.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -g -std=gnu++20 -o _deps/double-conversion-build/CMakeFiles/double-conversion.dir/double-conversion/cached-powers.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/double-conversion/cached-powers.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/double-conversion/cached-powers.cc",
+  "output": "_deps/double-conversion-build/CMakeFiles/double-conversion.dir/double-conversion/cached-powers.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -g -std=gnu++20 -o _deps/double-conversion-build/CMakeFiles/double-conversion.dir/double-conversion/double-to-string.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/double-conversion/double-to-string.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/double-conversion/double-to-string.cc",
+  "output": "_deps/double-conversion-build/CMakeFiles/double-conversion.dir/double-conversion/double-to-string.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -g -std=gnu++20 -o _deps/double-conversion-build/CMakeFiles/double-conversion.dir/double-conversion/fast-dtoa.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/double-conversion/fast-dtoa.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/double-conversion/fast-dtoa.cc",
+  "output": "_deps/double-conversion-build/CMakeFiles/double-conversion.dir/double-conversion/fast-dtoa.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -g -std=gnu++20 -o _deps/double-conversion-build/CMakeFiles/double-conversion.dir/double-conversion/fixed-dtoa.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/double-conversion/fixed-dtoa.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/double-conversion/fixed-dtoa.cc",
+  "output": "_deps/double-conversion-build/CMakeFiles/double-conversion.dir/double-conversion/fixed-dtoa.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -g -std=gnu++20 -o _deps/double-conversion-build/CMakeFiles/double-conversion.dir/double-conversion/string-to-double.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/double-conversion/string-to-double.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/double-conversion/string-to-double.cc",
+  "output": "_deps/double-conversion-build/CMakeFiles/double-conversion.dir/double-conversion/string-to-double.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -g -std=gnu++20 -o _deps/double-conversion-build/CMakeFiles/double-conversion.dir/double-conversion/strtod.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/double-conversion/strtod.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/double-conversion/strtod.cc",
+  "output": "_deps/double-conversion-build/CMakeFiles/double-conversion.dir/double-conversion/strtod.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -g -std=gnu++20 -o _deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/cctest.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/cctest.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/cctest.cc",
+  "output": "_deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/cctest.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -g -std=gnu++20 -o _deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/gay-fixed.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/gay-fixed.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/gay-fixed.cc",
+  "output": "_deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/gay-fixed.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -g -std=gnu++20 -o _deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/gay-precision.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/gay-precision.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/gay-precision.cc",
+  "output": "_deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/gay-precision.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -g -std=gnu++20 -o _deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/gay-shortest.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/gay-shortest.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/gay-shortest.cc",
+  "output": "_deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/gay-shortest.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -g -std=gnu++20 -o _deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/gay-shortest-single.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/gay-shortest-single.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/gay-shortest-single.cc",
+  "output": "_deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/gay-shortest-single.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -g -std=gnu++20 -o _deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/test-bignum.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/test-bignum.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/test-bignum.cc",
+  "output": "_deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/test-bignum.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -g -std=gnu++20 -o _deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/test-bignum-dtoa.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/test-bignum-dtoa.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/test-bignum-dtoa.cc",
+  "output": "_deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/test-bignum-dtoa.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -g -std=gnu++20 -o _deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/test-conversions.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/test-conversions.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/test-conversions.cc",
+  "output": "_deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/test-conversions.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -g -std=gnu++20 -o _deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/test-diy-fp.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/test-diy-fp.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/test-diy-fp.cc",
+  "output": "_deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/test-diy-fp.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -g -std=gnu++20 -o _deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/test-dtoa.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/test-dtoa.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/test-dtoa.cc",
+  "output": "_deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/test-dtoa.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -g -std=gnu++20 -o _deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/test-fast-dtoa.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/test-fast-dtoa.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/test-fast-dtoa.cc",
+  "output": "_deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/test-fast-dtoa.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -g -std=gnu++20 -o _deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/test-fixed-dtoa.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/test-fixed-dtoa.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/test-fixed-dtoa.cc",
+  "output": "_deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/test-fixed-dtoa.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -g -std=gnu++20 -o _deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/test-ieee.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/test-ieee.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/test-ieee.cc",
+  "output": "_deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/test-ieee.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src -g -std=gnu++20 -o _deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/test-strtod.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/test-strtod.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/double-conversion-src/test/cctest/test-strtod.cc",
+  "output": "_deps/double-conversion-build/test/cctest/CMakeFiles/cctest.dir/test-strtod.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o _deps/fmt-build/CMakeFiles/fmt.dir/src/format.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/src/format.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/src/format.cc",
+  "output": "_deps/fmt-build/CMakeFiles/fmt.dir/src/format.cc.o"
+},
+{
+  "directory": "/home/lizhen/Documents/Development/dive-folly/build",
+  "command": "/opt/llvm/bin/clang++ -I/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/include -g -std=gnu++20 -o _deps/fmt-build/CMakeFiles/fmt.dir/src/os.cc.o -c /home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/src/os.cc",
+  "file": "/home/lizhen/Documents/Development/dive-folly/build/_deps/fmt-src/src/os.cc",
+  "output": "_deps/fmt-build/CMakeFiles/fmt.dir/src/os.cc.o"
 }
 ]

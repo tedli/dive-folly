@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -126,8 +133,7 @@ FOLLY_INLINE_VARIABLE constexpr size_t constexpr_iterated_squares_desc_size_v =
 /// this utility takes its base as a type rather than as a value. For floating-
 /// point integral bases, that is, bases of floating-point type but of integral
 /// value, floating_point_integral_constant is the easiest parameterization.
-template <typename T, std::size_t Size>
-struct constexpr_iterated_squares_desc {
+template <typename T, std::size_t Size> struct constexpr_iterated_squares_desc {
   static_assert(Size > 0, "requires non-zero size");
 
   using size_type = decltype(Size);
@@ -142,14 +148,13 @@ struct constexpr_iterated_squares_desc {
   base_type base;
   item_type scaling[size];
 
- private:
+private:
   using lim = std::numeric_limits<base_type>;
 
-  static_assert(
-      lim::max_exponent < std::numeric_limits<size_type>::max(),
-      "size_type too small for base_type");
+  static_assert(lim::max_exponent < std::numeric_limits<size_type>::max(),
+                "size_type too small for base_type");
 
- public:
+public:
   explicit constexpr constexpr_iterated_squares_desc(base_type r) noexcept
       : base{r}, scaling{} {
     assert(size <= detail::constexpr_iterated_squares_desc_size_(base));
@@ -178,7 +183,7 @@ struct constexpr_iterated_squares_desc {
     auto power = size_type(0);
     auto scale = base_type(1);
     if (!(snum / scale <= max)) {
-      for (auto const& i : scaling) {
+      for (auto const &i : scaling) {
         auto const next = scale * i.scale;
         auto const div = snum / next;
         if (div <= rmax) {
@@ -208,7 +213,7 @@ struct constexpr_iterated_squares_desc {
     auto power = size_type(0);
     auto scale = base_type(1);
     if (!(snum * scale >= min)) {
-      for (auto const& i : scaling) {
+      for (auto const &i : scaling) {
         auto const next = scale * i.scale;
         auto const mul = snum * next;
         if (mul >= rmin) {
@@ -246,7 +251,7 @@ FOLLY_INLINE_VARIABLE constexpr auto constexpr_iterated_squares_desc_v =
 /// An alias for constexpr_iterated_squares_desc_v with base 2, which is the
 /// most common base to use with iterated-squares.
 template <typename T>
-constexpr auto& constexpr_iterated_squares_desc_2_v =
+constexpr auto &constexpr_iterated_squares_desc_2_v =
     constexpr_iterated_squares_desc_v<
         floating_point_integral_constant<T, int, 2>>;
 
@@ -254,8 +259,7 @@ constexpr auto& constexpr_iterated_squares_desc_2_v =
 // a and b are equivalent objects, we return b to make
 // sorting stable.
 // See http://stepanovpapers.com/notes.pdf for details.
-template <typename T, typename... Ts>
-constexpr T constexpr_max(T a, Ts... ts) {
+template <typename T, typename... Ts> constexpr T constexpr_max(T a, Ts... ts) {
   T list[] = {ts..., a}; // 0-length arrays are illegal
   for (auto i = 0u; i < sizeof...(Ts); ++i) {
     a = list[i] < a ? a : list[i];
@@ -265,8 +269,7 @@ constexpr T constexpr_max(T a, Ts... ts) {
 
 // When a and b are equivalent objects, we return a to
 // make sorting stable.
-template <typename T, typename... Ts>
-constexpr T constexpr_min(T a, Ts... ts) {
+template <typename T, typename... Ts> constexpr T constexpr_min(T a, Ts... ts) {
   T list[] = {ts..., a}; // 0-length arrays are illegal
   for (auto i = 0u; i < sizeof...(Ts); ++i) {
     a = list[i] < a ? list[i] : a;
@@ -275,49 +278,44 @@ constexpr T constexpr_min(T a, Ts... ts) {
 }
 
 template <typename T, typename Less>
-constexpr T const& constexpr_clamp(
-    T const& v, T const& lo, T const& hi, Less less) {
-  T const& a = less(v, lo) ? lo : v;
-  T const& b = less(hi, a) ? hi : a;
+constexpr T const &constexpr_clamp(T const &v, T const &lo, T const &hi,
+                                   Less less) {
+  T const &a = less(v, lo) ? lo : v;
+  T const &b = less(hi, a) ? hi : a;
   return b;
 }
 template <typename T>
-constexpr T const& constexpr_clamp(T const& v, T const& lo, T const& hi) {
+constexpr T const &constexpr_clamp(T const &v, T const &lo, T const &hi) {
   return constexpr_clamp(v, lo, hi, std::less<T>{});
 }
 
-template <typename T>
-constexpr bool constexpr_isnan(T const t) {
+template <typename T> constexpr bool constexpr_isnan(T const t) {
   return t != t; // NOLINT
 }
 
 namespace detail {
 
-template <typename T, typename = void>
-struct constexpr_abs_helper {};
+template <typename T, typename = void> struct constexpr_abs_helper {};
 
 template <typename T>
 struct constexpr_abs_helper<
-    T,
-    typename std::enable_if<std::is_floating_point<T>::value>::type> {
+    T, typename std::enable_if<std::is_floating_point<T>::value>::type> {
   static constexpr T go(T t) { return t < static_cast<T>(0) ? -t : t; }
 };
 
 template <typename T>
 struct constexpr_abs_helper<
-    T,
-    typename std::enable_if<
-        std::is_integral<T>::value && !std::is_same<T, bool>::value &&
-        std::is_unsigned<T>::value>::type> {
+    T, typename std::enable_if<std::is_integral<T>::value &&
+                               !std::is_same<T, bool>::value &&
+                               std::is_unsigned<T>::value>::type> {
   static constexpr T go(T t) { return t; }
 };
 
 template <typename T>
 struct constexpr_abs_helper<
-    T,
-    typename std::enable_if<
-        std::is_integral<T>::value && !std::is_same<T, bool>::value &&
-        std::is_signed<T>::value>::type> {
+    T, typename std::enable_if<std::is_integral<T>::value &&
+                               !std::is_same<T, bool>::value &&
+                               std::is_signed<T>::value>::type> {
   static constexpr typename std::make_unsigned<T>::type go(T t) {
     return typename std::make_unsigned<T>::type(t < static_cast<T>(0) ? -t : t);
   }
@@ -333,34 +331,29 @@ constexpr auto constexpr_abs(T t)
 
 namespace detail {
 
-template <typename T>
-constexpr T constexpr_log2_(T a, T e) {
+template <typename T> constexpr T constexpr_log2_(T a, T e) {
   return e == T(1) ? a : constexpr_log2_(a + T(1), e / T(2));
 }
 
-template <typename T>
-constexpr T constexpr_log2_ceil_(T l2, T t) {
+template <typename T> constexpr T constexpr_log2_ceil_(T l2, T t) {
   return l2 + T(T(1) << l2 < t ? 1 : 0);
 }
 
 } // namespace detail
 
-template <typename T>
-constexpr T constexpr_log2(T t) {
+template <typename T> constexpr T constexpr_log2(T t) {
   return detail::constexpr_log2_(T(0), t);
 }
 
-template <typename T>
-constexpr T constexpr_log2_ceil(T t) {
+template <typename T> constexpr T constexpr_log2_ceil(T t) {
   return detail::constexpr_log2_ceil_(constexpr_log2(t), t);
 }
 
 /// constexpr_trunc
 ///
 /// mimic: std::trunc (C++23)
-template <
-    typename T,
-    std::enable_if_t<std::is_floating_point<T>::value, int> = 0>
+template <typename T,
+          std::enable_if_t<std::is_floating_point<T>::value, int> = 0>
 constexpr T constexpr_trunc(T const t) {
   using lim = std::numeric_limits<T>;
   using int_type = std::uintmax_t;
@@ -388,8 +381,7 @@ constexpr T constexpr_trunc(T const t) {
 /// constexpr_round
 ///
 /// mimic: std::round (C++23)
-template <typename T>
-constexpr T constexpr_round(T const t) {
+template <typename T> constexpr T constexpr_round(T const t) {
   constexpr auto half = T(1) / T(2);
   auto const same = constexpr_isnan(t) || t == T(0);
   return same ? t : constexpr_trunc(t < T(0) ? t - half : t + half);
@@ -398,8 +390,7 @@ constexpr T constexpr_round(T const t) {
 /// constexpr_floor
 ///
 /// mimic: std::floor (C++23)
-template <typename T>
-constexpr T constexpr_floor(T const t) {
+template <typename T> constexpr T constexpr_floor(T const t) {
   auto const s = constexpr_trunc(t);
   return t < s ? s - T(1) : s;
 }
@@ -407,8 +398,7 @@ constexpr T constexpr_floor(T const t) {
 /// constexpr_ceil
 ///
 /// mimic: std::ceil (C++23)
-template <typename T>
-constexpr T constexpr_ceil(T const t) {
+template <typename T> constexpr T constexpr_ceil(T const t) {
   auto const s = constexpr_trunc(t);
   return s < t ? s + T(1) : s;
 }
@@ -416,19 +406,17 @@ constexpr T constexpr_ceil(T const t) {
 /// constexpr_ceil
 ///
 /// The least integer at least t that round divides.
-template <typename T>
-constexpr T constexpr_ceil(T t, T round) {
+template <typename T> constexpr T constexpr_ceil(T t, T round) {
   return round == T(0)
-      ? t
-      : ((t + (t < T(0) ? T(0) : round - T(1))) / round) * round;
+             ? t
+             : ((t + (t < T(0) ? T(0) : round - T(1))) / round) * round;
 }
 
 /// constexpr_mult
 ///
 /// Multiply two values, allowing for constexpr floating-pooint overflow to
 /// infinity.
-template <typename T>
-constexpr T constexpr_mult(T const a, T const b) {
+template <typename T> constexpr T constexpr_mult(T const a, T const b) {
   using lim = std::numeric_limits<T>;
   if (constexpr_isnan(a) || constexpr_isnan(b)) {
     return constexpr_isnan(a) ? a : b;
@@ -497,29 +485,24 @@ constexpr T constexpr_ipow(T const base, E const exp) {
 /// until approximate convergence.
 ///
 /// mimic: std::exp (C++23, C++26)
-template <
-    typename T,
-    typename N,
-    std::enable_if_t<
-        std::is_floating_point<T>::value && std::is_integral<N>::value &&
-            !std::is_same<N, bool>::value,
-        int> = 0>
+template <typename T, typename N,
+          std::enable_if_t<std::is_floating_point<T>::value &&
+                               std::is_integral<N>::value &&
+                               !std::is_same<N, bool>::value,
+                           int> = 0>
 constexpr T constexpr_exp(N const power) {
   auto const npower = constexpr_abs(power);
   auto const result = detail::constexpr_ipow(numbers::e_v<T>, npower);
   return power < N(0) ? T(1) / result : result;
 }
-template <
-    typename N,
-    std::enable_if_t<
-        std::is_integral<N>::value && !std::is_same<N, bool>::value,
-        int> = 0>
+template <typename N, std::enable_if_t<std::is_integral<N>::value &&
+                                           !std::is_same<N, bool>::value,
+                                       int> = 0>
 constexpr double constexpr_exp(N const power) {
   return constexpr_exp<double>(power);
 }
-template <
-    typename T,
-    std::enable_if_t<std::is_floating_point<T>::value, int> = 0>
+template <typename T,
+          std::enable_if_t<std::is_floating_point<T>::value, int> = 0>
 constexpr T constexpr_exp(T const power) {
   using lim = std::numeric_limits<T>;
 
@@ -567,12 +550,11 @@ constexpr T constexpr_exp(T const power) {
 /// The technique works best with numbers that are close enough to 1, so the
 /// implementation uses a quick shrink/growth technique as described in:
 ///   https://en.wikipedia.org/wiki/Natural_logarithm#Efficient_computation
-template <
-    typename T,
-    std::enable_if_t<std::is_floating_point<T>::value, int> = 0>
+template <typename T,
+          std::enable_if_t<std::is_floating_point<T>::value, int> = 0>
 constexpr T constexpr_log(T const num) {
   using lim = std::numeric_limits<T>;
-  constexpr auto& isq = constexpr_iterated_squares_desc_2_v<T>;
+  constexpr auto &isq = constexpr_iterated_squares_desc_2_v<T>;
 
   // edge cases
   if (constexpr_isnan(num)) {
@@ -624,17 +606,14 @@ constexpr T constexpr_log(T const num) {
 ///
 /// mimic: std::pow (C++26)
 template <
-    typename T,
-    typename E,
+    typename T, typename E,
     std::enable_if_t<
-        std::is_integral<E>::value && !std::is_same<E, bool>::value,
-        int> = 0>
+        std::is_integral<E>::value && !std::is_same<E, bool>::value, int> = 0>
 constexpr T constexpr_pow(T const base, E const exp) {
   return detail::constexpr_ipow(base, exp);
 }
-template <
-    typename T,
-    std::enable_if_t<std::is_floating_point<T>::value, int> = 0>
+template <typename T,
+          std::enable_if_t<std::is_floating_point<T>::value, int> = 0>
 constexpr T constexpr_pow(T const base, T const exp) {
   using lim = std::numeric_limits<T>;
 
@@ -690,25 +669,24 @@ constexpr T constexpr_pow(T const base, T const exp) {
   assert(T(0) < base || exp == exp_trunc); // error invalid
   auto const exp_fract = exp - exp_trunc;
   auto const anyi = exp_fract == T(0);
-  return constexpr_mult(
-      detail::constexpr_ipow(base, exp_trunc),
-      anyi ? T(1) : constexpr_exp(exp_fract * constexpr_log(base)));
+  return constexpr_mult(detail::constexpr_ipow(base, exp_trunc),
+                        anyi ? T(1)
+                             : constexpr_exp(exp_fract * constexpr_log(base)));
 }
 
 /// constexpr_find_last_set
 ///
 /// Return the 1-based index of the most significant bit which is set.
 /// For x > 0, constexpr_find_last_set(x) == 1 + floor(log2(x)).
-template <typename T>
-constexpr std::size_t constexpr_find_last_set(T const t) {
+template <typename T> constexpr std::size_t constexpr_find_last_set(T const t) {
   using U = std::make_unsigned_t<T>;
   return t == T(0) ? 0 : 1 + constexpr_log2(static_cast<U>(t));
 }
 
 namespace detail {
 template <typename U>
-constexpr std::size_t constexpr_find_first_set_(
-    std::size_t s, std::size_t a, U const u) {
+constexpr std::size_t constexpr_find_first_set_(std::size_t s, std::size_t a,
+                                                U const u) {
   return s == 0 ? a
                 : constexpr_find_first_set_(
                       s / 2, a + s * bool((u >> a) % (U(1) << s) == U(0)), u);
@@ -719,22 +697,19 @@ constexpr std::size_t constexpr_find_first_set_(
 ///
 /// Return the 1-based index of the least significant bit which is set.
 /// For x > 0, the exponent in the largest power of two which does not divide x.
-template <typename T>
-constexpr std::size_t constexpr_find_first_set(T t) {
+template <typename T> constexpr std::size_t constexpr_find_first_set(T t) {
   using U = std::make_unsigned_t<T>;
   using size = std::integral_constant<std::size_t, sizeof(T) * 4>;
-  return t == T(0)
-      ? 0
-      : 1 + detail::constexpr_find_first_set_(size{}, 0, static_cast<U>(t));
+  return t == T(0) ? 0
+                   : 1 + detail::constexpr_find_first_set_(size{}, 0,
+                                                           static_cast<U>(t));
 }
 
-template <typename T>
-constexpr T constexpr_add_overflow_clamped(T a, T b) {
+template <typename T> constexpr T constexpr_add_overflow_clamped(T a, T b) {
   using L = std::numeric_limits<T>;
   using M = std::intmax_t;
-  static_assert(
-      !std::is_integral<T>::value || sizeof(T) <= sizeof(M),
-      "Integral type too large!");
+  static_assert(!std::is_integral<T>::value || sizeof(T) <= sizeof(M),
+                "Integral type too large!");
   // clang-format off
   return
     // don't do anything special for non-integral types.
@@ -754,13 +729,11 @@ constexpr T constexpr_add_overflow_clamped(T a, T b) {
   // clang-format on
 }
 
-template <typename T>
-constexpr T constexpr_sub_overflow_clamped(T a, T b) {
+template <typename T> constexpr T constexpr_sub_overflow_clamped(T a, T b) {
   using L = std::numeric_limits<T>;
   using M = std::intmax_t;
-  static_assert(
-      !std::is_integral<T>::value || sizeof(T) <= sizeof(M),
-      "Integral type too large!");
+  static_assert(!std::is_integral<T>::value || sizeof(T) <= sizeof(M),
+                "Integral type too large!");
   // clang-format off
   return
     // don't do anything special for non-integral types.

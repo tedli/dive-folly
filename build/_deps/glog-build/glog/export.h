@@ -22,7 +22,7 @@
 #endif
 
 #ifndef GLOG_DEPRECATED
-#  define GLOG_DEPRECATED __declspec(deprecated)
+#  define GLOG_DEPRECATED __attribute__ ((__deprecated__))
 #endif
 
 #ifndef GLOG_DEPRECATED_EXPORT

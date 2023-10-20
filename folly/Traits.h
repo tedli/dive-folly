@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,11 +36,9 @@
 
 namespace folly {
 
-template <typename...>
-struct tag_t {};
+template <typename...> struct tag_t {};
 
-template <typename... T>
-FOLLY_INLINE_VARIABLE constexpr tag_t<T...> tag{};
+template <typename... T> FOLLY_INLINE_VARIABLE constexpr tag_t<T...> tag{};
 
 #if __cpp_lib_bool_constant || _MSC_VER
 
@@ -42,8 +47,7 @@ using std::bool_constant;
 #else
 
 //  mimic: std::bool_constant, C++17
-template <bool B>
-using bool_constant = std::integral_constant<bool, B>;
+template <bool B> using bool_constant = std::integral_constant<bool, B>;
 
 #endif
 
@@ -130,12 +134,11 @@ struct is_constexpr_default_constructible_ {
   // were desired, a combination of __apple_build_version__ and __clang_major__
   // may be used to reduce frontend overhead under correct compilers: clang 12
   // under xcode and clang 10 otherwise
-  template <typename T, int = make(tag<T>)>
-  static std::true_type sfinae(T*);
-  static std::false_type sfinae(void*);
+  template <typename T, int = make(tag<T>)> static std::true_type sfinae(T *);
+  static std::false_type sfinae(void *);
   template <typename T>
   static constexpr bool apply =
-      decltype(sfinae(static_cast<T*>(nullptr)))::value;
+      decltype(sfinae(static_cast<T *>(nullptr)))::value;
 };
 
 } // namespace detail
@@ -171,51 +174,38 @@ struct is_constexpr_default_constructible
  *  Also useful for any other library with template types having dependent
  *  member types named `type`, like the standard trait types.
  */
-template <typename T>
-using _t = typename T::type;
+template <typename T> using _t = typename T::type;
 
 /**
  * A type trait to remove all const volatile and reference qualifiers on a
  * type T
  */
-template <typename T>
-struct remove_cvref {
+template <typename T> struct remove_cvref {
   using type =
       typename std::remove_cv<typename std::remove_reference<T>::type>::type;
 };
-template <typename T>
-using remove_cvref_t = typename remove_cvref<T>::type;
+template <typename T> using remove_cvref_t = typename remove_cvref<T>::type;
 
 namespace detail {
-template <typename Src>
-struct like_ {
-  template <typename Dst>
-  using apply = Dst;
+template <typename Src> struct like_ {
+  template <typename Dst> using apply = Dst;
 };
-template <typename Src>
-struct like_<Src const> {
-  template <typename Dst>
-  using apply = Dst const;
+template <typename Src> struct like_<Src const> {
+  template <typename Dst> using apply = Dst const;
 };
-template <typename Src>
-struct like_<Src volatile> {
-  template <typename Dst>
-  using apply = Dst volatile;
+template <typename Src> struct like_<Src volatile> {
+  template <typename Dst> using apply = Dst volatile;
 };
-template <typename Src>
-struct like_<Src const volatile> {
-  template <typename Dst>
-  using apply = Dst const volatile;
+template <typename Src> struct like_<Src const volatile> {
+  template <typename Dst> using apply = Dst const volatile;
 };
-template <typename Src>
-struct like_<Src&> {
+template <typename Src> struct like_<Src &> {
   template <typename Dst>
-  using apply = typename like_<Src>::template apply<Dst>&;
+  using apply = typename like_<Src>::template apply<Dst> &;
 };
-template <typename Src>
-struct like_<Src&&> {
+template <typename Src> struct like_<Src &&> {
   template <typename Dst>
-  using apply = typename like_<Src>::template apply<Dst>&&;
+  using apply = typename like_<Src>::template apply<Dst> &&;
 };
 } // namespace detail
 
@@ -224,8 +214,7 @@ template <typename Src, typename Dst>
 using like_t = typename detail::like_<Src>::template apply<remove_cvref_t<Dst>>;
 
 //  mimic: like, p0847r0
-template <typename Src, typename Dst>
-struct like {
+template <typename Src, typename Dst> struct like {
   using type = like_t<Src, Dst>;
 };
 
@@ -294,16 +283,14 @@ struct like {
  */
 
 namespace traits_detail {
-template <class T, class...>
-struct type_t_ {
+template <class T, class...> struct type_t_ {
   using type = T;
 };
 } // namespace traits_detail
 
 template <class T, class... Ts>
 using type_t = typename traits_detail::type_t_<T, Ts...>::type;
-template <class... Ts>
-using void_t = type_t<void, Ts...>;
+template <class... Ts> using void_t = type_t<void, Ts...>;
 
 //  nonesuch
 //
@@ -316,8 +303,8 @@ using void_t = type_t<void, Ts...>;
 //  mimic: std::experimental::nonesuch, Library Fundamentals TS v2
 struct nonesuch {
   ~nonesuch() = delete;
-  nonesuch(nonesuch const&) = delete;
-  void operator=(nonesuch const&) = delete;
+  nonesuch(nonesuch const &) = delete;
+  void operator=(nonesuch const &) = delete;
 };
 
 namespace detail {
@@ -397,8 +384,7 @@ using aligned_storage_for_t =
 template <class T>
 struct is_trivially_copyable : bool_constant<__is_trivially_copyable(T)> {};
 #else
-template <class T>
-using is_trivially_copyable = std::is_trivially_copyable<T>;
+template <class T> using is_trivially_copyable = std::is_trivially_copyable<T>;
 #endif
 
 template <class T>
@@ -427,7 +413,7 @@ struct is_nothrow_convertible
 //  * std::is_nothrow_convertible_v
 //
 //  mimic: is_nothrow_convertible, C++20
-#if defined(__cpp_lib_is_nothrow_convertible) && \
+#if defined(__cpp_lib_is_nothrow_convertible) &&                               \
     __cpp_lib_is_nothrow_convertible >= 201806L
 using std::is_nothrow_convertible;
 using std::is_nothrow_convertible_v;
@@ -480,16 +466,14 @@ using fallback::is_nothrow_convertible_v;
 
 namespace traits_detail {
 
-#define FOLLY_HAS_TRUE_XXX(name)                                             \
-  template <typename T>                                                      \
-  using detect_##name = typename T::name;                                    \
-  template <class T>                                                         \
-  struct name##_is_true : std::is_same<typename T::name, std::true_type> {}; \
-  template <class T>                                                         \
-  struct has_true_##name : std::conditional<                                 \
-                               is_detected_v<detect_##name, T>,              \
-                               name##_is_true<T>,                            \
-                               std::false_type>::type {}
+#define FOLLY_HAS_TRUE_XXX(name)                                               \
+  template <typename T> using detect_##name = typename T::name;                \
+  template <class T>                                                           \
+  struct name##_is_true : std::is_same<typename T::name, std::true_type> {};   \
+  template <class T>                                                           \
+  struct has_true_##name                                                       \
+      : std::conditional<is_detected_v<detect_##name, T>, name##_is_true<T>,   \
+                         std::false_type>::type {}
 
 FOLLY_HAS_TRUE_XXX(IsRelocatable);
 FOLLY_HAS_TRUE_XXX(IsZeroInitializable);
@@ -500,25 +484,19 @@ FOLLY_HAS_TRUE_XXX(IsZeroInitializable);
 
 struct Ignore {
   Ignore() = default;
-  template <class T>
-  constexpr /* implicit */ Ignore(const T&) {}
-  template <class T>
-  const Ignore& operator=(T const&) const {
-    return *this;
-  }
+  template <class T> constexpr /* implicit */ Ignore(const T &) {}
+  template <class T> const Ignore &operator=(T const &) const { return *this; }
 };
 
-template <class...>
-using Ignored = Ignore;
+template <class...> using Ignored = Ignore;
 
 namespace traits_detail_IsEqualityComparable {
 Ignore operator==(Ignore, Ignore);
 
 template <class T, class U = T>
 struct IsEqualityComparable
-    : std::is_convertible<
-          decltype(std::declval<T>() == std::declval<U>()),
-          bool> {};
+    : std::is_convertible<decltype(std::declval<T>() == std::declval<U>()),
+                          bool> {};
 } // namespace traits_detail_IsEqualityComparable
 
 /* using override */ using traits_detail_IsEqualityComparable::
@@ -529,9 +507,8 @@ Ignore operator<(Ignore, Ignore);
 
 template <class T, class U = T>
 struct IsLessThanComparable
-    : std::is_convertible<
-          decltype(std::declval<T>() < std::declval<U>()),
-          bool> {};
+    : std::is_convertible<decltype(std::declval<T>() < std::declval<U>()),
+                          bool> {};
 } // namespace traits_detail_IsLessThanComparable
 
 /* using override */ using traits_detail_IsLessThanComparable::
@@ -542,21 +519,20 @@ namespace traits_detail_IsNothrowSwappable {
 // MSVC already implements the C++17 P0185R1 proposal which adds
 // std::is_nothrow_swappable, so use it instead if C++17 mode is
 // enabled.
-template <typename T>
-using IsNothrowSwappable = std::is_nothrow_swappable<T>;
+template <typename T> using IsNothrowSwappable = std::is_nothrow_swappable<T>;
 #elif _CPPLIB_VER
 // MSVC defines the base even if C++17 is disabled, and MSVC has
 // issues with our fallback implementation due to over-eager
 // evaluation of noexcept.
-template <typename T>
-using IsNothrowSwappable = std::_Is_nothrow_swappable<T>;
+template <typename T> using IsNothrowSwappable = std::_Is_nothrow_swappable<T>;
 #else
 /* using override */ using std::swap;
 
 template <class T>
 struct IsNothrowSwappable
-    : bool_constant<std::is_nothrow_move_constructible<T>::value&& noexcept(
-          swap(std::declval<T&>(), std::declval<T&>()))> {};
+    : bool_constant<std::is_nothrow_move_constructible<T>::value &&
+                    noexcept(swap(std::declval<T &>(), std::declval<T &>()))> {
+};
 #endif
 } // namespace traits_detail_IsNothrowSwappable
 
@@ -564,37 +540,31 @@ struct IsNothrowSwappable
 
 template <class T>
 struct IsRelocatable
-    : std::conditional<
-          is_detected_v<traits_detail::detect_IsRelocatable, T>,
-          traits_detail::has_true_IsRelocatable<T>,
-          // TODO add this line (and some tests for it) when we
-          // upgrade to gcc 4.7
-          // std::is_trivially_move_constructible<T>::value ||
-          is_trivially_copyable<T>>::type {};
+    : std::conditional<is_detected_v<traits_detail::detect_IsRelocatable, T>,
+                       traits_detail::has_true_IsRelocatable<T>,
+                       // TODO add this line (and some tests for it) when we
+                       // upgrade to gcc 4.7
+                       // std::is_trivially_move_constructible<T>::value ||
+                       is_trivially_copyable<T>>::type {};
 
 template <class T>
 struct IsZeroInitializable
     : std::conditional<
           is_detected_v<traits_detail::detect_IsZeroInitializable, T>,
           traits_detail::has_true_IsZeroInitializable<T>,
-          bool_constant< //
-              !std::is_class<T>::value && //
-              !std::is_union<T>::value && //
+          bool_constant<                                  //
+              !std::is_class<T>::value &&                 //
+              !std::is_union<T>::value &&                 //
               !std::is_member_object_pointer<T>::value && // itanium
               true>>::type {};
 
 namespace detail {
-template <bool>
-struct conditional_;
-template <>
-struct conditional_<false> {
-  template <typename, typename T>
-  using apply = T;
+template <bool> struct conditional_;
+template <> struct conditional_<false> {
+  template <typename, typename T> using apply = T;
 };
-template <>
-struct conditional_<true> {
-  template <typename T, typename>
-  using apply = T;
+template <> struct conditional_<true> {
+  template <typename T, typename> using apply = T;
 };
 } // namespace detail
 
@@ -608,27 +578,21 @@ struct conditional_<true> {
 template <bool V, typename T, typename F>
 using conditional_t = typename detail::conditional_<V>::template apply<T, F>;
 
-template <typename...>
-struct Conjunction : std::true_type {};
-template <typename T>
-struct Conjunction<T> : T {};
+template <typename...> struct Conjunction : std::true_type {};
+template <typename T> struct Conjunction<T> : T {};
 template <typename T, typename... TList>
 struct Conjunction<T, TList...>
     : std::conditional<T::value, Conjunction<TList...>, T>::type {};
 
-template <typename...>
-struct Disjunction : std::false_type {};
-template <typename T>
-struct Disjunction<T> : T {};
+template <typename...> struct Disjunction : std::false_type {};
+template <typename T> struct Disjunction<T> : T {};
 template <typename T, typename... TList>
 struct Disjunction<T, TList...>
     : std::conditional<T::value, T, Disjunction<TList...>>::type {};
 
-template <typename T>
-struct Negation : bool_constant<!T::value> {};
+template <typename T> struct Negation : bool_constant<!T::value> {};
 
-template <bool... Bs>
-struct Bools {
+template <bool... Bs> struct Bools {
   using valid_type = bool;
   static constexpr std::size_t size() { return sizeof...(Bs); }
 };
@@ -644,8 +608,7 @@ struct StrictDisjunction
           std::is_same<Bools<Ts::value...>, Bools<(Ts::value && false)...>>> {};
 
 namespace detail {
-template <typename T>
-using is_transparent_ = typename T::is_transparent;
+template <typename T> using is_transparent_ = typename T::is_transparent;
 } // namespace detail
 
 //  is_transparent_v
@@ -666,13 +629,11 @@ template <typename T, typename = void>
 FOLLY_INLINE_VARIABLE constexpr bool is_allocator_ = false;
 template <typename T>
 FOLLY_INLINE_VARIABLE constexpr bool is_allocator_<
-    T,
-    void_t<
-        typename T::value_type,
-        decltype(std::declval<T&>().allocate(std::size_t{})),
-        decltype(std::declval<T&>().deallocate(
-            static_cast<typename T::value_type*>(nullptr), std::size_t{}))>> =
-    true;
+    T, void_t<typename T::value_type,
+              decltype(std::declval<T &>().allocate(std::size_t{})),
+              decltype(std::declval<T &>().deallocate(
+                  static_cast<typename T::value_type *>(nullptr),
+                  std::size_t{}))>> = true;
 
 } // namespace detail
 
@@ -683,8 +644,7 @@ FOLLY_INLINE_VARIABLE constexpr bool is_allocator_<
 //  to the minimum protocol required by std::allocator_traits.
 template <typename T>
 FOLLY_INLINE_VARIABLE constexpr bool is_allocator_v = detail::is_allocator_<T>;
-template <typename T>
-struct is_allocator : bool_constant<is_allocator_v<T>> {};
+template <typename T> struct is_allocator : bool_constant<is_allocator_v<T>> {};
 
 } // namespace folly
 
@@ -701,7 +661,7 @@ struct is_allocator : bool_constant<is_allocator_v<T>> {};
  * template <class T1, class T2>
  * FOLLY_ASSUME_RELOCATABLE(MyType<T1, T2>)
  */
-#define FOLLY_ASSUME_RELOCATABLE(...) \
+#define FOLLY_ASSUME_RELOCATABLE(...)                                          \
   struct IsRelocatable<__VA_ARGS__> : std::true_type {}
 
 /**
@@ -729,34 +689,31 @@ struct is_allocator : bool_constant<is_allocator_v<T>> {};
  */
 
 // Use this macro ONLY at global level (no namespace)
-#define FOLLY_ASSUME_FBVECTOR_COMPATIBLE(...) \
-  namespace folly {                           \
-  template <>                                 \
-  FOLLY_ASSUME_RELOCATABLE(__VA_ARGS__);      \
+#define FOLLY_ASSUME_FBVECTOR_COMPATIBLE(...)                                  \
+  namespace folly {                                                            \
+  template <> FOLLY_ASSUME_RELOCATABLE(__VA_ARGS__);                           \
   }
 // Use this macro ONLY at global level (no namespace)
-#define FOLLY_ASSUME_FBVECTOR_COMPATIBLE_1(...) \
-  namespace folly {                             \
-  template <class T1>                           \
-  FOLLY_ASSUME_RELOCATABLE(__VA_ARGS__<T1>);    \
+#define FOLLY_ASSUME_FBVECTOR_COMPATIBLE_1(...)                                \
+  namespace folly {                                                            \
+  template <class T1> FOLLY_ASSUME_RELOCATABLE(__VA_ARGS__<T1>);               \
   }
 // Use this macro ONLY at global level (no namespace)
-#define FOLLY_ASSUME_FBVECTOR_COMPATIBLE_2(...)  \
-  namespace folly {                              \
-  template <class T1, class T2>                  \
-  FOLLY_ASSUME_RELOCATABLE(__VA_ARGS__<T1, T2>); \
+#define FOLLY_ASSUME_FBVECTOR_COMPATIBLE_2(...)                                \
+  namespace folly {                                                            \
+  template <class T1, class T2> FOLLY_ASSUME_RELOCATABLE(__VA_ARGS__<T1, T2>); \
   }
 // Use this macro ONLY at global level (no namespace)
-#define FOLLY_ASSUME_FBVECTOR_COMPATIBLE_3(...)      \
-  namespace folly {                                  \
-  template <class T1, class T2, class T3>            \
-  FOLLY_ASSUME_RELOCATABLE(__VA_ARGS__<T1, T2, T3>); \
+#define FOLLY_ASSUME_FBVECTOR_COMPATIBLE_3(...)                                \
+  namespace folly {                                                            \
+  template <class T1, class T2, class T3>                                      \
+  FOLLY_ASSUME_RELOCATABLE(__VA_ARGS__<T1, T2, T3>);                           \
   }
 // Use this macro ONLY at global level (no namespace)
-#define FOLLY_ASSUME_FBVECTOR_COMPATIBLE_4(...)          \
-  namespace folly {                                      \
-  template <class T1, class T2, class T3, class T4>      \
-  FOLLY_ASSUME_RELOCATABLE(__VA_ARGS__<T1, T2, T3, T4>); \
+#define FOLLY_ASSUME_FBVECTOR_COMPATIBLE_4(...)                                \
+  namespace folly {                                                            \
+  template <class T1, class T2, class T3, class T4>                            \
+  FOLLY_ASSUME_RELOCATABLE(__VA_ARGS__<T1, T2, T3, T4>);                       \
   }
 
 namespace folly {
@@ -781,26 +738,22 @@ using IsOneOf = StrictDisjunction<std::is_same<T, Ts>...>;
  */
 
 // same as `x < 0`
-template <typename T>
-constexpr bool is_negative(T x) {
+template <typename T> constexpr bool is_negative(T x) {
   return std::is_signed<T>::value && x < T(0);
 }
 
 // same as `x <= 0`
-template <typename T>
-constexpr bool is_non_positive(T x) {
+template <typename T> constexpr bool is_non_positive(T x) {
   return !x || folly::is_negative(x);
 }
 
 // same as `x > 0`
-template <typename T>
-constexpr bool is_positive(T x) {
+template <typename T> constexpr bool is_positive(T x) {
   return !is_non_positive(x);
 }
 
 // same as `x >= 0`
-template <typename T>
-constexpr bool is_non_negative(T x) {
+template <typename T> constexpr bool is_non_negative(T x) {
   return !x || is_positive(x);
 }
 
@@ -847,17 +800,16 @@ FOLLY_POP_WARNING
 
 } // namespace detail
 
-template <typename RHS, RHS rhs, typename LHS>
-bool less_than(LHS const lhs) {
-  return detail::
-      less_than_impl<RHS, rhs, typename std::remove_reference<LHS>::type>(lhs);
+template <typename RHS, RHS rhs, typename LHS> bool less_than(LHS const lhs) {
+  return detail::less_than_impl<RHS, rhs,
+                                typename std::remove_reference<LHS>::type>(lhs);
 }
 
 template <typename RHS, RHS rhs, typename LHS>
 bool greater_than(LHS const lhs) {
-  return detail::
-      greater_than_impl<RHS, rhs, typename std::remove_reference<LHS>::type>(
-          lhs);
+  return detail::greater_than_impl<RHS, rhs,
+                                   typename std::remove_reference<LHS>::type>(
+      lhs);
 }
 } // namespace folly
 
@@ -891,93 +843,67 @@ namespace folly {
 //    make_unsigned
 //    make_unsigned_t
 
-template <typename T>
-struct is_arithmetic : std::is_arithmetic<T> {};
+template <typename T> struct is_arithmetic : std::is_arithmetic<T> {};
 template <typename T>
 FOLLY_INLINE_VARIABLE constexpr bool is_arithmetic_v = is_arithmetic<T>::value;
 
-template <typename T>
-struct is_integral : std::is_integral<T> {};
+template <typename T> struct is_integral : std::is_integral<T> {};
 template <typename T>
 FOLLY_INLINE_VARIABLE constexpr bool is_integral_v = is_integral<T>::value;
 
-template <typename T>
-struct is_signed : std::is_signed<T> {};
+template <typename T> struct is_signed : std::is_signed<T> {};
 template <typename T>
 FOLLY_INLINE_VARIABLE constexpr bool is_signed_v = is_signed<T>::value;
 
-template <typename T>
-struct is_unsigned : std::is_unsigned<T> {};
+template <typename T> struct is_unsigned : std::is_unsigned<T> {};
 template <typename T>
 FOLLY_INLINE_VARIABLE constexpr bool is_unsigned_v = is_unsigned<T>::value;
 
-template <typename T>
-struct make_signed : std::make_signed<T> {};
-template <typename T>
-using make_signed_t = typename make_signed<T>::type;
+template <typename T> struct make_signed : std::make_signed<T> {};
+template <typename T> using make_signed_t = typename make_signed<T>::type;
 
-template <typename T>
-struct make_unsigned : std::make_unsigned<T> {};
-template <typename T>
-using make_unsigned_t = typename make_unsigned<T>::type;
+template <typename T> struct make_unsigned : std::make_unsigned<T> {};
+template <typename T> using make_unsigned_t = typename make_unsigned<T>::type;
 
 #if FOLLY_HAVE_INT128_T
 
 using int128_t = signed __int128;
 using uint128_t = unsigned __int128;
 
-template <>
-struct is_arithmetic<int128_t> : std::true_type {};
-template <>
-struct is_arithmetic<uint128_t> : std::true_type {};
+template <> struct is_arithmetic<int128_t> : std::true_type {};
+template <> struct is_arithmetic<uint128_t> : std::true_type {};
 
-template <>
-struct is_integral<int128_t> : std::true_type {};
-template <>
-struct is_integral<uint128_t> : std::true_type {};
+template <> struct is_integral<int128_t> : std::true_type {};
+template <> struct is_integral<uint128_t> : std::true_type {};
 
-template <>
-struct is_signed<int128_t> : std::true_type {};
-template <>
-struct is_signed<uint128_t> : std::false_type {};
-template <>
-struct is_unsigned<int128_t> : std::false_type {};
-template <>
-struct is_unsigned<uint128_t> : std::true_type {};
+template <> struct is_signed<int128_t> : std::true_type {};
+template <> struct is_signed<uint128_t> : std::false_type {};
+template <> struct is_unsigned<int128_t> : std::false_type {};
+template <> struct is_unsigned<uint128_t> : std::true_type {};
 
-template <>
-struct make_signed<int128_t> {
+template <> struct make_signed<int128_t> {
   using type = int128_t;
 };
-template <>
-struct make_signed<uint128_t> {
+template <> struct make_signed<uint128_t> {
   using type = int128_t;
 };
 
-template <>
-struct make_unsigned<int128_t> {
+template <> struct make_unsigned<int128_t> {
   using type = uint128_t;
 };
-template <>
-struct make_unsigned<uint128_t> {
+template <> struct make_unsigned<uint128_t> {
   using type = uint128_t;
 };
 #endif // FOLLY_HAVE_INT128_T
 
 namespace traits_detail {
-template <std::size_t>
-struct uint_bits_t_ {};
-template <>
-struct uint_bits_t_<8> : type_t_<std::uint8_t> {};
-template <>
-struct uint_bits_t_<16> : type_t_<std::uint16_t> {};
-template <>
-struct uint_bits_t_<32> : type_t_<std::uint32_t> {};
-template <>
-struct uint_bits_t_<64> : type_t_<std::uint64_t> {};
+template <std::size_t> struct uint_bits_t_ {};
+template <> struct uint_bits_t_<8> : type_t_<std::uint8_t> {};
+template <> struct uint_bits_t_<16> : type_t_<std::uint16_t> {};
+template <> struct uint_bits_t_<32> : type_t_<std::uint32_t> {};
+template <> struct uint_bits_t_<64> : type_t_<std::uint64_t> {};
 #if FOLLY_HAVE_INT128_T
-template <>
-struct uint_bits_t_<128> : type_t_<uint128_t> {};
+template <> struct uint_bits_t_<128> : type_t_<uint128_t> {};
 #endif // FOLLY_HAVE_INT128_T
 } // namespace traits_detail
 
@@ -987,21 +913,18 @@ using uint_bits_t = _t<traits_detail::uint_bits_t_<bits>>;
 template <std::size_t lg_bits>
 using uint_bits_lg_t = uint_bits_t<(1u << lg_bits)>;
 
-template <std::size_t bits>
-using int_bits_t = make_signed_t<uint_bits_t<bits>>;
+template <std::size_t bits> using int_bits_t = make_signed_t<uint_bits_t<bits>>;
 
 template <std::size_t lg_bits>
 using int_bits_lg_t = make_signed_t<uint_bits_lg_t<lg_bits>>;
 
 namespace traits_detail {
 
-template <std::size_t I, typename T>
-struct type_pack_element_indexed_type {
+template <std::size_t I, typename T> struct type_pack_element_indexed_type {
   using type = T;
 };
 
-template <typename, typename...>
-struct type_pack_element_set;
+template <typename, typename...> struct type_pack_element_set;
 template <std::size_t... I, typename... T>
 struct type_pack_element_set<std::index_sequence<I...>, T...>
     : type_pack_element_indexed_type<I, T>... {};
@@ -1009,16 +932,15 @@ template <typename... T>
 using type_pack_element_set_t =
     type_pack_element_set<std::index_sequence_for<T...>, T...>;
 
-template <std::size_t I>
-struct type_pack_element_test {
+template <std::size_t I> struct type_pack_element_test {
   template <typename T>
-  static type_pack_element_indexed_type<I, T> impl(
-      type_pack_element_indexed_type<I, T>*);
+  static type_pack_element_indexed_type<I, T>
+  impl(type_pack_element_indexed_type<I, T> *);
 };
 
 template <std::size_t I, typename... Ts>
 using type_pack_element_fallback = _t<decltype(type_pack_element_test<I>::impl(
-    static_cast<type_pack_element_set_t<Ts...>*>(nullptr)))>;
+    static_cast<type_pack_element_set_t<Ts...> *>(nullptr)))>;
 
 } // namespace traits_detail
 
@@ -1028,8 +950,7 @@ using type_pack_element_fallback = _t<decltype(type_pack_element_test<I>::impl(
 template <std::size_t I, typename... Ts>
 using type_pack_element_t = __type_pack_element<I, Ts...>;
 #else
-template <std::size_t I, typename... Ts>
-struct type_pack_element {
+template <std::size_t I, typename... Ts> struct type_pack_element {
   using type = __type_pack_element<I, Ts...>;
 };
 template <std::size_t I, typename... Ts>

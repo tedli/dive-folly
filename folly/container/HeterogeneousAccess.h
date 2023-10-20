@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -69,44 +76,40 @@ struct ValueTypeForTransparentConversionToRange {
 // convertible to folly::Range<T const*>.
 template <typename T>
 struct ValueTypeForTransparentConversionToRange<
-    T,
-    void_t<
-        decltype(std::declval<hasher<Range<typename T::value_type const*>>>()(
-            std::declval<Range<typename T::value_type const*>>()))>> {
+    T, void_t<decltype(std::declval<
+                       hasher<Range<typename T::value_type const *>>>()(
+           std::declval<Range<typename T::value_type const *>>()))>> {
   using type = std::remove_const_t<typename T::value_type>;
 };
 
 template <typename T>
 using TransparentlyConvertibleToRange = std::is_convertible<
     T,
-    Range<typename ValueTypeForTransparentConversionToRange<T>::type const*>>;
+    Range<typename ValueTypeForTransparentConversionToRange<T>::type const *>>;
 
-template <typename T>
-struct TransparentRangeEqualTo {
+template <typename T> struct TransparentRangeEqualTo {
   using is_transparent = void;
 
   template <typename U1, typename U2>
-  bool operator()(U1 const& lhs, U2 const& rhs) const {
-    return Range<T const*>{lhs} == Range<T const*>{rhs};
+  bool operator()(U1 const &lhs, U2 const &rhs) const {
+    return Range<T const *>{lhs} == Range<T const *>{rhs};
   }
 
   // This overload is not required for functionality, but
   // guarantees that replacing std::equal_to<std::string> with
   // HeterogeneousAccessEqualTo<std::string> is truly zero overhead
-  bool operator()(std::string const& lhs, std::string const& rhs) const {
+  bool operator()(std::string const &lhs, std::string const &rhs) const {
     return lhs == rhs;
   }
 };
 
-template <typename T>
-struct TransparentRangeHash {
+template <typename T> struct TransparentRangeHash {
   using is_transparent = void;
   using folly_is_avalanching = std::true_type;
 
- private:
-  template <typename U>
-  static std::size_t hashImpl(Range<U const*> piece) {
-    return hasher<Range<U const*>>{}(piece);
+private:
+  template <typename U> static std::size_t hashImpl(Range<U const *> piece) {
+    return hasher<Range<U const *>>{}(piece);
   }
 
   static std::size_t hashImpl(StringPiece piece) {
@@ -119,10 +122,9 @@ struct TransparentRangeHash {
 #endif
   }
 
- public:
-  template <typename U>
-  std::size_t operator()(U const& stringish) const {
-    return hashImpl(Range<T const*>{stringish});
+public:
+  template <typename U> std::size_t operator()(U const &stringish) const {
+    return hashImpl(Range<T const *>{stringish});
   }
 
   // Neither this overload nor the platform-conditional compilation
@@ -134,7 +136,7 @@ struct TransparentRangeHash {
   // example).  If folly::hasher<StringPiece> dominated the performance
   // of std::hash<std::string> then we should consider using it all of
   // the time.
-  std::size_t operator()(std::string const& str) const {
+  std::size_t operator()(std::string const &str) const {
 #if defined(_GLIBCXX_STRING) || defined(_LIBCPP_STRING)
     return std::hash<std::string>{}(str);
 #else
@@ -143,23 +145,15 @@ struct TransparentRangeHash {
   }
 };
 
-template <
-    typename TableKey,
-    typename Hasher,
-    typename KeyEqual,
-    typename ArgKey>
+template <typename TableKey, typename Hasher, typename KeyEqual,
+          typename ArgKey>
 struct EligibleForHeterogeneousFind
-    : Conjunction<
-          is_transparent<Hasher>,
-          is_transparent<KeyEqual>,
-          is_invocable<Hasher, ArgKey const&>,
-          is_invocable<KeyEqual, ArgKey const&, TableKey const&>> {};
+    : Conjunction<is_transparent<Hasher>, is_transparent<KeyEqual>,
+                  is_invocable<Hasher, ArgKey const &>,
+                  is_invocable<KeyEqual, ArgKey const &, TableKey const &>> {};
 
-template <
-    typename TableKey,
-    typename Hasher,
-    typename KeyEqual,
-    typename ArgKey>
+template <typename TableKey, typename Hasher, typename KeyEqual,
+          typename ArgKey>
 using EligibleForHeterogeneousInsert = Conjunction<
     EligibleForHeterogeneousFind<TableKey, Hasher, KeyEqual, ArgKey>,
     std::is_constructible<TableKey, ArgKey>>;
@@ -168,16 +162,14 @@ using EligibleForHeterogeneousInsert = Conjunction<
 
 template <typename T>
 struct HeterogeneousAccessEqualTo<
-    T,
-    std::enable_if_t<detail::TransparentlyConvertibleToRange<T>::value>>
+    T, std::enable_if_t<detail::TransparentlyConvertibleToRange<T>::value>>
     : detail::TransparentRangeEqualTo<
           typename detail::ValueTypeForTransparentConversionToRange<T>::type> {
 };
 
 template <typename T>
 struct HeterogeneousAccessHash<
-    T,
-    std::enable_if_t<detail::TransparentlyConvertibleToRange<T>::value>>
+    T, std::enable_if_t<detail::TransparentlyConvertibleToRange<T>::value>>
     : detail::TransparentRangeHash<
           typename detail::ValueTypeForTransparentConversionToRange<T>::type> {
 };

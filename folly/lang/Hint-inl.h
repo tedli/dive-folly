@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -47,8 +54,9 @@ compiler_may_unsafely_assume_unreachable() {
 #endif
 }
 
-FOLLY_ALWAYS_INLINE void compiler_may_unsafely_assume_separate_storage(
-    void const* const a, void const* const b) {
+FOLLY_ALWAYS_INLINE void
+compiler_may_unsafely_assume_separate_storage(void const *const a,
+                                              void const *const b) {
   FOLLY_SAFE_DCHECK(
       a != b, "compiler-hint separate storage assumption fails at runtime");
 #if FOLLY_HAS_BUILTIN(__builtin_assume_separate_storage)
@@ -62,21 +70,21 @@ namespace detail {
 
 #pragma optimize("", off)
 
-inline void compiler_must_force_sink(void const*) {}
+inline void compiler_must_force_sink(void const *) {}
 
 #pragma optimize("", on)
 
 } // namespace detail
 
 template <typename T>
-FOLLY_ALWAYS_INLINE void compiler_must_not_elide_fn::operator()(
-    T const& t) const noexcept {
+FOLLY_ALWAYS_INLINE void
+compiler_must_not_elide_fn::operator()(T const &t) const noexcept {
   detail::compiler_must_force_sink(&t);
 }
 
 template <typename T>
-FOLLY_ALWAYS_INLINE void compiler_must_not_predict_fn::operator()(
-    T& t) const noexcept {
+FOLLY_ALWAYS_INLINE void
+compiler_must_not_predict_fn::operator()(T &t) const noexcept {
   detail::compiler_must_force_sink(&t);
 }
 
@@ -85,13 +93,13 @@ FOLLY_ALWAYS_INLINE void compiler_must_not_predict_fn::operator()(
 namespace detail {
 
 template <typename T, typename D = std::decay_t<T>>
-using compiler_must_force_indirect = bool_constant<
-    !is_trivially_copyable_v<D> || //
-    sizeof(long) < sizeof(D) || //
-    std::is_pointer<D>::value>;
+using compiler_must_force_indirect =
+    bool_constant<!is_trivially_copyable_v<D> || //
+                  sizeof(long) < sizeof(D) ||    //
+                  std::is_pointer<D>::value>;
 
 template <typename T>
-FOLLY_ALWAYS_INLINE void compiler_must_not_elide(T const& t, std::false_type) {
+FOLLY_ALWAYS_INLINE void compiler_must_not_elide(T const &t, std::false_type) {
   // the "r" constraint forces the compiler to make the value available in a
   // register to the asm block, which means that it must first have been
   // computed or loaded
@@ -104,7 +112,7 @@ FOLLY_ALWAYS_INLINE void compiler_must_not_elide(T const& t, std::false_type) {
 }
 
 template <typename T>
-FOLLY_ALWAYS_INLINE void compiler_must_not_elide(T const& t, std::true_type) {
+FOLLY_ALWAYS_INLINE void compiler_must_not_elide(T const &t, std::true_type) {
   // tells the compiler that the asm block will read the value from memory,
   // and that in addition it might read or write from any memory location
   //
@@ -114,27 +122,27 @@ FOLLY_ALWAYS_INLINE void compiler_must_not_elide(T const& t, std::true_type) {
 }
 
 template <typename T>
-FOLLY_ALWAYS_INLINE void compiler_must_not_predict(T& t, std::false_type) {
+FOLLY_ALWAYS_INLINE void compiler_must_not_predict(T &t, std::false_type) {
   asm volatile("" : "+r"(t));
 }
 
 template <typename T>
-FOLLY_ALWAYS_INLINE void compiler_must_not_predict(T& t, std::true_type) {
+FOLLY_ALWAYS_INLINE void compiler_must_not_predict(T &t, std::true_type) {
   asm volatile("" : : "m"(t) : "memory");
 }
 
 } // namespace detail
 
 template <typename T>
-FOLLY_ALWAYS_INLINE void compiler_must_not_elide_fn::operator()(
-    T const& t) const noexcept {
+FOLLY_ALWAYS_INLINE void
+compiler_must_not_elide_fn::operator()(T const &t) const noexcept {
   using i = detail::compiler_must_force_indirect<T>;
   detail::compiler_must_not_elide(t, i{});
 }
 
 template <typename T>
-FOLLY_ALWAYS_INLINE void compiler_must_not_predict_fn::operator()(
-    T& t) const noexcept {
+FOLLY_ALWAYS_INLINE void
+compiler_must_not_predict_fn::operator()(T &t) const noexcept {
   using i = detail::compiler_must_force_indirect<T>;
   detail::compiler_must_not_predict(t, i{});
 }

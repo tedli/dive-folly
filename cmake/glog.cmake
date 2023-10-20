@@ -1,10 +1,16 @@
+# Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+# This source code is licensed under the BSD-style license found in the
+# LICENSE file in the root directory of this source tree. An additional grant
+# of patent rights can be found in the PATENTS file in the same directory.
+
 include_guard()
 
 include(cmake/utils.cmake)
 
-FetchContent_DeclareGitHubWithMirror(glog
-  google/glog v0.6.0
-  SHA256=122fb6b712808ef43fbf80f75c52a21c9760683dae470154f02bddfc61135022
+FetchContent_Declare(glog
+  URL https://github.com/google/glog/archive/v0.6.0.zip
+  URL_HASH SHA256=122fb6b712808ef43fbf80f75c52a21c9760683dae470154f02bddfc61135022
+  PATCH_COMMAND patch -p1 -s -i ${PROJECT_SOURCE_DIR}/cmake/patches/glog_demangle.patch
 )
 
 FetchContent_MakeAvailableWithArgs(glog

@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,20 +30,20 @@ namespace folly {
 
 namespace detail {
 
-void* memrchr_fallback(void* s, int c, std::size_t len) noexcept;
-void const* memrchr_fallback(void const* s, int c, std::size_t len) noexcept;
+void *memrchr_fallback(void *s, int c, std::size_t len) noexcept;
+void const *memrchr_fallback(void const *s, int c, std::size_t len) noexcept;
 
 } // namespace detail
 
 //  memrchr
 //
 //  mimic: memrchr, glibc++
-void* memrchr(void* s, int c, std::size_t len) noexcept;
-void const* memrchr(void const* s, int c, std::size_t len) noexcept;
+void *memrchr(void *s, int c, std::size_t len) noexcept;
+void const *memrchr(void const *s, int c, std::size_t len) noexcept;
 
 //  strlcpy
 //
 //  mimic: strlcpy, libbsd
-std::size_t strlcpy(char* dest, char const* src, std::size_t size);
+std::size_t strlcpy(char *dest, char const *src, std::size_t size);
 
 } // namespace folly

@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -37,7 +44,7 @@ struct SingletonThreadLocalState {
   struct Wrapper;
 
   struct LocalCache {
-    Wrapper* cache;
+    Wrapper *cache;
   };
   static_assert( // pod avoids tls-init guard var and tls-fini ub use-after-dtor
       std::is_standard_layout<LocalCache>::value &&
@@ -47,21 +54,21 @@ struct SingletonThreadLocalState {
   struct LocalLifetime;
 
   struct Wrapper {
-    using LocalCacheSet = std::unordered_set<LocalCache*>;
+    using LocalCacheSet = std::unordered_set<LocalCache *>;
 
     // per-cache refcounts, the number of lifetimes tracking that cache
-    std::unordered_map<LocalCache*, size_t> caches;
+    std::unordered_map<LocalCache *, size_t> caches;
 
     // per-lifetime cache tracking; 1-M lifetimes may track 1-N caches
-    std::unordered_map<LocalLifetime*, LocalCacheSet> lifetimes;
+    std::unordered_map<LocalLifetime *, LocalCacheSet> lifetimes;
 
     Wrapper() noexcept;
     ~Wrapper();
   };
 
   struct LocalLifetime {
-    void destroy(Wrapper& wrapper) noexcept;
-    void track(LocalCache& cache, Wrapper& wrapper) noexcept;
+    void destroy(Wrapper &wrapper) noexcept;
+    void track(LocalCache &cache, Wrapper &wrapper) noexcept;
   };
 };
 
@@ -99,14 +106,12 @@ struct SingletonThreadLocalState {
 ///
 /// Keywords to help people find this class in search:
 /// Thread Local Singleton ThreadLocalSingleton
-template <
-    typename T,
-    typename Tag = detail::DefaultTag,
-    typename Make = detail::DefaultMake<T>,
-    typename TLTag = std::
-        conditional_t<std::is_same<Tag, detail::DefaultTag>::value, void, Tag>>
+template <typename T, typename Tag = detail::DefaultTag,
+          typename Make = detail::DefaultMake<T>,
+          typename TLTag = std::conditional_t<
+              std::is_same<Tag, detail::DefaultTag>::value, void, Tag>>
 class SingletonThreadLocal {
- private:
+private:
   static detail::UniqueInstance unique;
 
   using State = detail::SingletonThreadLocalState;
@@ -114,13 +119,13 @@ class SingletonThreadLocal {
 
   struct ObjectWrapper {
     using Object = invoke_result_t<Make>;
-    static_assert(std::is_convertible<Object&, T&>::value, "inconvertible");
+    static_assert(std::is_convertible<Object &, T &>::value, "inconvertible");
 
     // keep as first field in first base, to save 1 instr in the fast path
     Object object{Make{}()};
   };
   struct Wrapper : ObjectWrapper, State::Wrapper {
-    /* implicit */ operator T&() { return ObjectWrapper::object; }
+    /* implicit */ operator T &() { return ObjectWrapper::object; }
   };
 
   using WrapperTL = ThreadLocal<Wrapper, TLTag>;
@@ -131,15 +136,15 @@ class SingletonThreadLocal {
 
   SingletonThreadLocal() = delete;
 
-  FOLLY_ALWAYS_INLINE static WrapperTL& getWrapperTL() {
+  FOLLY_ALWAYS_INLINE static WrapperTL &getWrapperTL() {
     (void)unique; // force the object not to be thrown out as unused
     return detail::createGlobal<WrapperTL, Tag>();
   }
 
-  FOLLY_NOINLINE static Wrapper& getWrapper() { return *getWrapperTL(); }
+  FOLLY_NOINLINE static Wrapper &getWrapper() { return *getWrapperTL(); }
 
-  FOLLY_NOINLINE static Wrapper& getSlow(LocalCache& cache) {
-    auto& wrapper = getWrapper();
+  FOLLY_NOINLINE static Wrapper &getSlow(LocalCache &cache) {
+    auto &wrapper = getWrapper();
     if (threadlocal_detail::StaticMetaBase::dying()) {
       return wrapper;
     }
@@ -148,23 +153,23 @@ class SingletonThreadLocal {
     return wrapper;
   }
 
- public:
-  FOLLY_EXPORT FOLLY_ALWAYS_INLINE static T& get() {
+public:
+  FOLLY_EXPORT FOLLY_ALWAYS_INLINE static T &get() {
     if (kIsMobile) {
       return getWrapper();
     }
     static thread_local LocalCache cache;
-    auto* wrapper = static_cast<Wrapper*>(cache.cache);
+    auto *wrapper = static_cast<Wrapper *>(cache.cache);
     return FOLLY_LIKELY(!!wrapper) ? *wrapper : getSlow(cache);
   }
 
-  static T* try_get() {
-    auto* wrapper = getWrapperTL().get_existing();
-    return wrapper ? &static_cast<T&>(*wrapper) : nullptr;
+  static T *try_get() {
+    auto *wrapper = getWrapperTL().get_existing();
+    return wrapper ? &static_cast<T &>(*wrapper) : nullptr;
   }
 
   class Accessor {
-   private:
+  private:
     using Inner = typename WrapperTL::Accessor;
     using IteratorBase = typename Inner::Iterator;
     using IteratorTag = std::bidirectional_iterator_tag;
@@ -173,22 +178,21 @@ class SingletonThreadLocal {
 
     explicit Accessor(Inner inner) noexcept : inner_(std::move(inner)) {}
 
-   public:
+  public:
     friend class SingletonThreadLocal<T, Tag, Make, TLTag>;
 
-    class Iterator
-        : public detail::
-              IteratorAdaptor<Iterator, IteratorBase, T, IteratorTag> {
-     private:
+    class Iterator : public detail::IteratorAdaptor<Iterator, IteratorBase, T,
+                                                    IteratorTag> {
+    private:
       using Super =
           detail::IteratorAdaptor<Iterator, IteratorBase, T, IteratorTag>;
       using Super::Super;
 
-     public:
+    public:
       friend class Accessor;
 
-      T& dereference() const {
-        return const_cast<Iterator*>(this)->base()->object;
+      T &dereference() const {
+        return const_cast<Iterator *>(this)->base()->object;
       }
 
       std::thread::id getThreadId() const { return this->base().getThreadId(); }
@@ -196,10 +200,10 @@ class SingletonThreadLocal {
       uint64_t getOSThreadId() const { return this->base().getOSThreadId(); }
     };
 
-    Accessor(const Accessor&) = delete;
-    Accessor& operator=(const Accessor&) = delete;
-    Accessor(Accessor&&) = default;
-    Accessor& operator=(Accessor&&) = default;
+    Accessor(const Accessor &) = delete;
+    Accessor &operator=(const Accessor &) = delete;
+    Accessor(Accessor &&) = default;
+    Accessor &operator=(Accessor &&) = default;
 
     Iterator begin() const { return Iterator(inner_.begin()); }
 
@@ -260,6 +264,6 @@ FOLLY_POP_WARNING
   };                                                                           \
   FOLLY_MAYBE_UNUSED ::folly::unsafe_for_async_usage                           \
       __folly_reused_g_prevent_async_##name;                                   \
-  auto& name =                                                                 \
+  auto &name =                                                                 \
       ::folly::SingletonThreadLocal<__folly_reused_type_##name>::get().object; \
   auto __folly_reused_g_##name = ::folly::makeGuard([&] { name.clear(); })

@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,8 +49,8 @@ extern bool const demangle_build_has_liberty;
  *
  * This function may allocate memory (and therefore throw std::bad_alloc).
  */
-fbstring demangle(const char* name);
-inline fbstring demangle(const std::type_info& type) {
+fbstring demangle(const char *name);
+inline fbstring demangle(const std::type_info &type) {
   return demangle(type.name());
 }
 
@@ -65,8 +72,8 @@ inline fbstring demangle(const std::type_info& type) {
  * libiberty), so it is possible for the fbstring version to work, while this
  * version returns the original, mangled name.
  */
-size_t demangle(const char* name, char* out, size_t outSize);
-inline size_t demangle(const std::type_info& type, char* buf, size_t bufSize) {
+size_t demangle(const char *name, char *out, size_t outSize);
+inline size_t demangle(const std::type_info &type, char *buf, size_t bufSize) {
   return demangle(type.name(), buf, bufSize);
 }
 

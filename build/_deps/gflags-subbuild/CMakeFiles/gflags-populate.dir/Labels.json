@@ -2,37 +2,37 @@
 	"sources" : 
 	[
 		{
-			"file" : "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/CMakeFiles/gflags-populate"
+			"file" : "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/CMakeFiles/gflags-populate"
 		},
 		{
-			"file" : "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/CMakeFiles/gflags-populate.rule"
+			"file" : "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/CMakeFiles/gflags-populate.rule"
 		},
 		{
-			"file" : "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/CMakeFiles/gflags-populate-complete.rule"
+			"file" : "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/CMakeFiles/gflags-populate-complete.rule"
 		},
 		{
-			"file" : "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-build.rule"
+			"file" : "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-build.rule"
 		},
 		{
-			"file" : "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-configure.rule"
+			"file" : "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-configure.rule"
 		},
 		{
-			"file" : "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-download.rule"
+			"file" : "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-download.rule"
 		},
 		{
-			"file" : "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-install.rule"
+			"file" : "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-install.rule"
 		},
 		{
-			"file" : "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-mkdir.rule"
+			"file" : "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-mkdir.rule"
 		},
 		{
-			"file" : "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-patch.rule"
+			"file" : "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-patch.rule"
 		},
 		{
-			"file" : "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-test.rule"
+			"file" : "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-test.rule"
 		},
 		{
-			"file" : "C:/Users/lizhen/Documents/Development/folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-update.rule"
+			"file" : "/home/lizhen/Documents/Development/dive-folly/build/_deps/gflags-subbuild/gflags-populate-prefix/src/gflags-populate-stamp/gflags-populate-update.rule"
 		}
 	],
 	"target" : 

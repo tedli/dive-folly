@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -26,32 +33,30 @@ namespace folly {
 namespace detail {
 
 class UniqueInstance {
- public:
+public:
   template <template <typename...> class Z, typename... Key, typename... Mapped>
   FOLLY_EXPORT FOLLY_ALWAYS_INLINE explicit UniqueInstance(
       tag_t<Z<Key..., Mapped...>>, tag_t<Key...>, tag_t<Mapped...>) noexcept {
     static Ptr const tmpl = FOLLY_TYPE_INFO_OF(key_t<Z>);
-    static Ptr const ptrs[] = {
-        FOLLY_TYPE_INFO_OF(Key)..., FOLLY_TYPE_INFO_OF(Mapped)...};
-    static Arg arg{
-        {tmpl, ptrs, sizeof...(Key), sizeof...(Mapped)},
-        {tag<Value, key_t<Z, Key...>>}};
+    static Ptr const ptrs[] = {FOLLY_TYPE_INFO_OF(Key)...,
+                               FOLLY_TYPE_INFO_OF(Mapped)...};
+    static Arg arg{{tmpl, ptrs, sizeof...(Key), sizeof...(Mapped)},
+                   {tag<Value, key_t<Z, Key...>>}};
     enforce(arg);
   }
 
-  UniqueInstance(UniqueInstance const&) = delete;
-  UniqueInstance(UniqueInstance&&) = delete;
-  UniqueInstance& operator=(UniqueInstance const&) = delete;
-  UniqueInstance& operator=(UniqueInstance&&) = delete;
+  UniqueInstance(UniqueInstance const &) = delete;
+  UniqueInstance(UniqueInstance &&) = delete;
+  UniqueInstance &operator=(UniqueInstance const &) = delete;
+  UniqueInstance &operator=(UniqueInstance &&) = delete;
 
- private:
-  template <template <typename...> class Z, typename... Key>
-  struct key_t {};
+private:
+  template <template <typename...> class Z, typename... Key> struct key_t {};
 
-  using Ptr = std::type_info const*;
+  using Ptr = std::type_info const *;
   struct Value {
     Ptr tmpl;
-    Ptr const* ptrs;
+    Ptr const *ptrs;
     std::uint32_t key_size;
     std::uint32_t mapped_size;
   };
@@ -60,7 +65,7 @@ class UniqueInstance {
     StaticSingletonManager::ArgCreate<true> global;
   };
 
-  static void enforce(Arg& arg) noexcept;
+  static void enforce(Arg &arg) noexcept;
 };
 
 } // namespace detail

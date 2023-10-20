@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023-present, Qihoo, Inc.  All rights reserved.
+ * This source code is licensed under the BSD-style license found in the
+ * LICENSE file in the root directory of this source tree. An additional grant
+ * of patent rights can be found in the PATENTS file in the same directory.
+ */
+
+/*
  * Copyright (c) Meta Platforms, Inc. and affiliates.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,14 +39,14 @@ namespace folly {
 
 namespace detail {
 
-#if FOLLY_HAS_FEATURE(cxx_constexpr_string_builtins) || \
+#if FOLLY_HAS_FEATURE(cxx_constexpr_string_builtins) ||                        \
     FOLLY_HAS_BUILTIN(__builtin_strlen) || defined(_MSC_VER)
 #define FOLLY_DETAIL_STRLEN __builtin_strlen
 #else
 #define FOLLY_DETAIL_STRLEN ::std::strlen
 #endif
 
-#if FOLLY_HAS_FEATURE(cxx_constexpr_string_builtins) || \
+#if FOLLY_HAS_FEATURE(cxx_constexpr_string_builtins) ||                        \
     FOLLY_HAS_BUILTIN(__builtin_strcmp)
 #define FOLLY_DETAIL_STRCMP __builtin_strcmp
 #else
@@ -48,15 +55,14 @@ namespace detail {
 
 // This overload is preferred if Char is char and if FOLLY_DETAIL_STRLEN
 // yields a compile-time constant.
-template <
-    typename Char,
-    std::size_t = FOLLY_DETAIL_STRLEN(static_cast<const Char*>(""))>
-constexpr std::size_t constexpr_strlen_internal(const Char* s, int) noexcept {
+template <typename Char,
+          std::size_t = FOLLY_DETAIL_STRLEN(static_cast<const Char *>(""))>
+constexpr std::size_t constexpr_strlen_internal(const Char *s, int) noexcept {
   return FOLLY_DETAIL_STRLEN(s);
 }
 template <typename Char>
-constexpr std::size_t constexpr_strlen_internal(
-    const Char* s, unsigned) noexcept {
+constexpr std::size_t constexpr_strlen_internal(const Char *s,
+                                                unsigned) noexcept {
   std::size_t ret = 0;
   while (*s++) {
     ++ret;
@@ -65,26 +71,24 @@ constexpr std::size_t constexpr_strlen_internal(
 }
 
 template <typename Char>
-constexpr std::size_t constexpr_strlen_fallback(const Char* s) noexcept {
+constexpr std::size_t constexpr_strlen_fallback(const Char *s) noexcept {
   return constexpr_strlen_internal(s, 0u);
 }
 
-static_assert(
-    constexpr_strlen_fallback("123456789") == 9,
-    "Someone appears to have broken constexpr_strlen...");
+static_assert(constexpr_strlen_fallback("123456789") == 9,
+              "Someone appears to have broken constexpr_strlen...");
 
 // This overload is preferred if Char is char and if FOLLY_DETAIL_STRCMP
 // yields a compile-time constant.
-template <
-    typename Char,
-    int = FOLLY_DETAIL_STRCMP(static_cast<const Char*>(""), "")>
-constexpr int constexpr_strcmp_internal(
-    const Char* s1, const Char* s2, int) noexcept {
+template <typename Char,
+          int = FOLLY_DETAIL_STRCMP(static_cast<const Char *>(""), "")>
+constexpr int constexpr_strcmp_internal(const Char *s1, const Char *s2,
+                                        int) noexcept {
   return FOLLY_DETAIL_STRCMP(s1, s2);
 }
 template <typename Char>
-constexpr int constexpr_strcmp_internal(
-    const Char* s1, const Char* s2, unsigned) noexcept {
+constexpr int constexpr_strcmp_internal(const Char *s1, const Char *s2,
+                                        unsigned) noexcept {
   while (*s1 && *s1 == *s2) {
     ++s1, ++s2;
   }
@@ -93,8 +97,8 @@ constexpr int constexpr_strcmp_internal(
 }
 
 template <typename Char>
-constexpr int constexpr_strcmp_fallback(
-    const Char* s1, const Char* s2) noexcept {
+constexpr int constexpr_strcmp_fallback(const Char *s1,
+                                        const Char *s2) noexcept {
   return constexpr_strcmp_internal(s1, s2, 0u);
 }
 
@@ -104,7 +108,7 @@ constexpr int constexpr_strcmp_fallback(
 } // namespace detail
 
 template <typename Char>
-constexpr std::size_t constexpr_strlen(const Char* s) noexcept {
+constexpr std::size_t constexpr_strlen(const Char *s) noexcept {
 #if __GNUC_PREREQ(11, 0)
   return detail::constexpr_strlen_internal(s, 0u);
 #else
@@ -113,14 +117,13 @@ constexpr std::size_t constexpr_strlen(const Char* s) noexcept {
 }
 
 template <typename Char>
-constexpr int constexpr_strcmp(const Char* s1, const Char* s2) noexcept {
+constexpr int constexpr_strcmp(const Char *s1, const Char *s2) noexcept {
   return detail::constexpr_strcmp_internal(s1, s2, 0);
 }
 
 namespace detail {
 
-template <typename V>
-struct is_constant_evaluated_or_constinit_ {
+template <typename V> struct is_constant_evaluated_or_constinit_ {
   V value;
   FOLLY_ERASE FOLLY_CONSTEVAL /* implicit */
   is_constant_evaluated_or_constinit_(V const v) noexcept(noexcept(V(v)))
